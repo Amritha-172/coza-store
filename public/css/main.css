@@ -486,8 +486,11 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
   font-size: 26px;
   line-height: 1;
   cursor: pointer;
+ 
 }
-
+a .zmdi-shopping-cart {
+  color: black; 
+}
 
 /*---------------------------------------------*/
 .icon-header-noti::after {
@@ -3451,3 +3454,4 @@ input.num-product::-webkit-inner-spin-button {
   border-color: #007bff;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+

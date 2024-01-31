@@ -1,120 +1,59 @@
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt');
-const securePassword = async (password) => {
+const product = require('../models/productModel')
+
+
+const loadshop = async (req, res) => {
     try {
-        const passwordHash = await bcrypt.hash(password, 10)
-        return passwordHash
+        const productArray = await product.find({ is_categoryBlocked: false, is_blocked: false })
+        res.render("shop", { productArray })
     } catch (error) {
-        console.log(error.message);
+        console.log("error in loadshop:", error);
     }
 }
-
-const signup = async (req, res) => {
+const profile = async (req, res) => {
     try {
-        res.render("register",)
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const insertUser = async (req, res) => {
-    try {
-        const {password,confirmPassword}=req.body;
-        const spassword = await securePassword(password)
-        const cpassword= await securePassword(confirmPassword)
-        if(password!==confirmPassword){
-             res.render('register',{messages:"password and confirm password is wrong"})
-        }
-        const user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            mobile: req.body.mobile,
-            // image: req.file.filename,
-            password: spassword,
-            confirmPassword:cpassword
-        
-
-        })
-
-        const userData = await user.save()
-
+        let userData = await User.find({ _id: req.session.user_id })
+        let address = null
         if (userData) {
-            res.render('register', { message: "Your registration is successfully completed" })
-        } else {
-            res.render('register', { message: "Your registration has been failed" })
+            res.render('profile', { userData: userData, Address: address })
         }
-
     } catch (error) {
-        console.log(error.message);
+        console.log("Error in profile:", error)
     }
 }
 
-
-
-const userLogin = async (req, res) => {
+const singleProduct = async (req, res) => {
     try {
-        res.render('login',)
+        let profile;
+        const productId = req.query.productId
+        console.log(productId, typeof (productId))
+
+        const productData = await product.findOne({ _id: productId })
+
+        const userData = await User.find({ email: req.session.user_email })
+     
+        if (productData) {
+            res.render('singleProduct', { product: productData })
+        }
     } catch (error) {
-        console.log(error.message);
+        console.log("error in Single product:", error);
     }
 }
-
-
-const verifyLogin = async(req,res)=>{
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
-
-     const userData = await User.findOne({email:email});  
-
-     if(userData){ 
-      const passwordMatch = await bcrypt.compare(password,userData.password)
-//authentication of user
-      if (passwordMatch) {
-
-        req.session.user_id = userData._id; 
-        res.redirect('/home');
-
-      } else {
-        res.render('login',{message:'Email or password is incorrect'})
-      }
-     } 
-     else{
-      res.render('login',{message:'Email or password is incorrect'})
-     }
-
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-
-
-const Homepage = async (req, res) => {
+const shoppingcart = async (req, res) => {
     try {
-        const userData = await User.findById({ _id: req.session.user_id})
-        res.render('home', { user: userData })
+        res.render('shoppingCart')
     } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const userLogout = async (req, res) => {
-    try {
-        req.session.user_id = null
-        res.redirect('/')
-    } catch (error) {
-        console.log(error.message);
+        console.log('error in shopping cart:', error);
     }
 }
 
 
 module.exports = {
-  signup,
-    insertUser,
-    userLogin,
-    userLogout,
-    Homepage,
-    verifyLogin,
-   
+    singleProduct,
+    loadshop,
+    profile,
+    shoppingcart
 }
+
+

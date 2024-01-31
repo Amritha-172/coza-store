@@ -1,46 +1,43 @@
 const express = require('express');
-const session = require('express-session');
-const config = require('../config/config')
+
 const auth=require('../middleware/userMiddleware')
-const userController=require('../controller/userController')
+const userAuth=require('../controller/userAuth')
+const userController=require("../controller/userController")
 
-const userRoute=express()
-
-userRoute.use(session({
-    secret:config.sessionSecret,
-    resave:false,
-    saveUninitialized:true
-}))
+const  userRoute=express()
 
 
 userRoute.set("view engine",'ejs')
 userRoute.set("views","./views/user")
 
 
-userRoute.use(express.json())
-userRoute.use(express.urlencoded({extended:true}))
-
-userRoute.get('/',(req,res)=>{
-    res.render('home')
-})
-
-userRoute.get('/login',auth.isLogout,userController.userLogin)
-userRoute.post('/login',userController.verifyLogin)
-
-userRoute.get('/home',auth.isLogin,userController.Homepage)
-userRoute.post('/home',userController.Homepage)
-
-userRoute.get('/logout',auth.isLogin,userController.userLogout)
-
-userRoute.get('/register',auth.isLogout,userController.signup)
-userRoute.post("/register",userController.insertUser)
 
 
-userRoute.post('/signup',(req,res)=>{
-    res.render("signupOtp")
-})
-userRoute.post("/newhome",(req,res)=>{
-    res.render("newhome")
+// userRoute.get('/',auth.isLogin,userAuth.Homepage)
+// userRoute.post('/',userAuth.Homepage)
+userRoute.get('/',userAuth.Homepage)
+userRoute.get('/home',auth.isLogin,userAuth.Homepage)
+userRoute.get('/login',auth.isLogout,userAuth.userLogin)
+userRoute.post('/login',auth.isLogout,userAuth.verifyLogin)
+
+
+userRoute.get('/logout',userAuth.userLogout)
+
+userRoute.get('/register',userAuth.signup)
+
+
+
+userRoute.get('/signup',auth.isLogout,userAuth.signup)
+userRoute.post('/signup',userAuth.verifySignup)
+
+userRoute.get('/signupOtp',auth.isLogout,userAuth.otp)
+userRoute.post('/signupOtp',userAuth.verifyOtp)
+userRoute.get('/shops',auth.isBlocked,userAuth.shop)
+userRoute.get('/home',auth.isLogin,auth.isBlocked,userAuth.Homepage)
+userRoute.get('/shoppingcart',auth.isLogin,userController.shoppingcart)
+userRoute.get('/product',auth.isLogin,userController.singleProduct)
+userRoute.get('/checkout',(req,res)=>{
+    res.render('checkOut')
 })
 
 userRoute.get('/profile',(req,res)=>{

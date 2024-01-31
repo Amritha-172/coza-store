@@ -1,128 +1,91 @@
-/* otpPage.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
 
+html,
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-family: "Poppins-Regular";
-    color: #333;
-    font-size: 13px;
-    margin: 0;
-    background-image: url('/public/images/gallery-09.jpg');
-  }
-  
-  .preloader {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: url('/images/loader.gif') no-repeat center center #fff;
-  }
-  
-  .container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-  }
-  
-  :where(.container, form, .input-field, header) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .container {
-    background-color: transparent;
-    padding: 30px 65px;
-    border-radius: 12px;
-    row-gap: 20px;
-    box-shadow: 0 5px 10px rgba(122, 120, 120, 0.1);
-  }
-  
-  .container header {
-    height: 65px;
-    width: 65px;
-    background: #4070f4;
-    color: #fff;
-    font-size: 2.5rem;
-    border-radius: 50%;
-  }
-  
-  .container h4 {
-    font-size: 1.25rem;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  form .input-field {
-    flex-direction: row;
-    column-gap: 10px;
-  }
-  
-  .input-field input {
-    height: 45px;
-    width: 42px;
-    border-radius: 6px;
-    outline: none;
-    font-size: 1.125rem;
-    text-align: center;
-    border: 1px solid #ddd;
-  }
-  
-  .input-field input:focus {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  }
-  
-  .input-field input::-webkit-inner-spin-button,
-  .input-field input::-webkit-outer-spin-button {
-    display: none;
-  }
-  
-  form button {
-    margin-top: 25px;
-    width: 100%;
-    color: #fff;
-    font-size: 1rem;
-    border: none;
-    padding: 9px 0;
-    cursor: pointer;
-    border-radius: 6px;
-    pointer-events: none;
-    background: #CBABFF;
-    transition: all 0.2s ease;
-  }
-  
-  form button.active {
-    background: #8c45ff;
-    pointer-events:auto;
-  }
-  
-  form button:hover {
-    background: #9d60ff;
-  }
-  button{
-    margin-top: 10px;
-    width: 40%;
-    color: #fff;
-    font-size: 0.8rem;
-    border: none;
-    padding: 9px 0;
-    cursor: pointer;
-    border-radius: 6px;
-    pointer-events: none;
-    background: #CBABFF;
-    transition: all 0.2s ease;
-  }
-  button :hover{
-    background: #9d60ff;
-  }
-  button.active{
-    background: #8c45ff;
-    pointer-events: auto;
-  }
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background-color: #EAF5F6;
+}
+
+.container {
+  width: 400px;
+  padding: 50px;
+  background-color: #ffffff;
+  border-radius: 25px;
+}
+
+h3.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #093030;
+  margin-bottom: 25px;
+}
+
+p.sub-title {
+  color: #B5BAB8;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+p span.phone-number {
+  display: block;
+  color: #093030;
+  font-weight: 600;
+}
+
+.wrapper {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: space-between;
+}
+
+.wrapper input.field {
+  width: 50px;
+  line-height: 75px;
+  font-size: 32px;
+  border: none;
+  background-color: #EAF5F6;
+  border-radius: 5px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #093030;
+  margin-bottom: 25px;
+}
+
+.wrapper input.field:focus {
+  outline: none;
+}
+
+button.resend {
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  color: #3DAFE1;
+  cursor: pointer;
+margin-left: 120px;
+margin-top: 20px;
+
+}
+
+button.resend i {
+  margin-left: 5px;
+}
+.verify{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 100px;
+  margin-left: 100px;
+  background-color: seagreen;
+  border-radius: 10px;
+  border: 1px solid grey;
+
+}

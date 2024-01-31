@@ -64,17 +64,15 @@
         <h4 class="mb-4">Login</h4>
         <form action="/login" method="post">
             <div class="">
-                <%
-                if(typeof message !== 'undefined'){
-                  %>
-                  
-                  <p class="text-danger "> <%= message %> </p>
                 
-                  <%
-                }
-                %>
+                
             </div>
             <div class="form-group">
+                <% if (messages.length>0) {%>
+                    <div style="color: red;">
+                        <%=messages%>
+                    </div>
+                    <%}%>
                 <label for="username">Email:</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
             </div>
@@ -83,14 +81,16 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
             </div>
             <div class="d-flex justify-content-center  ">
+                
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
-        </form>
         <div class="forgot-password">
-            <!-- Button trigger modal -->
-            <a href="forgot" >Forgot Password?</a>
-            <a href="register" class="text-secondary ">Create new Account</a>
+            
+            <a href="/forgot" >Forgot Password?</a>
+            <a href="/register" type="submit" class="text-secondary ">Create new Account</a>
+            
         </div>
+    </form>
     </div>
 </div>
 
@@ -100,6 +100,7 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 
 </body>

@@ -4,12 +4,12 @@ const mongoose = require('mongoose');
 
 const OTPschema  = new mongoose.Schema({
     userid :{
-        type :String,
-        required :true
+        type :mongoose.Schema.Types.ObjectId
+      
     },
     otp:{
         type:String,
-        required:true
+      
     },
     createdAt:{
         type:Date ,

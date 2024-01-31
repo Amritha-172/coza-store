@@ -1,6 +1,6 @@
 
 const mongoose = require('mongoose');
-const { boolean } = require('webidl-conversions');
+
 
 const userShema= mongoose.Schema({
     name:{
@@ -15,22 +15,19 @@ const userShema= mongoose.Schema({
         type:Number,
         required:true
     },
-    // image:{
-    //     type:String,
-    //      required: true
-    // },
     password:{
         type:String,
         required:true
     },
-    confirmPassword:{
-        type:String,
-        required:true
-    },
+    
     is_blocked:{
         type:Boolean,
         default:false
-    }
+    }, 
+      is_verified:{
+        type:Boolean,
+        default:false
+      }
 })
 
 module.exports=mongoose.model('user',userShema)

@@ -63,14 +63,13 @@
                 <div class="form-group">
                   
 
-                    <% if (locals.message) { %>
-                        <p class="text-success ps-5"><%= locals.message %></p>
-                    <% } else { %>
-                        <p class="text-danger ps-5"><%= locals.messages %></p>
+                    <% if (messages.length>0) { %>
+                        <p class="text-danger  ps-5"><%= messages %></p>
+
                     <% } %>
 
                     <label for="username">Username:</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your username" required>
+                    <input type="text" class="form-control" id="name" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$"name="name" placeholder="Enter your username" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>
@@ -83,29 +82,19 @@
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
+                    <span id="passwordErr" style="color: red;"></span>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password:</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
                 </div>
 
-                <!-- <%
-
-                if(typeof message !== 'undefined'){
-                  %>
-                  
-                  <p style = "color: rgb(255, 255, 255);"> <%= message %> </p>
-                  <%
-                }
-                
-                %> -->
+             
 
 
                 <div class="d-flex justify-content-center ">
-                    <!-- <form action="/signup" method="post">
-                        
-                    </form> -->
-                       <button type="submit" class="btn btn-primary ">Signup</button>
+                    
+                       <button type="submit" class="btn btn-primary " onclick="return validate()">Signup</button>
                 </div>
             </form>
             <div class="login-link">
@@ -117,6 +106,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    function validate () {
+        const password = document.getElementById('password').value.trim()
+        const passwordErr = document.getElementById('passwordErr')
+        if(password.length === 0){
+            passwordErr.innerHTML = 'Password is required'
+            return false
+        }
+        if (password.length < 8) {
+            passwordErr.innerHTML = 'Password min length is 8'
+            return false
+        }
+        // if (password.match('[A-Za-z0-9 ]')) {
+        //     passwordErr.innerHTML = 'Give a strong Password'
+        //     return false
+        // }
+
+        passwordErr.innerHTML = ''
+        return true
+        
+    }
+</script>
 
 <!-- Bootstrap JS, Popper.js, and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
