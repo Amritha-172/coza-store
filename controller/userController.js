@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const product = require('../models/productModel')
 
 
+
 const loadshop = async (req, res) => {
     try {
         const productArray = await product.find({ is_categoryBlocked: false, is_blocked: false })
@@ -13,7 +14,7 @@ const loadshop = async (req, res) => {
 }
 const profile = async (req, res) => {
     try {
-        let userData = await User.find({ _id: req.session.user_id })
+        let userData = await User.findOne({ _id: req.session.user_id })
         let address = null
         if (userData) {
             res.render('profile', { userData: userData, Address: address })
@@ -25,35 +26,30 @@ const profile = async (req, res) => {
 
 const singleProduct = async (req, res) => {
     try {
-        let profile;
+      
         const productId = req.query.productId
+    
         console.log(productId, typeof (productId))
 
         const productData = await product.findOne({ _id: productId })
 
-        const userData = await User.find({ email: req.session.user_email })
+        const userData = await User.findOne({ email: req.session.user_email })
      
         if (productData) {
-            res.render('singleProduct', { product: productData })
+            res.render('singleProduct', { product: productData ,userData})
         }
     } catch (error) {
         console.log("error in Single product:", error);
     }
 }
-const shoppingcart = async (req, res) => {
-    try {
-        res.render('shoppingCart')
-    } catch (error) {
-        console.log('error in shopping cart:', error);
-    }
-}
+
 
 
 module.exports = {
     singleProduct,
     loadshop,
     profile,
-    shoppingcart
+    
 }
 
 

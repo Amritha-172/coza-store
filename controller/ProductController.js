@@ -42,7 +42,7 @@ const addProduct = async (req, res) => {
                 price: details.price,
                 quantity: details.quantity,
                 image: images,
-                colors: details.color,
+                color: details.color,
                 size: details.size,
                 category: details.category,
                 offer: details.offer,

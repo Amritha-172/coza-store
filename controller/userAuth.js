@@ -93,7 +93,7 @@ const verifyLogin = async (req, res) => {
             return res.redirect('/login')
         }
         console.log('session in verify');
-        req.session.user_id = userData
+        req.session.user_id = userData._id
 
         return res.redirect('/home')
 
@@ -101,6 +101,7 @@ const verifyLogin = async (req, res) => {
         console.log("error in verify login", error.message);
     }
 }
+
 
 const otp = async (req, res) => {
     try {

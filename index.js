@@ -24,9 +24,9 @@ app.use(session({
 }));
 
 app.use(flash())
-
-app.use("/admin", adminRoute)
 app.use("/", userRoute)
+app.use("/admin", adminRoute)
+
 
 
 

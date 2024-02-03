@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 //single cart item schema
 const cartItemShema=new  mongoose.Schema({
    
-    prductId:{
+    productId:{
         type:mongoose.Schema.Types.ObjectId,
-            ref:"product",
+           
             required:true
     },
     quantity:{
@@ -16,6 +16,10 @@ const cartItemShema=new  mongoose.Schema({
     price:{
         type:Number,
         required:true
+    } ,userId:{
+        type:mongoose.Schema.Types.ObjectId,
+       
+        required:true
     }
     },
     {
@@ -25,27 +29,5 @@ const cartItemShema=new  mongoose.Schema({
 
 //schema for the cart
 
-const CartShema= new mongoose.Schema({
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"user",
-        required:true
-    },
-    items:[cartItemShema],
-     totalQuantity:{
-        type:Number,
-        required:true,
-        default:0
-     },   
-     totalPrice:{
-        type:Number,
-        required:true,
-        default:0
 
-     }
-
-},{
-    timestamps:true
-})
-
-module.exports=mongoose.model('cart',CartShema)
+module.exports=mongoose.model('cart',cartItemShema)
