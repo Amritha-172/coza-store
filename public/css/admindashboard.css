@@ -79,7 +79,7 @@ body {
 }
 /* Coza Store Header Styles */
 .coza-header {
-  background-color: #623397; /* Set your desired background color */
+  background-color:  #7553b3 ;
   color: #fff; /* Set your desired text color */
   padding: 15px 0; /* Adjust padding as needed */
 }
@@ -120,3 +120,24 @@ body {
 }
 /* Add these styles to your existing stylesheet */
 
+.btn-edit {
+  display: inline-block;
+
+  color: white;
+  background-color: black;
+  border: 0px;
+  border-radius: .375rem;
+  text-decoration: none; /* Removes underline from links */
+  text-align: center;
+  
+  /* width: 1px; */
+}
+
+.btn-edit:hover {
+  background-color: #333; /* Darker background on hover */
+  color: #fff; /* Ensures text color is white */
+}
+.table td{
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}

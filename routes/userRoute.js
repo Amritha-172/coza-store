@@ -6,10 +6,11 @@ const userController=require("../controller/userController")
 const cartController=require('../controller/cartController')
 
 const  userRoute=express()
+    
 
 
-userRoute.set("view engine",'ejs')
-userRoute.set("views","./views/user")
+// userRoute.set("view engine",'ejs')
+// userRoute.set("views","./views/user")
 
 
 

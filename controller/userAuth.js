@@ -16,9 +16,10 @@ const securePassword = async (password) => {
 const signup = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render("register", { messages })
+        res.render("user/register", { messages })
     } catch (error) {
         console.log("error in signup page:", error);
+        res.render('error')
     }
 }
 
@@ -29,10 +30,10 @@ const verifySignup = async (req, res) => {
 
         if (userCheck) {
             req.flash('message', "User Already Exist")
-            return res.redirect('/register')
+            return res.redirect('user/register')
         } else if (password != confirmPassword) {
 
-            res.render('register', { messages: "Password and confirm password is not match" })
+            res.render('user/register', { messages: "Password and confirm password is not match" })
         } else {
             const spassword = await securePassword(password)
 
@@ -51,16 +52,17 @@ const verifySignup = async (req, res) => {
             await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
           Here is the verification code.Please enter otp and verify Email`)
 
-            res.render("SignupOtp", { message: "enter Otp", user: req.session.user_email })
+            res.render("user/SignupOtp", { message: "enter Otp", user: req.session.user_email })
         }
     } catch (error) {
+        res.reder('error')
         console.log("error in verify signuop:", error);
     }
 }
 const userLogin = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render('login', { messages })
+        res.render('user/login', { messages })
     } catch (error) {
         console.log("error in userlogin:", error);
         res.status(500).send('Internal Server Error');
@@ -99,13 +101,14 @@ const verifyLogin = async (req, res) => {
 
     } catch (error) {
         console.log("error in verify login", error.message);
+        res.render('error')
     }
 }
 
 
 const otp = async (req, res) => {
     try {
-        res.render('signupOtp', { user: req.session.user_email, message: "Enter OTP" })
+        res.render('user/signupOtp', { user: req.session.user_email, message: "Enter OTP" })
     } catch (error) {
         console.log("error in otp:", error);
     }
@@ -140,7 +143,7 @@ const verifyOtp = async (req, res) => {
                 res.redirect('/home')
             } else {
                 req.session.user_id
-                res.render('signupOtp', { messages: "OTP is incorrect" })
+                res.render('user/signupOtp', { messages: "OTP is incorrect" })
             }
         }
     } catch (error) {
@@ -168,14 +171,14 @@ const Homepage = async (req, res) => {
 
         if (userdata) {
 
-            res.render('home', {
+            res.render('user/home', {
                 userName: userData.name,
                 product: productData,
                 userdata
             })
         } else {
 
-            res.render('home', {
+            res.render('user/home', {
                 userName: null,
                 product: productData,
                 userdata: ""
@@ -187,7 +190,7 @@ const Homepage = async (req, res) => {
 }
 const home = async (req, res) => {
     try {
-        res.render('home')
+        res.render('user/home')
     } catch (error) {
         console.log('error in home:', error);
     }
@@ -195,7 +198,7 @@ const home = async (req, res) => {
 
 const shop = async (req, res) => {
     try {
-        res.render('shop')
+        res.render('user/shop')
     } catch (error) {
         console.log('error in shop', error);
     }

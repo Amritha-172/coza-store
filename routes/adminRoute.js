@@ -28,12 +28,12 @@ admin_route.get('/deletecategory',adminMiddleware.isLogin,adminController.delete
 admin_route.get('/findcategory',adminController.findCategory)
 
 admin_route.get('/productlist',adminMiddleware.isLogin,products.loadProduct)
-admin_route.get('/addproduct',adminMiddleware.isLogin,products.loadAddProduct)
-admin_route.post('/addproduct',adminMiddleware.isLogin,multer.uploadProduct,products.addProduct)
-admin_route.post('/blockcategory/',adminMiddleware.isLogin,adminController.blockCategory)
 admin_route.post("/unblockcategory/",adminMiddleware.isLogin,adminController.unblockCategory)
 
 
+admin_route.get('/addproduct',adminMiddleware.isLogin,products.loadAddProduct)
+admin_route.post('/addproduct',adminMiddleware.isLogin,multer.uploadProduct,products.addProduct)
+admin_route.post('/blockcategory/',adminMiddleware.isLogin,adminController.blockCategory)
 admin_route.get('/unlistproduct',adminMiddleware.isLogin,products.unlistProduct)
 admin_route.get('/listproduct',adminMiddleware.isLogin,products.listProduct)
 admin_route.get('/editproduct',adminMiddleware.isLogin,products.loadeditProduct)    

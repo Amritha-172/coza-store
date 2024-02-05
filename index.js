@@ -10,6 +10,8 @@ const flash = require('express-flash')
 
 require('./config/config').connect()
 
+app.set('view engine','ejs')
+app.set('views','views')
 
 app.use(express.static('public'))
 app.use(nocache())
@@ -24,15 +26,16 @@ app.use(session({
 }));
 
 app.use(flash())
-app.use("/", userRoute)
+
 app.use("/admin", adminRoute)
+app.use("/", userRoute)
 
 
+app.use((req, res, next) => {
+  res.status(404).render('error');
+});
 
 
-
-
-
-app.listen(3000, () => {
-  console.log('server is Running at http://localhost:3000');
+app.listen(process.env.PORT, () => {
+  console.log(`server is Running at http://localhost:${process.env.PORT}`);
 })

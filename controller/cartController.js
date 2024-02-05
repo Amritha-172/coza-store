@@ -66,16 +66,38 @@ const itemExist=async(req,res)=>{
         console.log("error in item exist:",error);
     }
 }
+// const shoppingcart = async (req, res) => {
+//   try {
+//     const {productId}=req.query
+//     const userId = new ObjectId( req.session.user_id)
+//     const product=await Product.findById({_id:productId})
+//     const Usercart=await Cart.find({userId:userId})
+
+//       res.render('shoppingCart',{product,Usercart})
+//   } catch (error) {
+//       console.log('error in shopping cart:', error);
+//   }
+// }
 const shoppingcart = async (req, res) => {
   try {
-    const {productId}=req.query
-    const userId = new ObjectId( req.session.user_id)
-    const product=await Product.findById({_id:productId})
-    const Usercart=await Cart.findOne({userId:userId})
+    const userId = req.session.user_id; 
+    let Usercart = await Cart.find({ userId: userId });
 
-      res.render('shoppingCart',{product,Usercart})
+    // Fetch product details for each cart item
+    const cartItemsWithProductDetails = await Promise.all(
+      Usercart.map(async (cartItem) => {
+        const product = await Product.findById(cartItem.productId);
+        return {
+          ...cartItem._doc,
+          productDetails: product,
+        };
+      })
+    );
+    res.render('user/shoppingCart', { cartItems: cartItemsWithProductDetails });
   } catch (error) {
-      console.log('error in shopping cart:', error);
+    console.log('error in shopping cart:', error);
+    // res.status(500).send('Error retrieving shopping cart');
+    res.render('error')
   }
 }
 
@@ -85,7 +107,7 @@ const checkout=async(req,res)=>{
 
   
 
-      res.render('checkOut')
+      res.render('user/checkOut')
   } catch (error) {
       console.log("error in checkout page",error);
   }

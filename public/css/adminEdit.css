@@ -72,15 +72,17 @@ body {
   }
   /* Coza Store Header Styles */
   .coza-header {
-    background-color: #623397; /* Set your desired background color */
-    color: #fff; /* Set your desired text color */
-    padding: 15px 0; /* Adjust padding as needed */
+    background-color:#623397; 
+    color: #fff; 
+    padding: 15px 0;
+     /* Adjust padding as needed */
   }
   
   .coza-header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #623397;
   }
   
   .coza-header .logo {

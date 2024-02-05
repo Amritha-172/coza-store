@@ -35,7 +35,7 @@ const addProduct = async (req, res) => {
                 files[0].filename,
                 files[1].filename,
                 files[2].filename,
-                files[3].filename
+                
             ]
             const products = new product({
                 productName: details.productName,
@@ -101,7 +101,9 @@ const loadeditProduct = async (req, res) => {
         const { id } = req.query
         const products = await product.findOne({ _id: id })
         const categories = await category.find({})
-        res.render('editProducts', { products: products })
+        console.log(products);
+        res.render('editProducts', { product: products })
+        
     } catch (error) {
         console.log("error in loadeditProdut:", error);
     }
@@ -109,10 +111,17 @@ const loadeditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
+                  console.log(req.body);
+                  console.log(req.files);
 
-         const { productName, category, price, description, quantity, offer, id, image } = req.body
-        console.log(req.body.image, typeof (req.body.image));
-        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, offer: offer,image:image } })
+         const { productName, category, price, description, quantity, offer, id, size,color,oldimageUrl} = req.body
+
+         const {filename}=req.files
+         const upload=await product.findOne({_id:id})
+          const array=upload.image
+           
+
+        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, offer: offer,size:size,color:color} })
         console.log(edit);
         if (edit) {
             res.redirect('productlist')

@@ -18,7 +18,7 @@
 <body>
     <header class="coza-header">
         <div class="container">
-            <div class="logo">Coza Store</div>
+            <div class="logo" >Coza Store</div>
             <!-- Add more header elements or navigation links as needed -->
         </div>
     </header>
@@ -55,13 +55,13 @@
                 <h1>PRODUCT LIST</h1>
                 <p>List of Products:</p>
                 <form action="/admin/addproduct" method="">
-                    <button type="submit" class="btn btn-dark d-flex">Add</button>
+                    <button type="submit" class="btn btn-dark d-flex mb-3">Add</button>
                 </form>
 
-                <table class="table table-bordered">
+                <table class="table table-bordered" style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th style="width: 50px;">ID</th>
                             <th>Images</th>
                             <th>Name</th>
                             <th>Quantity</th>
@@ -70,13 +70,13 @@
                             <th>Offer</th>
                             <th>Dscription</th>
 
-                            <th>Action</th>
+                            <th style="width: 140px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% for(let i=0 ;i < products.length ; i++ ) { %>
                             <tr>
-                                <td>
+                                <td style="width: 50px;">
                                     <%= i+1 %>
                                 </td>
                                 <td>
@@ -109,27 +109,36 @@
                                         <%= products[i].offer%>
                                     </center>
                                 </td>
-                                <td>
+                                <td class="description">
                                     <center>
+                                        <marquee behavior="scroll" direction="left">
                                         <%= products[i].description%>
+                                           </marquee>
+
                                     </center>
                                 </td>
 
-                                <td>
-                                    <% if (products[i].is_blocked) { %>
+                                <td class="d-flex" style="width: 140px;">
+                                    <div class="col-6 ">
+                                        <% if (products[i].is_blocked) { %>
 
-                                        <button type="submit" class="badge rounded-pill alert-warning"
-                                            style="color: #a85a0b; border: 0px; background-color: #f9ba7a;"><a
-                                                href="/admin/unlistproduct?productName=<%= products[i].productName%>"
-                                                class="text-decoration-none"> UnList</a></button>
-                                        <% } else { %>
                                             <button type="submit" class="badge rounded-pill alert-warning"
-                                                style="color: #a85a0b; border: 0px; background-color: #f9ba7a;"><a
-                                                    href="/admin/listproduct?productName=<%= products[i].productName%>"
-                                                    class="text-decoration-none">List</a></button>
-                                            <% } %>
-                                                <a href="/admin/editproduct?id=<%= products[i]._id %>"
-                                                    class="btn btn-primary text-decoration-none text-white">Edit</a>
+                                                style="color: #a85a0b; border: 0px; background-color: #f9ba7a; width: 60px;"><a
+                                                    href="/admin/unlistproduct?productName=<%= products[i].productName%>"
+                                                    class="text-decoration-none"> UnList</a></button>
+                                            <% } else { %>
+                                                <button type="submit"
+                                                    class="btn-edit text-decoration-none w-100 text-white"
+                                                    style="color: #a85a0b; border: 0px; background-color: #f9ba7a;"><a
+                                                        href="/admin/listproduct?productName=<%= products[i].productName%>"
+                                                        class="text-decoration-none">List</a></button>
+                                                <% } %>
+                                    </div>
+                                    <div class="col-6 ">
+                                        <a href="/admin/editproduct?id=<%= products[i]._id %>"
+                                            class="btn-edit text-decoration-none ms-2  text-white"
+                                            style="width: 60px;">Edit</a>
+                                    </div>
                                 </td>
                             </tr>
                             <%}%>
@@ -138,7 +147,7 @@
             </div>
         </main>
     </div>
-
+    
     <script src="js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

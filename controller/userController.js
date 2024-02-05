@@ -7,9 +7,10 @@ const product = require('../models/productModel')
 const loadshop = async (req, res) => {
     try {
         const productArray = await product.find({ is_categoryBlocked: false, is_blocked: false })
-        res.render("shop", { productArray })
+        res.render("user/shop", { productArray })
     } catch (error) {
         console.log("error in loadshop:", error);
+        res.render('error')
     }
 }
 const profile = async (req, res) => {
@@ -17,14 +18,16 @@ const profile = async (req, res) => {
         let userData = await User.findOne({ _id: req.session.user_id })
         let address = null
         if (userData) {
-            res.render('profile', { userData: userData, Address: address })
+            res.render('user/profile', { userData: userData, Address: address })
+        }else{
+            res.render('error')
         }
     } catch (error) {
         console.log("Error in profile:", error)
     }
 }
 
-const singleProduct = async (req, res) => {
+const singleProduct = async (req, res,) => {
     try {
       
         const productId = req.query.productId
@@ -36,10 +39,13 @@ const singleProduct = async (req, res) => {
         const userData = await User.findOne({ email: req.session.user_email })
      
         if (productData) {
-            res.render('singleProduct', { product: productData ,userData})
+            res.render('user/singleProduct', { product: productData ,userData})
+        }else{
+            res.render('error')
         }
     } catch (error) {
         console.log("error in Single product:", error);
+        res.render('error')
     }
 }
 

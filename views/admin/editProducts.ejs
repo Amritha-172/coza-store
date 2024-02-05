@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -53,80 +54,187 @@
             <div class="content">
                 <h1>EDIT PRODUCT</h1>
                 <!-- Inside your form for editing product details -->
-                <form class="add" action="/admin/editproduct" method="post" enctype="multipart/form-data">
+                <form class="" >
+                    <div class="add">
+                        <div class="mb-3">
 
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="productName" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName"
-                            value="<%=products.productName%>" required>
+                            <%if(messages.length>0){%>
+                                <div style="color: red;">
+                                    <%=messages[0]%>
+                                </div>
+                                <%}%>
+                                    <label for="productName" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" id="productName"
+                                        pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName"
+                                        value="<%=product.productName%>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category"
+                                pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" value="<%=product.category%>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" name="price" value="120" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">description</label>
+
+                            <input type="text" class="form-control" id="description" name="description"
+                                value="<%=product.description%>" required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                value="<%=product.quantity%>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="size" class="form-label">Size</label>
+                            <input type="text" class="form-control" id="size" name="size" value="<%=product.size%>"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Color</label>
+                            <input type="text" class="form-control" id="color" name="color" value="<%=product.color%>"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="offer" class="form-label">offer</label>
+                            <input type="text" class="form-control" id="offer" name="offer" value="<%=product.offer%>"
+                                required>
+                        </div>
+                    </div>
+                    <div class=" d-flex justify-content-center " style="width: 700px;">
+                        <div class="d-flex justify-content-evenly ">
+                            <div style="width: 120px; height: 120px;">
+                                <label for="image1" class="form-label">Image
+                                    <img id="preview1" style="width: 110px; height: 110px;"
+                                        src="/multerimages/<%=product.image[0]%>" alt="">
+                                </label>
+                                <input type="file" class="form-control" id="image1" name="cropImages" value=""
+                                    style="display: none;" onchange="updateImage('image1', 'preview1')">
+                            </div>
+
+                            <div class="" style="width: 120px; height: 120px;">
+                                <label for="image2" style="width: 100px; height: 100px;" class="form-label">Image
+                                    <img id="preview2" style="width: 110px; height: 110px;"
+                                        src="/multerimages/<%=product.image[1]%>" alt="">
+                                </label>
+                                <input type="file" class="form-control" id="image2" name="cropImages" value=""
+                                    style="display: none;" onchange="updateImage('image2', 'preview2')">
+                            </div>
+
+                            <div class="mb-3 ">
+                                <label for="image3" id="fisrtimg" style="width: 100px; height: 100px;"
+                                    class="form-label">Image
+                                    <img id="preview3" style="width: 110px; height: 110px;"
+                                        src="/multerimages/<%=product.image[2]%>" alt="">
+                                </label>
+                                <input type="file" class="form-control" id="image3" data-image="" name="cropImages"
+                                    value="" style="display: none;" onchange="updateImage('image3', 'preview3')">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex  justify-content-center ">
+                        <input type="hidden" name="id"  id="id" value="<%=product._id%>">
+                        <button type="button" class="btn btn-dark  mt-4 " id="upload" style="width: 150px; height: 50px; ">Update
+                            Product</button>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="category" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$"name="category"
-                            value="<%=products.category%>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Price</label>
-                        <input type="number" class="form-control" id="price" name="price" value="<%=products.price%>"
-                            required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">description</label>
-                        <input type="text" class="form-control" id="price" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="description"
-                            value="<%=products.description%>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity"
-                            value="<%=products.quantity%>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="size" class="form-label">Size</label>
-                        <input type="text" class="form-control" id="size" name="size" value="<%=products.size%>"
-                            required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="color" class="form-label">Color</label>
-                        <input type="text" class="form-control" id="color" name="color" value="Blue" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="color" class="form-label">offer</label>
-                        <input type="text" class="form-control" id="offer" name="offer" value="<%=products.offer%>"
-                            required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="image1" class="form-label">Image</label>
-                        <input type="file" class="form-control" id="image" name="cropImages" value="" multiple>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="image2" class="form-label">Image </label>
-                        <input type="file" class="form-control" id="image" name="cropImages" value="" multiple>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="image3" class="form-label">Image </label>
-                        <input type="file" class="form-control" id="image" name="cropImages" value="" multiple>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="image4" class="form-label">Image</label>
-                        <input type="file" class="form-control" id="image" name="cropImages" value="" multiple>
-                    </div>
-                    <input type="hidden" name="id" value="<%= products._id%>">
-                    <button type="submit" class="btn btn-primary">UPDATE</button>
                 </form>
 
             </div>
         </main>
     </div>
+    <script>
+           var oldimageUrl=[]
+
+        function updateImage(inputId, previewId) {
+
+            var input = document.getElementById(inputId);
+            var preview = document.getElementById(previewId);
+            const oldurl = preview.src
+            const segments = oldurl.split('/');
+            const filename = segments[segments.length - 1];
+              oldimageUrl.push(filename)
+           
+
+          
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+   
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadbtn = document.getElementById('upload')
+
+            uploadbtn.addEventListener('click', function (e) {
+                e.preventDefault()
+                console.log(oldimageUrl);
+                const id=document.getElementById('id').value
+                const productName = document.getElementById('productName').value
+                const category = document.getElementById('category').value
+                const price = document.getElementById('price').value
+                const description = document.getElementById('description').value
+                const quantity = document.getElementById('quantity').value
+                const size = document.getElementById('size').value
+                const color = document.getElementById('color').value
+                const offer = document.getElementById('offer').value
+                const image1 = document.getElementById('image1').files[0]
+                const image2 = document.getElementById('image2').files[0]
+                const image3 = document.getElementById('image3').files[0]
+                  console.log(image1);
+
+                const  formData=new FormData()
+                formData.append('productName',productName)
+                formData.append('category',category)
+                formData.append('price',price)
+                formData.append('description',description)
+                formData.append('quantity',quantity)
+                formData.append('size',size)
+                formData.append('color',color)
+                formData.append('offer',offer)
+                formData.append('cropImages',image1)
+                formData.append('cropImages',image2)
+                formData.append('cropImages',image3)
+                formData.append('oldimageUrl',JSON.stringify(oldimageUrl))
+                formData.append('id',id)
+                
+
+              axios.post('/admin/editproduct',formData,{
+                headers:{
+                    'Content-type':"multipart/form-data"
+                }
+              })
+              .then(res=>{
+
+                console.log('data submitted');
+              }).catch(err=>{
+                console.log('error in editproduct submission');
+              })
+              
+            })
+
+
+
+
+
+
+
+        })
+
+    </script>
 
     <script src="js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

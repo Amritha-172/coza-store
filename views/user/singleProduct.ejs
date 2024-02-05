@@ -35,10 +35,15 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	
+
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+	<!-- Include Medium Zoom library (CDN) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.css">
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+
 	<!--===============================================================================================-->
+	
 </head>
 
 <body class="animsition">
@@ -283,17 +288,19 @@
 						<div class="wrap-slick3 flex-sb flex-w">
 							<div class="wrap-slick3-dots"></div>
 							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
 							<div class="slick3 gallery-lb">
-								<div class="item-slick3" data-thumb="/multerimages/<%= product.image[0]%>">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/multerimages/<%= product.image[0]%>" alt="IMG-PRODUCT">
 
+								<div class="item-slick3" data-thumb="/multerimages/<%= product.image[0]%>">
+
+
+									<div class="wrap-pic-w pos-relative" id="zoomable-Image" >
+											<img src="/multerimages/<%= product.image[0]%>" alt="IMG-PRODUCT">
 										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
 											href="/multerimages/<%= product.image[0]%>">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
+
 								</div>
 
 								<div class="item-slick3" data-thumb="/multerimages/<%= product.image[1]%>">
@@ -330,7 +337,7 @@
 						</h4>
 
 						<span class="mtext-106 cl2">
-							<%=product.price%>
+							$<%=product.price%>
 						</span>
 
 						<p class="stext-102 cl3 p-t-23">
@@ -392,13 +399,13 @@
 										</div>
 									</div>
 
-								
-										<button id="addtocart" data-name="<%=product._id%>"
-											class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-											Add to cart
-										</button>
 
-										
+									<button id="addtocart" data-name="<%=product._id%>"
+										class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+										Add to cart
+									</button>
+
+
 								</div>
 							</div>
 						</div>
@@ -1264,7 +1271,15 @@
 		</div>
 	</div>
 	</div>
-  
+	<style>
+		#zoomable-image {
+			transition: transform 0.3s ease-in-out;
+		}
+	
+		#zoomable-image:hover {
+			transform: scale(1.1);
+	    }
+	</style>
 
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
@@ -1286,13 +1301,14 @@
 				let currentValue = parseInt(inputQuantity.value, 10);
 				inputQuantity.value = currentValue + 1;
 			});
+
 			const id = button.getAttribute('data-name');
 			console.log('id in single product page:', id);
 			axios.get(`/addcart/${id}`)
 				.then(res => {
-					if (res.data.exist==true) {
+					if (res.data.exist == true) {
 						button.innerHTML = 'Go to cart'
-						
+
 					} else {
 						button.innerHTML = 'Add to  cart'
 					}
@@ -1308,7 +1324,7 @@
 
 
 				if (button.innerHTML === 'Go to cart') {
-					window.location.href = `/shoppingCart?productId=${id}`
+					window.location.href = `/shoppingCart`
 
 				} else {
 
@@ -1323,7 +1339,7 @@
 								icon: 'success',
 								confirmButtonText: 'OK'
 							});
-                            
+
 							button.innerHTML = 'Go to cart'
 
 						})
@@ -1342,8 +1358,56 @@
 
 	</script>
 
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('zoomable-Image').addEventListener('mousemove', function (event) {
+            zoomImage(event, this);
+        });
+
+        function zoomImage(event, element) {
+            const rect = element.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+
+            element.style.transformOrigin = `${percentX}% ${percentY}%`;
+            element.style.transition = 'transform 0.3s ease-in-out';
+            element.style.transform = 'scale(3.3)';
+        }
+
+        document.getElementById('zoomable-Image').addEventListener('mouseleave', function () {
+            this.style.transition = 'transform 0.3s ease-in-out';
+            this.style.transform = 'scale(1)';
+        });
+
+        document.getElementById('zoomable-Image2').addEventListener('mousemove', function (event) {
+            zoomImage(event, this);
+        });
+
+        document.getElementById('zoomable-Image2').addEventListener('mouseleave', function () {
+            this.style.transition = 'transform 0.3s ease-in-out';
+            this.style.transform = 'scale(1)';
+        });
+
+        document.getElementById('zoomable-Image3').addEventListener('mousemove', function (event) {
+            zoomImage(event, this);
+        });
+
+        document.getElementById('zoomable-Image3').addEventListener('mouseleave', function () {
+            this.style.transition = 'transform 0.3s ease-in-out';
+            this.style.transform = 'scale(1)';
+        });
 
 
+
+    });
+
+
+
+</script>
 	<!--===============================================================================================-->
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 	<!--===============================================================================================-->
