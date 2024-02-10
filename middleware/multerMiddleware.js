@@ -11,7 +11,7 @@ const upload = multer.diskStorage({
 
 })
 const product = multer({ storage: upload })
-const uploadProduct = product.array('cropImages', 4)
+const uploadProduct = product.array('cropImages', 3)
 
 
 module.exports = {

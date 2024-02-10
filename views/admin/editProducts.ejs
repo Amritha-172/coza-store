@@ -31,7 +31,7 @@
                 <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
                 <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
-                <li><a href="/admin/orders" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
+                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
                 <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
                 <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
                 <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
@@ -119,7 +119,7 @@
                                         src="/multerimages/<%=product.image[0]%>" alt="">
                                 </label>
                                 <input type="file" class="form-control" id="image1" name="cropImages" value=""
-                                    style="display: none;" onchange="updateImage('image1', 'preview1')">
+                                    style="display: none;" onchange="updateImage('image1', 'preview1')" required>
                             </div>
 
                             <div class="" style="width: 120px; height: 120px;">
@@ -128,7 +128,7 @@
                                         src="/multerimages/<%=product.image[1]%>" alt="">
                                 </label>
                                 <input type="file" class="form-control" id="image2" name="cropImages" value=""
-                                    style="display: none;" onchange="updateImage('image2', 'preview2')">
+                                    style="display: none;" onchange="updateImage('image2', 'preview2')" required>
                             </div>
 
                             <div class="mb-3 ">
@@ -138,7 +138,7 @@
                                         src="/multerimages/<%=product.image[2]%>" alt="">
                                 </label>
                                 <input type="file" class="form-control" id="image3" data-image="" name="cropImages"
-                                    value="" style="display: none;" onchange="updateImage('image3', 'preview3')">
+                                    value="" style="display: none;" onchange="updateImage('image3', 'preview3')" required>
                             </div>
                         </div>
                     </div>
@@ -218,8 +218,11 @@
                 }
               })
               .then(res=>{
-
-                console.log('data submitted');
+                  console.log(res);
+                if(res.data.success){
+                    window.location.href='/admin/productlist'
+                }
+                
               }).catch(err=>{
                 console.log('error in editproduct submission');
               })

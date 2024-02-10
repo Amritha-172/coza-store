@@ -16,7 +16,7 @@ const securePassword = async (password) => {
 const signup = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render("user/register", { messages })
+        res.render("user/user/register", { messages })
     } catch (error) {
         console.log("error in signup page:", error);
         res.render('error')
@@ -30,10 +30,10 @@ const verifySignup = async (req, res) => {
 
         if (userCheck) {
             req.flash('message', "User Already Exist")
-            return res.redirect('user/register')
+            return res.redirect('user/user/register')
         } else if (password != confirmPassword) {
 
-            res.render('user/register', { messages: "Password and confirm password is not match" })
+            res.render('user/user/register', { messages: "Password and confirm password is not match" })
         } else {
             const spassword = await securePassword(password)
 
@@ -62,7 +62,7 @@ const verifySignup = async (req, res) => {
 const userLogin = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render('user/login', { messages })
+        res.render('user/user/login', { messages })
     } catch (error) {
         console.log("error in userlogin:", error);
         res.status(500).send('Internal Server Error');
@@ -166,22 +166,24 @@ const Homepage = async (req, res) => {
     try {
 
         let userData = req.session.user_id;
-        let userdata = await user.findOne({ _id: userData })
+        let userdata = await user.findOne({ _id: userData ,is_blocked:false})
         let productData = await products.find({ is_blocked: false, is_categoryBlocked: false })
 
         if (userdata) {
 
-            res.render('user/home', {
+            res.render('user/user/home', {
                 userName: userData.name,
                 product: productData,
-                userdata
+                userdata:userdata
             })
         } else {
-
-            res.render('user/home', {
+            req.session.user_id=null
+            res.render('user/user/home', {
+                
                 userName: null,
                 product: productData,
-                userdata: ""
+                userdata: null,
+               
             })
         }
     } catch (error) {
@@ -190,7 +192,7 @@ const Homepage = async (req, res) => {
 }
 const home = async (req, res) => {
     try {
-        res.render('user/home')
+        res.render('user/user/home')
     } catch (error) {
         console.log('error in home:', error);
     }

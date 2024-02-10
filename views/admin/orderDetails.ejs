@@ -16,6 +16,11 @@
 </head>
 
 <body>
+
+    <style>
+        
+    </style>
+
     <header class="coza-header">
         <div class="container">
             <div class="logo">Coza Store</div>
@@ -52,55 +57,70 @@
             </div>
 
             <div class="content">
-                <h1>CATEGORY LIST</h1>
-                <p>List of Categories:</p>
-                <form action="/admin/addcategory" method="">
-                    <button type="submit" class="btn btn-dark d-flex">Add</button>
-                </form>
-                <table class="table table-bordered mt-2">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(let i=0;i < category.length; i++) {%>
-
+                <h1>ORDER LIST</h1>
+                <p>List of Orders:</p>
+    
+                    <table class="table table-bordered" style="table-layout: fixed;">
+                        <thead>
                             <tr>
-                                <td>
-                                    <%=i+1%>
-                                </td>
-
-                                <td>
-                                    <center>
-                                        <%= category[i].catName %>
-                                    </center>
-                                </td>
-                                <td>
-                                    <center>
-                                        <%= category[i].description %>
-                                    </center>
-                                </td>
-                                <td>
-
-                                    <a href="/admin/editcategory?id=<%= category[i]._id%>">
-                                        <button type="submit" class="btn btn-primary ">Edit</button>
-                                    </a>
-                                    <a href="/admin/deletecategory?id=<%= category[i]._id %>"><button type="submit"
-                                            class="btn btn-danger">Delete</button></a>
-
-                                </td>
+                                <th style="width: 50px;">ID</th>
+                                <th>Order Number</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th style="width: 200px;">Action</th>
                             </tr>
+                        </thead>
+                        <% for(i=0; i< orderDetails.length;i++){%>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <%=i+1%>
+                                    </td>
+                                    <td>
+                                        <%=orderDetails[i]._id%>
+                                    </td>
+                                    <td>
+                                        <%=orderDetails[i].formattedCreatedAt %>
+                                    </td>
+                                    <td>
+                                        <%=orderDetails[i].userId.name%>
+                                    </td>
+                                    <td>
+                                        <%=orderDetails[i].orderAmount%>
+                                    </td>
+                                    <td>
+                                        <%=orderDetails[i].orderStatus%>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);" class="btn border btn-dark view-btn" data-id="<%=orderDetails[i]._id%>">View</a>
+
+                                    </td>
+
+
+                                </tr>
+
+                            </tbody>
                             <%}%>
-                    </tbody>
-                </table>
+                    </table>
             </div>
         </main>
     </div>
 
+  
+    <script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.view-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var orderId = this.getAttribute('data-id');
+            window.location.href = 'singleorderview?orderId=' + orderId;
+        });
+    });
+});
+
+    </script>
     <script src="js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

@@ -28,6 +28,10 @@
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!--===============================================================================================-->
 </head>
 
@@ -112,12 +116,12 @@
 							<i class="zmdi zmdi-search"></i>
 						</div>
 
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11  "
 							data-notify="2">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 "
 							data-notify="0">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
@@ -345,7 +349,7 @@
 
 
 	<!-- Shoping Cart -->
-	<form actoin="/checkout" method="post" class="bg0 p-t-75 p-b-85">
+	<form action="/checkout" method="post" class="bg0 p-t-75 p-b-85">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -358,41 +362,53 @@
 									<th class="column-3">Price</th>
 									<th class="column-4">Quantity</th>
 									<th class="column-5">Total</th>
+									<th class="column-6" style="width: 120px;"> </th>
 								</tr>
 
-								 <!-- cart details here -->
-								
-								 <% cartItems.forEach((item,i) => { %>
-								<tr class="table_row">
-									<td class="column-1">
-										<div class="how-itemcart1">
-											<img src="/multerimages/<%=item.productDetails.image[0]%>" alt="IMG">
-										</div>
-									</td>
-									<td class="column-2">
-										<%=item.productDetails.productName%>
-									</td>
-									<td class="column-3 productprice" data-price="<%=item.productDetails.price%>" >$ <%=item.productDetails.price%>
-									</td>
-									<td class="column-4">
-										<div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
-											</div>
+								<!-- cart details here -->
 
-											<input class="mtext-104 cl3 txt-center num-product quantity" id="q<%=i%>" type="number"
-												name="num-product1"  value="<%=item.quantity%>">
-
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
+								<% cartItems.forEach((item,i)=> { %>
+									<tr class="table_row">
+										<td class="column-1">
+											<div class="how-itemcart1">
+												<img src="/multerimages/<%=item.productDetails.image[0]%>" alt="IMG">
 											</div>
-										</div>
-									</td>
-									<td class="column-5 totalPrice" >$ <%=item.price%>
-									</td>
-								</tr>
-                                <%})%>
-								<!-- cart details end here -->
+										</td>
+										<td class="column-2">
+											<%=item.productDetails.productName%>
+										</td>
+										<td class="column-3 productprice" data-price="<%=item.productDetails.price%>"
+											id="p<%=i%>">$ <%=item.productDetails.price%>
+										</td>
+										<td class="column-4">
+											<div class="wrap-num-product flex-w m-l-auto m-r-0">
+												<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
+													data-id="<%=item.productId%>">
+													<i class="fs-16 zmdi zmdi-minus"></i>
+												</div>
+
+												<input class="mtext-104 cl3 txt-center num-product quantity"
+													id="q<%=i%>" type="number" name="num-product1"
+													value="<%=item.quantity%>">
+
+												<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
+													data-id="<%=item.productId%>">
+													<i class="fs-16 zmdi zmdi-plus"></i>
+												</div>
+											</div>
+										</td>
+										<td class="column-5 totalPrice" id="t<%=i%>">$ <%=item.price%>
+										</td>
+										<td>
+											<button class="btn btn-danger remove-btn"
+												data-product-id="<%=item.productId%>">
+												Remove
+											</button>
+
+										</td>
+									</tr>
+									<%})%>
+										<!-- cart details end here -->
 
 							</table>
 						</div>
@@ -425,15 +441,21 @@
 						<div class="flex-w flex-t bor12 p-b-13">
 							<div class="size-300">
 								<span class="stext-110 cl2">
-									Price(4 items)
+									Price( <%=cartItems.length%> items)
 								</span>
 							</div>
+							<% let totalPrice=0; %>
+								<% for(let i=0; i < cartItems.length; i++) { %>
 
-							<div class="size-200 ">
-								<span class="mtext-110 cl2 p-5 ">
-									$79.65
-								</span>
-							</div>
+									<% totalPrice +=cartItems[i].price; %>
+										<% } %>
+
+											<div class="size-200">
+												<span class="mtext-110 cl2 p-5" id="Amount">
+													$ <%= totalPrice %>
+												</span>
+											</div>
+
 						</div>
 						<div class="flex-w flex-t bor12 p-b-13 ">
 							<div class="size-300">
@@ -443,7 +465,7 @@
 							</div>
 							<div class="size-200 pl-5 ">
 								<span class="mtext-110 cl2 p-5">
-									$79.65
+									
 								</span>
 							</div>
 						</div>
@@ -455,28 +477,30 @@
 							</div>
 							<div class="size-200 pl-5 ">
 								<span class="mtext-110 cl2">
-									$79.65
+
 								</span>
 							</div>
 						</div>
 
 						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
-								<span class="mtext-101 cl2">
+								<span class="mtext-101 cl2" >
 									Total:
 								</span>
 							</div>
 
 							<div class="size-209 p-t-1">
-								<span class="mtext-110 cl2">
-									$79.65
+								<span class="mtext-110 cl2" id="Total">
+									$ <%=totalPrice%>
 								</span>
 							</div>
 						</div>
-					
-							<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-								<a href="/checkout" class="text-white">Proceed to Checkout</a>
-							</button>
+						<%if(cartItems.length>0){%>
+                           <input type="hidden" id="totalamount" name="totalpice" value="<%=totalPrice%>">
+						<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" value="<%=totalPrice%>">
+						Proceed to Checkout
+						</button>
+						<%}%>
 					</div>
 				</div>
 			</div>
@@ -646,57 +670,103 @@
 	</div>
 
 	<script>
-		function h(e,i){
+		function h(e, i) {
 			console.log(e.value);
 		}
 		document.addEventListener('DOMContentLoaded', function () {
 			const btnDecrease = document.querySelectorAll('.btn-num-product-down');
 			const btnIncrease = document.querySelectorAll('.btn-num-product-up');
-			const inputQuantity = document.querySelector('.quantity');
-			const productelement = document.querySelector('.productprice')
-			   const productPrice=productelement.getAttribute('data-price')
-			   console.log(productPrice);
-			
-			const totalPriceElement = document.querySelector('.totalPrice')
+			const total = document.getElementById('Total')
 
+			function updateTotalPrice(id, inputQuantity, PriceElement, productId) {
+			   const totalamount=document.getElementById('totalamount')
+				const productPrice = PriceElement.getAttribute('data-price')
 
-
-
-			// Update total price function
-			function updateTotalPrice() {
 				const quantity = parseInt(inputQuantity.value, 10);
 				const totalPrice = (quantity * productPrice)
-				
+				const totalPriceElement = document.getElementById(id)
 				totalPriceElement.innerText = '$ ' + totalPrice;
 
-			     
+				axios.patch('/editprice', { totalPrice, productId, quantity })
+					.then(res => {
+						if (res.data.success) {
+							const amount = document.getElementById('Amount')
+							const total = document.getElementById('Total')
+							amount.innerHTML = '$ ' + res.data.newTotal;
+							total.innerHTML = '$ ' + (res.data.newTotal )
+
+                            totalamount.value=res.data.newTotal 
+
+						}
+					}).catch(err => {
+						console.log(err);
+					})
+
 			}
 
 			// Event listeners for the buttons and quantity input field
-			btnDecrease.forEach((e,i)=>{
-				const inputQuantity=document.getElementById(`q${i}`)
-				e.addEventListener('click', function () {
-				let currentValue = parseInt(inputQuantity.value, 10);
-				if (currentValue > 1) {
-					inputQuantity.value = currentValue - 1;
-					updateTotalPrice();
-				}
-			});
-			})
-			
-			btnIncrease.forEach((e,i)=>{
-				const inputQuantity=document.getElementById(`q${i}`)
+			btnDecrease.forEach((e, i) => {
+				const inputQuantity = document.getElementById(`q${i}`)
+				const PriceElement = document.getElementById(`p${i}`)
 
 				e.addEventListener('click', function () {
+					const productId = e.getAttribute('data-id')
 					let currentValue = parseInt(inputQuantity.value, 10);
-					inputQuantity.value = currentValue + 1;
-					updateTotalPrice();
+					if (currentValue > 1) {
+						inputQuantity.value = currentValue - 1;
+						updateTotalPrice(`t${i}`, inputQuantity, PriceElement, productId);
+					}
 				});
 			})
 
-			inputQuantity.addEventListener('change', updateTotalPrice);
+			btnIncrease.forEach((e, i) => {
+				const inputQuantity = document.getElementById(`q${i}`)
+				const PriceElement = document.getElementById(`p${i}`)
+				e.addEventListener('click', function () {
+					const productId = e.getAttribute('data-id')
+					let currentValue = parseInt(inputQuantity.value, 10);
+					if (currentValue < 5) {
+						inputQuantity.value = currentValue + 1;
+						updateTotalPrice(`t${i}`, inputQuantity, PriceElement, productId);
+					}
+				});
+			})
+
+			// inputQuantity.addEventListener('change', updateTotalPrice);
 
 		})
+
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+
+			const removeElement = document.querySelectorAll('.remove-btn')
+
+
+			removeElement.forEach(button => {
+				button.addEventListener("click", function (e) {
+					e.preventDefault()
+					const productId = this.getAttribute('data-product-id')
+
+					axios.post('/removeProduct', { productId })
+						.then(res => {
+							if (res.data.success) {
+						
+								window.location.href='/shoppingcart'
+							}
+
+						}).catch(err => {
+					console.log('error');
+				})	
+
+
+				})
+
+			})
+
+
+		})
+
 
 	</script>
 

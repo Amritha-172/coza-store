@@ -1,6 +1,8 @@
 const User = require('../models/userModel')
 const isLogin = async (req, res, next) => {
     try {
+    
+  
         if (!req.session.user_id) {
            return  res.redirect('/')
         } 

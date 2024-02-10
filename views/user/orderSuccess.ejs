@@ -266,23 +266,27 @@
     <div class="order-details">
         <h4 class="mb-3 " style="color: #7280e0;">Order Summary</h4>
         <p class="mb-2"><strong >Order Number:</strong> #MN0124</p>
-        <p class="mb-2"><strong>Total:</strong> $150.00</p>
-        <p class="mb-2"><strong>Order Date:</strong> [Order Date Here]</p>
-        <p class="mb-2"><strong>Payment Method:</strong> Credit Card</p>
+        <p class="mb-2"><strong>Total:</strong> $<%=orderDetail.orderAmount%></p>
+        <p class="mb-2"><strong>Order Date:</strong> <%=formattedCreatedAt%></p>
+        <p class="mb-2"><strong>Payment Method:</strong><%=orderDetail.paymentMethod%> </p>
         
         <!-- Add more details as needed -->
 
         <h5 class="mb-3 mt-3 " style="color: #7280e0;"><strong>Shipping Address</strong></h5>
-        <p>[Customer Name]</p>
-        <p>[Address Line 1]</p>
-        <p>[City, State, Zip]</p>
+	
+        <p><%=findAddress.name%></p>
+        <p><%=findAddress.mobile%></p>
+  
+		<p><%=findAddress.streetAddress%></p>
+		<p><%=findAddress.city%>, <%=findAddress.state%><%=findAddress.pincode%></p>
+        
         
         <!-- Add more details as needed -->
     </div>
 
     <div class="text-center mt-4">
         <div class="d-grid gap-2 pt-3 ">
-            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+            <a href="/home" class="btn btn-primary">Continue Shopping</a>
             <a class="btn btn-dark "
                 href="/profile/manageaddress/addaddress">
                 <button class="text-white " type="button">Track order </button>

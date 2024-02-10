@@ -38,7 +38,9 @@ admin_route.get('/unlistproduct',adminMiddleware.isLogin,products.unlistProduct)
 admin_route.get('/listproduct',adminMiddleware.isLogin,products.listProduct)
 admin_route.get('/editproduct',adminMiddleware.isLogin,products.loadeditProduct)    
 admin_route.post('/editproduct',adminMiddleware.isLogin,multer.uploadProduct,products.editProduct)
-
+admin_route.get('/oderDetails',adminMiddleware.isLogin,adminController.oderDetails)
+admin_route.get('/singleorderview',adminMiddleware.isLogin,adminController.singleProduct)
+admin_route.post('/updatestatus',adminMiddleware.isLogin,adminController.updateSts)
 
 
 

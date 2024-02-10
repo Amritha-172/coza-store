@@ -2,6 +2,7 @@ const user=require('../models/userModel')
 const Cart=require('../models/cartModel')
 const Product=require('../models/productModel')
 const {ObjectId}=require('mongodb')
+const Address=require('../models/addressModal')
 
 const addToCart = async (req, res) => {
     try {
@@ -66,18 +67,7 @@ const itemExist=async(req,res)=>{
         console.log("error in item exist:",error);
     }
 }
-// const shoppingcart = async (req, res) => {
-//   try {
-//     const {productId}=req.query
-//     const userId = new ObjectId( req.session.user_id)
-//     const product=await Product.findById({_id:productId})
-//     const Usercart=await Cart.find({userId:userId})
 
-//       res.render('shoppingCart',{product,Usercart})
-//   } catch (error) {
-//       console.log('error in shopping cart:', error);
-//   }
-// }
 const shoppingcart = async (req, res) => {
   try {
     const userId = req.session.user_id; 
@@ -104,12 +94,53 @@ const shoppingcart = async (req, res) => {
 
 const checkout=async(req,res)=>{
   try {
-
-  
-
-      res.render('user/checkOut')
+     const {totalpice}=req.body
+   
+     console.log("total price",totalpice);
+    const userId=req.session.user_id
+    const addressData=await Address.find({userId:userId})
+    const total= await Cart.find({userId:userId})
+    let newTotal=0
+    total.forEach(element => {
+      newTotal=element.price+newTotal
+    });
+    console.log(addressData);
+       
+      res.render('user/checkOut',{addressData,newTotal})
   } catch (error) {
       console.log("error in checkout page",error);
+  }
+}
+
+const editPrice=async(req,res)=>{
+  try {
+    const userId=req.session.user_id
+    const {productId,totalPrice,quantity}=req.body
+    console.log(productId);
+    const cart=await Cart.updateOne({productId:productId},{$set:{price:totalPrice,quantity:quantity}})
+    console.log(cart);
+      const total= await Cart.find({userId:userId})
+      console.log(total);
+      let newTotal=0
+      total.forEach(element => {
+        newTotal=element.price+newTotal
+      });
+      
+ res.status(200).json({success:true,newTotal})
+  } catch (error) {
+    console.log('error in edit price');
+    res.status(300).json('error')
+  }
+}
+const removeProduct=async(req,res)=>{
+  try {
+    const {productId}=req.body
+       const remove=await Cart. deleteOne({productId:productId}) 
+       if(remove){
+        res.status(200).json({success:true})
+       }
+      } catch (error) {
+     console.log('error in remove product',error);
   }
 }
 
@@ -118,5 +149,7 @@ module.exports={
     addToCart,
     itemExist,
     shoppingcart,
-    checkout
+    checkout,
+    editPrice,
+    removeProduct
 }

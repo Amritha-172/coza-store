@@ -1,10 +1,12 @@
 const User = require("../models/userModel")
 const category = require('../models/categoryModel')
 const product = require('../models/productModel')
+const Order=require('../models/orderModel')
+
 
 const userList = async (req, res) => {
     try {
-        const userlist = await User.find({ is_verified: true }).sort({ _id: -1 })
+        const userlist = await User.find({}).sort({ _id: -1 })
         const locals = {
             userlist: userlist
         }
@@ -179,6 +181,51 @@ const deleteCategory = async (req, res) => {
         console.log('error from deletecategory:', error);
     }
 }
+
+const oderDetails=async(req,res)=>{
+    try {
+      const orders= await Order.find({}).populate('userId')
+      const formattedOrders=orders.map(order=>{
+        const date= new Date(order.createdAt)
+        const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+          return {
+            ...order.toObject(),
+            formattedCreatedAt: formattedDate,
+          }
+      })
+      console.log("formatted",formattedOrders);
+      
+        res.render('orderDetails',{orderDetails:formattedOrders } )
+    } catch (error) {
+        console.log("error in oderDetails",error);
+    }
+}
+   
+const singleProduct= async(req,res)=>{
+    try {
+        const orderId=req.query.orderId
+        const orderDetails=await Order.findOne({_id:orderId}).populate('userId').populate('oderedItem.productId')
+        console.log(orderDetails);
+        res.render('singleorderDetails',{orderDetails})
+    } catch (error) {
+        console.log('error in single product',error);
+    }
+}
+
+const updateSts=async(req,res)=>{
+    try {
+        console.log(req.body);
+        const{selectedOrderStatus, orderId}=req.body
+        console.log(orderId);
+        const orderStatus= await Order.updateOne({_id:orderId},{$set:{orderStatus:selectedOrderStatus}})
+        console.log('order status',orderStatus);
+
+   res.status(200).json({success:true})
+        
+    } catch (error) {
+         console.log('error in update status'); 
+    }
+}
 module.exports = {
     userList,
     blockUser,
@@ -192,6 +239,9 @@ module.exports = {
     findCategory,
     loadAddCategory,
     deleteCategory,
-    loadEditCategory
+    loadEditCategory,
+    oderDetails,
+    singleProduct,
+    updateSts
 
 }

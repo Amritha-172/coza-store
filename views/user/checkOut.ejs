@@ -1,428 +1,596 @@
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <title>Checkout</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!--===============================================================================================-->
-        <link rel="icon" type="image/png" href="images/icons/favicon.png" />
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
-        <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="css/util.css">
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <link rel="stylesheet" type="text/css" href="css/checkout.css">
-        <!--===============================================================================================-->
+<head>
+    <title>Checkout</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/checkout.css">
+    <!--===============================================================================================-->
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.0.7/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.0.7/css/boxicons.min.css" rel="stylesheet">
 
-    </head>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet"> -->
 
-    <body class="animsition">
-        <header class="header-v4">
-            <!-- Header desktop -->
-            <div class="container-menu-desktop">
-                <!-- Topbar -->
-                <div class="top-bar">
-                    <div class="content-topbar flex-sb-m h-full container">
-                        <div class="left-top-bar">
-                            Free shipping for standard order over $100
-                        </div>
+    <!-- Bootstrap Bundle JS (includes Popper.js for tooltips & popovers) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 
-                        <div class="right-top-bar flex-w h-full">
-                            <a href="#" class="flex-c-m trans-04 p-lr-25">
-                                Help & FAQs
-                            </a>
+</head>
+<style>
+    body {
+        background-color: rgb(241, 243, 246);
+    }
+</style>
 
-                            <a href="#" class="flex-c-m trans-04 p-lr-25">
-                                My Account
-                            </a>
-
-                            <a href="#" class="flex-c-m trans-04 p-lr-25">
-                                EN
-                            </a>
-
-                            <a href="#" class="flex-c-m trans-04 p-lr-25">
-                                USD
-                            </a>
-                        </div>
+<body class="animsition">
+    <header class="header-v4">
+        <!-- Header desktop -->
+        <div class="container-menu-desktop">
+            <!-- Topbar -->
+            <div class="top-bar">
+                <div class="content-topbar flex-sb-m h-full container-fluid">
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
                     </div>
-                </div>
 
-                <div class="wrap-menu-desktop how-shadow1">
-                    <nav class="limiter-menu-desktop container">
-
-                        <!-- Logo desktop -->
-                        <a href="#" class="logo">
-                            <img src="images/icons/logo-01.png" alt="IMG-LOGO">
+                    <div class="right-top-bar flex-w h-full">
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            Help & FAQs
                         </a>
 
-                        <!-- Menu desktop -->
-                        <div class="menu-desktop">
-                            <ul class="main-menu">
-                                <li>
-                                    <a href="index.html">Home</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="index.html">Homepage 1</a></li>
-                                        <li><a href="home-02.html">Homepage 2</a></li>
-                                        <li><a href="home-03.html">Homepage 3</a></li>
-                                    </ul>
-                                </li>
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            My Account
+                        </a>
 
-                                <li>
-                                    <a href="product.html">Shop</a>
-                                </li>
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            EN
+                        </a>
 
-                                <li class="label1" data-label1="hot">
-                                    <a href="shoping-cart.html">Features</a>
-                                </li>
-
-                                <li>
-                                    <a href="blog.html">Blog</a>
-                                </li>
-
-                                <li>
-                                    <a href="about.html">About</a>
-                                </li>
-
-                                <li>
-                                    <a href="contact.html">Contact</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Icon header -->
-                        <div class="wrap-icon-header flex-w flex-r-m">
-                            <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                                <i class="zmdi zmdi-search"></i>
-                            </div>
-
-                            <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
-                                data-notify="2">
-                                <i class="zmdi zmdi-shopping-cart"></i>
-                            </div>
-
-                            <a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
-                                data-notify="0">
-                                <i class="zmdi zmdi-favorite-outline"></i>
-                            </a>
-                        </div>
-                    </nav>
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            USD
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Header Mobile -->
-            <div class="wrap-header-mobile">
-                <!-- Logo moblie -->
-                <div class="logo-mobile">
-                    <a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
-                </div>
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
 
-                <!-- Icon header -->
-                <div class="wrap-icon-header flex-w flex-r-m m-r-15">
-                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
-                        <i class="zmdi zmdi-search"></i>
-                    </div>
-
-                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
-                        data-notify="2">
-                        <i class="zmdi zmdi-shopping-cart"></i>
-                    </div>
-
-                    <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                        data-notify="0">
-                        <i class="zmdi zmdi-favorite-outline"></i>
+                    <!-- Logo desktop -->
+                    <a href="#" class="logo">
+                        <img src="images/icons/logo-01.png" alt="IMG-LOGO">
                     </a>
-                </div>
 
-                <!-- Button show menu -->
-                <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-                    <span class="hamburger-box">
-                        <span class="hamburger-inner"></span>
-                    </span>
-                </div>
-            </div>
+                    <!-- Menu desktop -->
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li>
+                                <a href="/home">Home</a>
 
+                            </li>
 
-            <!-- Menu Mobile -->
-            <div class="menu-mobile">
-                <ul class="topbar-mobile">
-                    <li>
-                        <div class="left-top-bar">
-                            Free shipping for standard order over $100
-                        </div>
-                    </li>
+                            <li>
+                                <a href="product.html">Shop</a>
+                            </li>
 
-                    <li>
-                        <div class="right-top-bar flex-w h-full">
-                            <a href="#" class="flex-c-m p-lr-10 trans-04">
-                                Help & FAQs
-                            </a>
+                            <li class="label1" data-label1="hot">
+                                <a href="shoping-cart.html">Features</a>
+                            </li>
 
-                            <a href="#" class="flex-c-m p-lr-10 trans-04">
-                                My Account
-                            </a>
+                            <li>
+                                <a href="blog.html">Blog</a>
+                            </li>
 
-                            <a href="#" class="flex-c-m p-lr-10 trans-04">
-                                EN
-                            </a>
+                            <li>
+                                <a href="about.html">About</a>
+                            </li>
 
-                            <a href="#" class="flex-c-m p-lr-10 trans-04">
-                                USD
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-
-                <ul class="main-menu-m">
-                    <li>
-                        <a href="index.html">Home</a>
-                        <ul class="sub-menu-m">
-                            <li><a href="index.html">Homepage 1</a></li>
-                            <li><a href="home-02.html">Homepage 2</a></li>
-                            <li><a href="home-03.html">Homepage 3</a></li>
+                            <li>
+                                <a href="contact.html">Contact</a>
+                            </li>
                         </ul>
-                        <span class="arrow-main-menu-m">
-                            <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        </span>
-                    </li>
+                    </div>
 
-                    <li>
-                        <a href="product.html">Shop</a>
-                    </li>
-
-                    <li>
-                        <a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
-                    </li>
-
-                    <li>
-                        <a href="blog.html">Blog</a>
-                    </li>
-
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-
-                    <li>
-                        <a href="contact.html">Contact</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Modal Search -->
-            <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
-                <div class="container-search-header">
-                    <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-                        <img src="images/icons/icon-close2.png" alt="CLOSE">
-                    </button>
-
-                    <form class="wrap-search-header flex-w p-l-15">
-                        <button class="flex-c-m trans-04">
+                    <!-- Icon header -->
+                    <div class="wrap-icon-header flex-w flex-r-m">
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                             <i class="zmdi zmdi-search"></i>
-                        </button>
-                        <input class="plh3" type="text" name="search" placeholder="Search...">
-                    </form>
-                </div>
+                        </div>
+
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+                            data-notify="2">
+                            <i class="zmdi zmdi-shopping-cart"></i>
+                        </div>
+
+                        <a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+                            data-notify="0">
+                            <i class="zmdi zmdi-favorite-outline"></i>
+                        </a>
+                    </div>
+                </nav>
             </div>
-        </header>
+        </div>
 
-        <!-- Breadcrumb -->
+        <!-- Header Mobile -->
+        <div class="wrap-header-mobile">
+            <!-- Logo moblie -->
+            <div class="logo-mobile">
+                <a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+            </div>
 
-        <div class="container">
-            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-                <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
-                    Home
-                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            <!-- Icon header -->
+            <div class="wrap-icon-header flex-w flex-r-m m-r-15">
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+                    <i class="zmdi zmdi-search"></i>
+                </div>
+
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+                    data-notify="2">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+
+                <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+                    data-notify="0">
+                    <i class="zmdi zmdi-favorite-outline"></i>
                 </a>
+            </div>
 
-                <span class="stext-109 cl4">
-                    Shoping Cart
+            <!-- Button show menu -->
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
                 </span>
             </div>
         </div>
 
 
+        <!-- Menu Mobile -->
+        <div class="menu-mobile">
+            <ul class="topbar-mobile">
+                <li>
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
+                    </div>
+                </li>
 
-        <!-- Checkout Form -->
-        <div class="container mt-5 pt-5 ">
-            <div class="row">
-                
-                <div class="col-xl-8">
-                    <div class="card">
-                        <div class="card-body ">
-                            <ol class="activity-checkout mb-0 px-4 mt-3">
-                                <li class="checkout-item">
-                                </li>
-                                <li class="checkout-item">
-                                    <div class="avatar checkout-icon p-1">
-                                        <div class="avatar-title rounded-circle bg-primary">
-                                            <i class="bx bxs-truck text-white font-size-20"></i>
-                                        </div>
+                <li>
+                    <div class="right-top-bar flex-w h-full">
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            Help & FAQs
+                        </a>
+
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            My Account
+                        </a>
+
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            EN
+                        </a>
+
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            USD
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="main-menu-m">
+                <li>
+                    <a href="/home">Home</a>
+
+                    <span class="arrow-main-menu-m">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </span>
+                </li>
+
+                <li>
+                    <a href="product.html">Shop</a>
+                </li>
+
+                <li>
+                    <a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+                </li>
+
+                <li>
+                    <a href="blog.html">Blog</a>
+                </li>
+
+                <li>
+                    <a href="about.html">About</a>
+                </li>
+
+                <li>
+                    <a href="contact.html">Contact</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Modal Search -->
+        <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+            <div class="container-search-header">
+                <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+                    <img src="images/icons/icon-close2.png" alt="CLOSE">
+                </button>
+
+                <form class="wrap-search-header flex-w p-l-15">
+                    <button class="flex-c-m trans-04">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                    <input class="plh3" type="text" name="search" placeholder="Search...">
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+
+    <div class="container">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+
+            <span class="stext-109 cl4">
+                Shoping Cart
+            </span>
+        </div>
+    </div>
+
+
+
+    <!-- Checkout Form -->
+
+    <div class="container-fluid  mt-5 pt-5 ">
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body ">
+                        <ol class="activity-checkout mb-0 px-4 mt-3">
+                            <li class="checkout-item">
+                            </li>
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                        <i class="bx bxs-truck text-white font-size-20"></i>
                                     </div>
-                                    <div class="feed-item-list">
-                                        <section class="shipping-info">
-                                            <div class="d-flex align-items-center mb-4">
-                                               
-                                                <h5 class="font-size-16 mb-0">Shipping Info</h5>
-                                            </div>
-                                            <p class="text-muted mb-4">Choose a shipping address or add a new one.</p>
-                                            <div class="existing-addresses">
-                                                <h6 class="mb-3">Your Addresses:</h6>
-                                                <!-- Example Existing Address -->
-                                                <div class="form-check mb-2 ">
-                                                    <input class="form-check-input" type="radio" name="shippingAddress" id="address1" >
-                                                    <label class="form-check-label" for="address1">
-                                                        <span class="fs-14 mb-2 d-block">Name</span>
-                                                        <span
-                                                            class="fs-14 mb-2 d-block">Locality</span>
-                                                        <span
-                                                            class="text-muted fw-normal text-wrap mb-1 d-block">address</span>
-                                                        <span
-                                                            class="text-muted fw-normal mb-1 d-block">district</span>
-                                                        <span
-                                                            class="text-muted fw-normal mb-1 d-block">State</span>
-                                                        <span class="text-muted fw-normal d-block">Address Type:
-                                                            work/home</span>
+                                </div>
+
+                                <div class="feed-item-list">
+
+                                    <section class="shipping-info">
+                                        <div class="d-flex align-items-center mb-4">
+
+                                            <h5 class="font-size-16 mb-0">Shipping Info</h5>
+                                        </div>
+
+                                        <p class="text-muted mb-4">Choose a shipping address or add a new one.</p>
+                                        <div class="existing-addresses">
+                                            <h6 class="mb-3">Your Addresses:</h6>
+                                            <% for(let i=0; i < addressData.length; i++) { %>
+                                                <input class="form-check-input" type="radio" name="shippingAddress"
+                                                    id="address<%= i %>" value="<%= addressData[i]._id %>">
+                                                <div class="form-check mb-2 border shadow" style="border-radius: 10px;">
+                                                    <label class="form-check-label" for="address<%= i %>">
+                                                        <span class="fs-14 mb-2 d-block">
+                                                            <%= addressData[i].name %>
+                                                        </span>
+                                                        <span class="fs-14 mb-2 d-block">
+                                                            <%= addressData[i].mobile %>
+                                                        </span>
+                                                        <span class="fs-14 mb-2 d-block">
+                                                            <%= addressData[i].streetAddress %>
+                                                                <%= addressData[i].locality %>
+                                                        </span>
+                                                        <span class="text-muted fw-normal mb-1 d-block">
+                                                            <%= addressData[i].city %>
+                                                        </span>
+                                                        <span class="text-muted fw-normal mb-1 d-block">
+                                                            <%= addressData[i].state %>
+                                                        </span>
+                                                        <span class="text-muted fw-normal d-block">
+                                                            <%= addressData[i].addressType %>
+                                                        </span>
                                                     </label>
                                                 </div>
-                                                <!-- Add more addresses as needed -->
+                                                <% } %>
+                                        </div>
+
+                                        <!-- Add more addresses as needed -->
+
+                                        <button class="btn btn-dark text-white"  type="button" id="addAddress">
+                                            + Add New Address
+
+                                        </button>
+
+
+
+                                        <div class="col-md-8 col-lg-9" id="mydiv">
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade show active" id="tab-account" role="tabpanel"
+                                                    aria-labelledby="tab-account-link">
+                                                    <form action="/AddressSave" method="post"
+                                                        class="p-5 shadow rounded bg-white">
+                                                        <h2 class="mb-5 text-center">Manage Address</h2>
+                                                        <div class="row g-3">
+                                                            <!-- Existing fields for name, email, age, gender, phone -->
+
+                                                            <!-- Additional fields for address details -->
+                                                            <p id="error"></p>
+                                                            <div class="col-md-6">
+                                                                <label for="Name" class="form-label">Name</label>
+                                                                <input type="text" class="form-control" id="username"
+                                                                    name="name" placeholder="Enter your Name" required>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="mobile" class="form-label">Mobile Number
+                                                                </label>
+                                                                <input type="text" class="form-control" id="mobile"
+                                                                    name="mobile" placeholder="10-digit number"
+                                                                    required>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label for="postalCode" class="form-label">Postal
+                                                                    Code</label>
+                                                                <input type="text" class="form-control" id="postalCode"
+                                                                    name="pincode" placeholder="Postal Code" required>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="locality"
+                                                                    class="form-label">Locality</label>
+                                                                <input type="text" class="form-control" id="locality"
+                                                                    name="locality" placeholder="Locality" required>
+                                                            </div>
+
+                                                            <div class="col-md-12">
+                                                                <div class="mb-3">
+                                                                    <label for="Street Address"
+                                                                        class="form-label">Address (Area
+                                                                        and Street)</label>
+                                                                    <textarea class="form-control" id="Street address"
+                                                                        name="streetAddress" placeholder="" rows="3"
+                                                                        required></textarea>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label for="city"
+                                                                    class="form-label">City/District/Town</label>
+                                                                <input type="text" class="form-control" id="city"
+                                                                    placeholder="" name="city" required>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label for="country" class="form-label">State</label>
+                                                                <select class="form-select" name="state" id="state"
+                                                                    required>
+                                                                    <option selected>--Select State--</option>
+                                                                    <option selected>--Select State--</option>
+                                                                    <option value="AP">Andhra Pradesh</option>
+                                                                    <option value="AR">Arunachal Pradesh</option>
+                                                                    <option value="AS">Assam</option>
+                                                                    <option value="BR">Bihar</option>
+                                                                    <option value="CT">Chhattisgarh</option>
+                                                                    <option value="GA">Goa</option>
+                                                                    <option value="GJ">Gujarat</option>
+                                                                    <option value="HR">Haryana</option>
+                                                                    <option value="HP">Himachal Pradesh</option>
+                                                                    <option value="JK">Jammu and Kashmir</option>
+                                                                    <option value="JH">Jharkhand</option>
+                                                                    <option value="KA">Karnataka</option>
+                                                                    <option value="Kerala">Kerala</option>
+                                                                    <option value="MP">Madhya Pradesh</option>
+                                                                    <option value="MH">Maharashtra</option>
+                                                                    <option value="MN">Manipur</option>
+                                                                    <option value="ML">Meghalaya</option>
+                                                                    <option value="MZ">Mizoram</option>
+                                                                    <option value="NL">Nagaland</option>
+                                                                    <option value="OD">Odisha</option>
+                                                                    <option value="PB">Punjab</option>
+                                                                    <option value="RJ">Rajasthan</option>
+                                                                    <option value="SK">Sikkim</option>
+                                                                    <option value="TN">Tamil Nadu</option>
+                                                                    <option value="TG">Telangana</option>
+                                                                    <option value="TR">Tripura</option>
+                                                                    <option value="UP">Uttar Pradesh</option>
+                                                                    <option value="UT">Uttarakhand</option>
+                                                                    <option value="WB">West Bengal</option>
+
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="landmark"
+                                                                    class="form-label">Landmark</label>
+
+                                                                <input type="text" class="form-control" id="landmark"
+                                                                    name="landmark" placeholder="optional">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="alternatephone" class="form-label">Alternate
+                                                                    Phone</label>
+                                                                <input type="text" class="form-control" id="alterPhone"
+                                                                    name="alterPhone" placeholder="optional">
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <label for="addresstype" class="form-label">Address
+                                                                    Type</label>
+                                                                <select class="form-select" id="addressType"
+                                                                    name="addressType" required>
+                                                                    <option selected>--Select--</option>
+                                                                    <option value="home">Home</option>
+                                                                    <option value="Work">Work</option>
+
+
+                                                                </select>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="text-center mt-5">
+                                                            <button type="submit" class="btn btn-primary px-4">Save
+                                                            </button>
+                                                            
+                                                        </div>
+
+                                                    </form>
+                                                </div>
                                             </div>
-                                            <div class="d-grid gap-2 pt-3 ">
-                                                <a class="btn btn-dark "
-                                                    href="/profile/manageaddress/addaddress">
-                                                    <button class="text-white " type="button">+ Add New Address</button>
-                                                </a>
-                                            </div>
-                                        </section>
-                    
+                                        </div>
+
+
+
+
+                                    </section>
+
+                                </div>
+                            </li>
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                        <i class="bx bxs-wallet-alt text-white font-size-20"></i>
                                     </div>
-                                </li>
-                                <li class="checkout-item">
-                                    <div class="avatar checkout-icon p-1">
-                                        <div class="avatar-title rounded-circle bg-primary">
-                                            <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                </div>
+                                <hr class="bg-dark-subtle ">
+                                <div class="feed-item-list">
+                                    <div>
+                                        <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                        <p class="text-muted text-truncate mb-4">Duis arcu tortor, suscipit eget</p>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-size-14 mb-3">Payment method :</h5>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div data-bs-toggle="collapse">
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" id="pay-methodoption1"
+                                                            class="card-radio-input" value="credit">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-credit-card d-block h2 mb-3"></i>
+                                                            Credit / Debit Card
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" id="pay-methodoption2"
+                                                            class="card-radio-input" value="paypal">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bxl-paypal d-block h2 mb-3"></i>
+                                                            Paypal
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" id="pay-methodoption3"
+                                                            value="cash on delivey" class="card-radio-input" checked>
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            <span>Cash on Delivery</span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <hr class="bg-dark-subtle ">
-                                    <div class="feed-item-list">
-                                        <div>
-                                            <h5 class="font-size-16 mb-1">Payment Info</h5>
-                                            <p class="text-muted text-truncate mb-4">Duis arcu tortor, suscipit eget</p>
-                                        </div>
-                                        <div>
-                                            <h5 class="font-size-14 mb-3">Payment method :</h5>
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6">
-                                                    <div data-bs-toggle="collapse">
-                                                        <label class="card-radio-label">
-                                                            <input type="radio" name="pay-method" id="pay-methodoption1"
-                                                                class="card-radio-input">
-                                                            <span class="card-radio py-3 text-center text-truncate">
-                                                                <i class="bx bx-credit-card d-block h2 mb-3"></i>
-                                                                Credit / Debit Card
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6">
-                                                    <div>
-                                                        <label class="card-radio-label">
-                                                            <input type="radio" name="pay-method" id="pay-methodoption2"
-                                                                class="card-radio-input">
-                                                            <span class="card-radio py-3 text-center text-truncate">
-                                                                <i class="bx bxl-paypal d-block h2 mb-3"></i>
-                                                                Paypal
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6">
-                                                    <div>
-                                                        <label class="card-radio-label">
-                                                            <input type="radio" name="pay-method" id="pay-methodoption3"
-                                                                class="card-radio-input" checked>
-                                                            <span class="card-radio py-3 text-center text-truncate">
-                                                                <i class="bx bx-money d-block h2 mb-3"></i>
-                                                                <span>Cash on Delivery</span>
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="row my-4">
-                        <div class="col">
-                            <a href="/home" class="btn btn-link text-muted">
-                                <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
-                        </div>
+                                </div>
+                            </li>
+                        </ol>
                     </div>
                 </div>
-
-
-                <div class="col-xl-4">
-                    <div class="card checkout-order-summary">
-                        <div class="card-body">
-                            <div class="p-3 bg-light mb-3">
-                                <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span></h5>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                            <th>Subtotal:</th>
-                                            <td class="text-end">₹[Cart Value]</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Coupon Discount:</th>
-                                            <td class="text-end">-₹[Discount Amount]</td>
-                                        </tr>
-                                        <tr class="fw-bold ">
-                                            <th><h4>Order Total:</h4></th>
-                                            <td class="text-end">₹[Total Amount]</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="text-center mt-4"><a href="/ordersuccess">
-                                <button id="place-order-btn" class="btn btn-success" type="button">
-                                    <i class="mdi mdi-cart-outline me-1"></i>Place Your Order and Pay
-                                </button>
-                            </a>
-                            </div>
-                        </div>
+                <div class="row my-4">
+                    <div class="col">
+                        <a href="/home" class="btn btn-link text-muted">
+                            <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
                     </div>
                 </div>
-                
+            </div>
 
+
+            <div class="col-xl-4">
+                <div class="card checkout-order-summary">
+
+                    <div class="card-body">
+                        <div class="p-3 bg-light mb-3">
+                            <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span>
+                            </h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>Subtotal:</th>
+                                        <td class="text-end">₹<%=newTotal%>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Coupon Discount:</th>
+                                        <td class="text-end">₹</td>
+                                    </tr>
+                                    <tr class="fw-bold ">
+                                        <th>
+                                            <h4>Order Total:</h4>
+                                        </th>
+                                        <td class="text-end">₹<%=newTotal%>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <input type="hidden" name="newTotal" id="newTotal" value="<%=newTotal%>">
+                        <div class="text-center mt-4">
+                            <button id="place-order-btn" class="btn btn-success" type="button">
+                                Place Your Order and Pay
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
 
 
 
+
         <footer class="bg3 p-t-75 p-b-32">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6 col-lg-3 p-b-50">
                         <h4 class="stext-301 cl0 p-b-30">
@@ -494,7 +662,8 @@
                         </h4>
 
                         <p class="stext-107 cl7 size-201">
-                            Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us
+                            Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call
+                            us
                             on (+1) 96 716 6879
                         </p>
 
@@ -579,6 +748,77 @@
             </span>
         </div>
 
+        <script>
+
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const pincode = document.getElementById('postalCode')
+                const nameElement = document.getElementById('username')
+                nameElement.addEventListener('blur', function (e) {
+                    e.preventDefault()
+                    const name = document.getElementById('username').value
+                    const errmsg = document.getElementById('error')
+                    axios.post('/checkname', { name })
+                        .then(res => {
+                            if (res.data.success) {
+                                errmsg.textContent = " "
+
+                            } else {
+                                errmsg.textContent = "User name is required"
+                                errmsg.style.color = "red"
+
+                            }
+
+                        }).catch(err => {
+                            console.log(err);
+                        })
+                })
+
+            })
+
+
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const placeorder = document.getElementById('place-order-btn')
+                placeorder.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const newTotal = document.getElementById('newTotal').value
+                    const selectedAddress = document.querySelector('input[name="shippingAddress"]:checked').value
+                    const selectedPaymentMethod = document.querySelector('input[name="pay-method"]:checked').value
+
+                    axios.post('/placeorder', { newTotal, selectedAddress, selectedPaymentMethod })
+                        .then(res => {
+                            if (res.data.success) {
+                                window.location.href = '/ordersuccess'
+                            }
+                        }).catch(err => {
+                            console.log('error');
+                        })
+                })
+
+
+            })
+        </script>
+        <script>
+
+      
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const addAddress = document.getElementById('addAddress')
+                const mydiv=document.getElementById('mydiv').style.display='none'
+                addAddress.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    var x = document.getElementById("mydiv");
+                if (x.style.display === "none") {
+                    x.style.display = "block"; // Show the div
+                } else {
+                    x.style.display = "none"; // Hide the div
+                }
+                
+                })
+            })
+        </script>
         <!--===============================================================================================-->
         <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
         <!--===============================================================================================-->
@@ -617,6 +857,6 @@
         </script>
         <!--===============================================================================================-->
         <script src="js/main.js"></script>
-    </body>
+</body>
 
-    </html>
+</html>
