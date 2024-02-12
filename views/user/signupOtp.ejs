@@ -1,48 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/otppage.css">
-   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/otppage.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
+
 <body>
-    <!-- <div class="par">
+  <style>
+    #otpTimer {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+  <!-- <div class="par">
         <div class="container">
           <span class="header">OTP Verification</span>
           <span class="muted">Enter OTP Sent to your Email Id</span>
          
 
         </div> -->
-        
-        <div class="container">
-            <h3 class="title">OTP Verification</h3>
-            <p class="sub-title">
-              Enter the OTP you received to 
-              <span class=""><%=locals.user%></span>
-            </p>
-            <form action="/signupOtp" method="post">
-            <div class="wrapper">
-              <input type="text" name="noOne"  class="field 1" maxlength="1">
-              <input type="text" name="noTwo" class="field 2" maxlength="1">
-              <input type="text" name="noThree" class="field 3" maxlength="1">
-              <input type="text" name="noFour" class="field 4" maxlength="1">
-              <input type="hidden" name="email" value="<%=locals.user%>">
-            </div>
-           
-                <button type="submit" value="submit" class="verify">verify</button>
 
-                </form>
-           
-          
-            <button class="resend">
-              Resend OTP
-              <i class="fa fa-caret-right"></i>
-            </button>
+  <div class="container">
+    <h3 class="title">OTP Verification</h3>
+    <p class="sub-title">
+      Enter the OTP you received to
+      <span class="">
+        <%=locals.user%>
+      </span>
+    </p>
+    <form action="/signupOtp" method="post">
+      <div class="wrapper">
+        <input type="text" name="noOne" class="field 1" maxlength="1">
+        <input type="text" name="noTwo" class="field 2" maxlength="1">
+        <input type="text" name="noThree" class="field 3" maxlength="1">
+        <input type="text" name="noFour" class="field 4" maxlength="1">
+        <input type="hidden" name="email" value="<%=locals.user%>">
+      </div>
 
-          </div>
-          <script src="/js/otpPage.js"></script>
-      
+      <button type="submit" value="submit" class="verify">verify</button>
+
+    </form>
+    <div class="d-flex justify-content-center align-items-center ">
+    <div  style="margin-left: 120px; margin-top: 20px;" id="otpTimer">00:00</div>
+
+
+    <a href=""  id="resendotp" style="margin-right: 20px;"><button class="resend">
+        Resend OTP
+        <i class="fa fa-caret-right"></i>
+      </button></a>
+
+  </div>
+</div>
+  <script>
+ document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('resendotp').addEventListener('click',function(e){
+    e.preventDefault()
+     axios.post('/resendOtp')
+     .then(res=>{
+      console.log("success");
+     }).catch(err=>{
+      console.log('error in resend otp',err);
+     })
+
+  })
+ })
+
+
+
+    function startOTPTimer(duration, display) {
+      var timer = duration, minutes, seconds;
+      var endInterval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+          clearInterval(endInterval);
+          display.style.display='none'
+
+        }
+      }, 1000);
+    }
+
+    window.onload = function () {
+      var fiveMinutes = 60,
+        display = document.querySelector('#otpTimer');
+      startOTPTimer(fiveMinutes, display);
+    };
+
+  </script>
+  <script src="/js/otpPage.js"></script>
+
 </body>
+
 </html>

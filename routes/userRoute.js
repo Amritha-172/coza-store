@@ -27,14 +27,15 @@ userRoute.post('/login',auth.isLogout,userAuth.verifyLogin)
 userRoute.get('/logout',userAuth.userLogout)
 
 userRoute.get('/register',userAuth.signup)
-
+userRoute.post('/checkEmail',userAuth.checkEmail)
 
 
 userRoute.get('/signup',auth.isLogout,userAuth.signup)
 userRoute.post('/signup',userAuth.verifySignup)
 
 userRoute.get('/signupOtp',auth.isLogout,userAuth.otp)
-userRoute.post('/signupOtp',userAuth.verifyOtp)
+userRoute.post('/signupOtp',auth.isLogout,userAuth.verifyOtp)
+userRoute.post('/resendOtp',auth.isLogout,userAuth.resendOtp)
 
 userRoute.get('/shops',auth.isBlocked,userAuth.shop)
 userRoute.get('/home',auth.isLogin,auth.isBlocked,userAuth.Homepage)

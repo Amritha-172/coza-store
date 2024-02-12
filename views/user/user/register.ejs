@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -67,25 +69,30 @@
                         <p class="text-danger  ps-5"><%= messages %></p>
 
                     <% } %>
-
+                  
                     <label for="username">Username:</label>
+                    <p id="errorname"></p>
                     <input type="text" class="form-control" id="name" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$"name="name" placeholder="Enter your username" required>
                 </div>
                 <div class="form-group">
+                    <p id="errorEmail" ></p>
                     <label for="email">Email:</label>
                     <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Phone:</label>
-                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter your Phone number" required>
+                    <p id="errorphone"></p>
+                    <input type="number" class="form-control" name="mobile" id="mobile" placeholder="Enter your Phone number" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
+                    <p id="passwordErr"></p>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
-                    <span id="passwordErr" style="color: red;"></span>
+                 
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password:</label>
+                    <p id="comError"></p>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
                 </div>
 
@@ -94,7 +101,7 @@
 
                 <div class="d-flex justify-content-center ">
                     
-                       <button type="submit" class="btn btn-primary " onclick="return validate()">Signup</button>
+                       <button type="submit" class="btn btn-primary " >Signup</button>
                 </div>
             </form>
             <div class="login-link">
@@ -108,26 +115,85 @@
 </div>
 
 <script>
-    function validate () {
-        const password = document.getElementById('password').value.trim()
-        const passwordErr = document.getElementById('passwordErr')
-        if(password.length === 0){
-            passwordErr.innerHTML = 'Password is required'
-            return false
-        }
-        if (password.length < 8) {
-            passwordErr.innerHTML = 'Password min length is 8'
-            return false
-        }
-        // if (password.match('[A-Za-z0-9 ]')) {
-        //     passwordErr.innerHTML = 'Give a strong Password'
-        //     return false
-        // }
+    
 
-        passwordErr.innerHTML = ''
-        return true
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        const emailelem=document.getElementById('email')
+        const errorEmail=document.getElementById('errorEmail')
+        const name=document.getElementById('name')
+        const errorname=document.getElementById('errorname')
+       
+        document.getElementById('password').addEventListener('blur',function(){
+             const pass=this.value
+             const passwordErr= document.getElementById('passwordErr')
+             if(pass.length === 0){
+            passwordErr.innerHTML = 'Password is required'
+            passwordErr.style.color='red'
+        }else if(pass.length < 8) {
+            passwordErr.innerHTML = 'Password min length is 8'
+            passwordErr.style.color='red'
+        }else if(!pass||pass.trim()==""){
+            passwordErr.innerHTML = "Phone number is required"
+        }else{
+            passwordErr.innerHTML=""
+        }
+
+        })
+        document.getElementById('confirmPassword').addEventListener("input",function(){
+                const confirmPass=this.value
+                const password=document.getElementById('password').value
+                const comError=document.getElementById('comError')
+                if(confirmPass!==password){
+                    comError.innerHTML="Password and confirm password is not match"
+                    comError.style.color='red'
+                }else{
+                    comError.innerHTML=" "
+                }
+
+        })
+
         
-    }
+        emailelem.addEventListener('blur',function(e){
+            e.preventDefault()
+            const email=document.getElementById('email').value
+            axios.post('/checkEmail',{email})
+            .then(res=>{
+                 if(res.data.success){
+                    errorEmail.innerHTML="Email already existed"
+                    errorEmail.style.color='red'
+                 }else{
+                    errorEmail.innerHTML=" "
+                 }
+            })
+
+        })
+            name.addEventListener('blur',function(){
+                const username=name.value
+                if(!username ||username.trim()==''){
+                    errorname.innerHTML='User name required'
+                    errorname.style.color="red"
+            
+            }else{
+                errorname.innerHTML=''
+            }
+            })
+       document.getElementById('mobile').addEventListener('blur',function(){ 
+           const mobilenumber= this.value
+          
+           const errorphone=document.getElementById('errorphone')
+            if(mobilenumber.length!==10){
+                errorphone.innerHTML='Please Enter a valid Number'
+                errorphone.style.color='red'
+            }else{
+                errorphone.innerHTML=""
+            }
+        })
+      
+
+    })
 </script>
 
 <!-- Bootstrap JS, Popper.js, and jQuery -->

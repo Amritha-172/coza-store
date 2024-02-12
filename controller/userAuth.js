@@ -48,7 +48,7 @@ const verifySignup = async (req, res) => {
             const userId = userData._id
             req.session.user_sign = userId
             // req.session.user_name = userData.name
-            // req.session.user_email = userData.email
+            req.session.user_email = userData.email
             await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
           Here is the verification code.Please enter otp and verify Email`)
 
@@ -123,6 +123,8 @@ const verifyOtp = async (req, res) => {
         console.log("verify otp", userData);
         const userID = req.session.user_sign
         const input = `${noOne}${noTwo}${noThree}${noFour}`
+        console.log(input);
+        console.log(userID);
 
         if (!userID) {
             console.log("no userid");
@@ -151,6 +153,19 @@ const verifyOtp = async (req, res) => {
     }
 
 
+}
+
+const resendOtp=async(req,res)=>{
+    try {
+        const userId=req.session.user_id
+        const email=req.session.user_email
+        await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
+        Here is the verification code.Please enter otp and verify Email`)
+        res.status(200).json({})
+         
+    } catch (error) {
+        console.log('Error in resend otp ',error);
+    }
 }
 
 const userLogout = async (req, res) => {
@@ -206,6 +221,21 @@ const shop = async (req, res) => {
     }
 }
 
+const checkEmail=async(req,res)=>{
+  try {
+     const {email}=req.body
+     const check=await user.findOne({email:email,is_verified:true})
+     console.log(check);
+     if(check){
+        res.status(200).json({success:true})
+     }else{
+        res.json({success:false})
+     }
+    
+  } catch (error) {
+    console.log('error in check email',error);
+  }
+}
 
 module.exports = {
     otp,
@@ -217,5 +247,7 @@ module.exports = {
     Homepage,
     verifyOtp,
     shop,
-    home
+    home,
+    checkEmail,
+    resendOtp
 }
