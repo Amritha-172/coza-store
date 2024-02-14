@@ -12,6 +12,10 @@
 
 <body>
   <style>
+    button.verify:hover {
+    
+    cursor: pointer; 
+}
     #otpTimer {
       font-size: 20px;
       font-weight: bold;
@@ -27,7 +31,8 @@
         </div> -->
 
   <div class="container">
-    <h3 class="title">OTP Verification</h3>
+<h3 class="title">OTP Verification</h3>
+  
     <p class="sub-title">
       Enter the OTP you received to
       <span class="">
@@ -43,62 +48,87 @@
         <input type="hidden" name="email" value="<%=locals.user%>">
       </div>
 
-      <button type="submit" value="submit" class="verify">verify</button>
+     <button type="submit" value="submit" class="verify btn">verify</button>
 
     </form>
     <div class="d-flex justify-content-center align-items-center ">
     <div  style="margin-left: 120px; margin-top: 20px;" id="otpTimer">00:00</div>
 
 
-    <a href=""  id="resendotp" style="margin-right: 20px;"><button class="resend">
-        Resend OTP
-        <i class="fa fa-caret-right"></i>
-      </button></a>
+      <a href=""  id="resendotp" style="margin-right: 20px; display: none;"><button class="resend">
+          Resend OTP
+          <i class="fa fa-caret-right"></i>
+        </button></a>
 
   </div>
 </div>
-  <script>
- document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('resendotp').addEventListener('click',function(e){
-    e.preventDefault()
-     axios.post('/resendOtp')
-     .then(res=>{
-      console.log("success");
-     }).catch(err=>{
-      console.log('error in resend otp',err);
-     })
+ <script>
 
-  })
- })
+var currentInterval = null; // Add a variable to keep track of the current interval
+var currentTimerValue = 0
+function startOTPTimer(duration, display) {
+  if (currentInterval) {
+    clearInterval(currentInterval); // Clear any existing interval
+  }
 
+  var timer = duration, minutes, seconds;
+  currentTimerValue=timer
+  currentInterval = setInterval(function () { // Update the current interval
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+    
 
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-    function startOTPTimer(duration, display) {
-      var timer = duration, minutes, seconds;
-      var endInterval = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
+    display.textContent = minutes + ":" + seconds;
+    currentTimerValue=timer
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-          clearInterval(endInterval);
-          display.style.display='none'
-
-        }
-      }, 1000);
+    if(timer<30){
+      const resend=document.getElementById('resendotp')
+      resend.style.display='block'
     }
 
-    window.onload = function () {
-      var fiveMinutes = 60,
-        display = document.querySelector('#otpTimer');
-      startOTPTimer(fiveMinutes, display);
-    };
+    if (--timer < 0) {
+      clearInterval(currentInterval);
+      display.style.display='none';
+    }
+  }, 1000);
+}
 
-  </script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  var display = document.querySelector('#otpTimer'); 
+  var oneMinute = 60;
+
+ 
+  window.onload = function() {
+    startOTPTimer(oneMinute, display);
+    
+  };
+
+  // Resend OTP setup
+ 
+  document.getElementById('resendotp').addEventListener('click', function(e) {
+    e.preventDefault();
+ 
+    axios.post('/resendOtp')
+      .then(res => {
+        if (res.data.success) {
+            display.style.display = ''; 
+            startOTPTimer(oneMinute, display); 
+
+        }
+      }).catch(err => {
+        console.log('error in resend otp', err);
+      });
+
+})
+
+});
+</script>
+
+
   <script src="/js/otpPage.js"></script>
 
 </body>

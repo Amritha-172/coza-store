@@ -290,40 +290,17 @@
 							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 							<div class="slick3 gallery-lb">
 
-								<div class="item-slick3" data-thumb="/multerimages/<%= product.image[0]%>">
-
-
-									<div class="wrap-pic-w pos-relative" id="zoomable-Image" >
-											<img src="/multerimages/<%= product.image[0]%>" alt="IMG-PRODUCT">
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-											href="/multerimages/<%= product.image[0]%>">
-											<i class="fa fa-expand"></i>
-										</a>
+								<% for(let i = 0; i < product.image.length; i++) { %>
+									<div class="item-slick3" data-thumb="/multerimages/<%= product.image[i] %>">
+										<div class="wrap-pic-w pos-relative zoomable-Image">
+											<img src="/multerimages/<%= product.image[i] %>" alt="IMG-PRODUCT">
+											<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/multerimages/<%= product.image[i] %>">
+												<i class="fa fa-expand"></i>
+											</a>
+										</div>
 									</div>
+								<% } %>
 
-								</div>
-
-								<div class="item-slick3" data-thumb="/multerimages/<%= product.image[1]%>">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/multerimages/<%= product.image[1]%>" alt="IMG-PRODUCT">
-
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-											href="/multerimages/<%= product.image[1]%>">
-											<i class="fa fa-expand"></i>
-										</a>
-									</div>
-								</div>
-
-								<div class="item-slick3" data-thumb="/multerimages/<%=product.image[2]%>">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/multerimages/<%=product.image[2]%>" alt="IMG-PRODUCT">
-
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-											href="/multerimages/<%=product.image[2]%>">
-											<i class="fa fa-expand"></i>
-										</a>
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -1124,17 +1101,6 @@
 								<div class="wrap-slick3-dots"></div>
 								<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-								<!-- <div class="slick3 gallery-lb">
-									<div class="item-slick3" data-thumb="/multerimages/<%= product.image%>">
-										<div class="wrap-pic-w pos-relative">
-											<img src="/multerimages/<%= product.image[0]%>" alt="IMG-PRODUCT">
-
-											<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-												href="images/product-detail-01.jpg">
-												<i class="fa fa-expand"></i>
-											</a>
-										</div>
-									</div> -->
 
 								<div class="item-slick3" data-thumb="images/product-detail-02.jpg">
 									<div class="wrap-pic-w pos-relative">
@@ -1272,11 +1238,11 @@
 	</div>
 	</div>
 	<style>
-		#zoomable-image {
+		.zoomable-image {
 			transition: transform 0.3s ease-in-out;
 		}
 	
-		#zoomable-image:hover {
+		.zoomable-image:hover {
 			transform: scale(1.1);
 	}
 	</style>
@@ -1360,50 +1326,31 @@
 
 <script>
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('zoomable-Image').addEventListener('mousemove', function (event) {
+document.addEventListener('DOMContentLoaded', function () {
+    const zoomableImages = document.querySelectorAll('.zoomable-Image');
+
+    function zoomImage(event, element) {
+        const rect = element.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const percentX = (x / rect.width) * 100;
+        const percentY = (y / rect.height) * 100;
+        element.style.transformOrigin = `${percentX}% ${percentY}%`;
+        element.style.transition = 'transform 0.3s ease-in-out';
+        element.style.transform = 'scale(3.3)';
+    }
+
+    zoomableImages.forEach(image => {
+        image.addEventListener('mousemove', function (event) {
             zoomImage(event, this);
         });
 
-        function zoomImage(event, element) {
-            const rect = element.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            const percentX = (x / rect.width) * 100;
-            const percentY = (y / rect.height) * 100;
-
-            element.style.transformOrigin = `${percentX}% ${percentY}%`;
-            element.style.transition = 'transform 0.3s ease-in-out';
-            element.style.transform = 'scale(3.3)';
-        }
-
-        document.getElementById('zoomable-Image').addEventListener('mouseleave', function () {
+        image.addEventListener('mouseleave', function () {
             this.style.transition = 'transform 0.3s ease-in-out';
             this.style.transform = 'scale(1)';
         });
-
-        document.getElementById('zoomable-Image2').addEventListener('mousemove', function (event) {
-            zoomImage(event, this);
-        });
-
-        document.getElementById('zoomable-Image2').addEventListener('mouseleave', function () {
-            this.style.transition = 'transform 0.3s ease-in-out';
-            this.style.transform = 'scale(1)';
-        });
-
-        document.getElementById('zoomable-Image3').addEventListener('mousemove', function (event) {
-            zoomImage(event, this);
-        });
-
-        document.getElementById('zoomable-Image3').addEventListener('mouseleave', function () {
-            this.style.transition = 'transform 0.3s ease-in-out';
-            this.style.transform = 'scale(1)';
-        });
-
-
-
     });
+});
 
 
 

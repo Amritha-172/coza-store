@@ -16,6 +16,56 @@
 </head>
 
 <body>
+    <style>
+       
+       .image-upload-container {
+        position: relative; /* Set relative positioning context for the close icon */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 120px;
+        height: 160px;
+        margin: 0 10px;
+    }
+
+    .close-icon {
+        position: absolute;
+        top: -20px; 
+        right: -5px; 
+        cursor: pointer;
+        font-size: 20px; /* Adjust size as needed */
+        background-color: white; /* Optional, for better visibility */
+        border-radius: 50%; /* Optional, for a rounded background */
+    }
+
+   
+
+    .image-upload-container label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 110px;
+        height: 110px;
+        margin-bottom: 10px; 
+    }
+
+    .image-upload-container img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .image-upload-container button {
+        width: 100%; 
+        margin-top: 5px; 
+        background-color:rgb(186, 174, 219);
+      
+    }
+</style>
+
+
+
+    </style>
     <header class="coza-header">
         <div class="container">
             <div class="logo">Coza Store</div>
@@ -57,7 +107,7 @@
                 <form class="" >
                     <div class="add">
                         <div class="mb-3">
-
+            
                             <%if(messages.length>0){%>
                                 <div style="color: red;">
                                     <%=messages[0]%>
@@ -70,9 +120,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="category" name="category"
-                                pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" value="<%=product.category%>" required>
+                            <label for="category" class="form-label">Category:</label>
+                            <select name="category" id="category" class="form-select">
+                                <option ><--select category --></option>
+                                <% category.forEach((category)=>{ %>
+                                    <option  value="<%= category._id %>"><%= category.catName %></option>
+                                <% }) %>
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -111,37 +165,37 @@
                                 required>
                         </div>
                     </div>
-                    <div class=" d-flex justify-content-center " style="width: 700px;">
-                        <div class="d-flex justify-content-evenly ">
-                            <div style="width: 120px; height: 120px;">
-                                <label for="image1" class="form-label">Image
-                                    <img id="preview1" style="width: 110px; height: 110px;"
-                                        src="/multerimages/<%=product.image[0]%>" alt="">
+                    <div class="d-flex justify-content-center" style="width: 700px;">
+                        <div class="d-flex justify-content-evenly">
+                            <div class="image-upload-container">
+                                <div class="close-icon" onclick="deleteImage('image1', 'preview1');">&times;</div>
+                                <label for="image1" class="form-label">
+                                    <img id="preview1" src="/multerimages/<%=product.image[0]%>" alt="">
                                 </label>
-                                <input type="file" class="form-control" id="image1" name="cropImages" value=""
-                                    style="display: none;" onchange="updateImage('image1', 'preview1')" required>
+                                <input type="file" class="form-control" id="image1" name="cropImages" style="display: none;" onchange="updateImage('image1', 'preview1')" >
+                                <button type="button" onclick="document.getElementById('image1').click();">Upload Image</button>
                             </div>
-
-                            <div class="" style="width: 120px; height: 120px;">
-                                <label for="image2" style="width: 100px; height: 100px;" class="form-label">Image
-                                    <img id="preview2" style="width: 110px; height: 110px;"
-                                        src="/multerimages/<%=product.image[1]%>" alt="">
+                    
+                            <div class="image-upload-container">
+                                <div class="close-icon" onclick="deleteImage('image2', 'preview2');">&times;</div>
+                                <label for="image2" class="form-label">
+                                    <img id="preview2" src="/multerimages/<%=product.image[1]%>" alt="">
                                 </label>
-                                <input type="file" class="form-control" id="image2" name="cropImages" value=""
-                                    style="display: none;" onchange="updateImage('image2', 'preview2')" required>
+                                <input type="file" class="form-control" id="image2" name="cropImages" style="display: none;" onchange="updateImage('image2', 'preview2')" >
+                                <button type="button" onclick="document.getElementById('image2').click();">Upload Image</button>
                             </div>
-
-                            <div class="mb-3 ">
-                                <label for="image3" id="fisrtimg" style="width: 100px; height: 100px;"
-                                    class="form-label">Image
-                                    <img id="preview3" style="width: 110px; height: 110px;"
-                                        src="/multerimages/<%=product.image[2]%>" alt="">
+                    
+                            <div class="image-upload-container">
+                                <div class="close-icon" onclick="deleteImage('image3', 'preview3');">&times;</div>
+                                <label for="image3" class="form-label">
+                                    <img id="preview3" src="/multerimages/<%=product.image[2]%>" alt="">
                                 </label>
-                                <input type="file" class="form-control" id="image3" data-image="" name="cropImages"
-                                    value="" style="display: none;" onchange="updateImage('image3', 'preview3')" required>
+                                <input type="file" class="form-control" id="image3" name="cropImages" style="display: none;" onchange="updateImage('image3', 'preview3')" >
+                                <button type="button"  onclick="document.getElementById('image3').click();">Upload Image</button>
                             </div>
                         </div>
                     </div>
+                    
                     <div class="d-flex  justify-content-center ">
                         <input type="hidden" name="id"  id="id" value="<%=product._id%>">
                         <button type="button" class="btn btn-dark  mt-4 " id="upload" style="width: 150px; height: 50px; ">Update
@@ -154,6 +208,24 @@
         </main>
     </div>
     <script>
+  
+
+
+
+    function deleteImage(inputId, previewId) {
+
+    axios.post('/deleteImage',{inputId,previewId})
+
+    .then(res=>{
+        if(res.data.success){
+        document.getElementById(inputId).value = '';
+        document.getElementById(previewId).src = 'https://bit.ly/3ubuq5o';
+        }
+    }).catch(err=>{
+        console.log('Error');
+    })
+        
+    }
            var oldimageUrl=[]
 
         function updateImage(inputId, previewId) {

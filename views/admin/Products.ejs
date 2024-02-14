@@ -101,7 +101,8 @@
                                 </td>
                                 <td>
                                     <center>
-                                        <%= products[i].category%>
+                                      
+                                        <%= products[i].categoryId.catName%>
                                     </center>
                                 </td>
                                 <td>
@@ -135,7 +136,7 @@
                                                 <% } %>
                                     </div>
                                     <div class="col-6 ">
-                                        <a href="/admin/editproduct?id=<%= products[i]._id %>"
+                                        <a href="/admin/editproduct?id=<%= products[i]._id %> "
                                             class="btn-edit text-decoration-none ms-2  text-white"
                                             style="width: 60px;">Edit</a>
                                     </div>

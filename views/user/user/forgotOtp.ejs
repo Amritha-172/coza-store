@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm OTP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #eef2f3, #8e9eab);
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-size: 14px;
+            color: #666;
+            display: block;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #verify {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #717fe0;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #4f61d6;
+        }
+    </style>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <form>
+        <h2>Confirm OTP</h2>
+        <% if (messages.length> 0) { %>
+            <p style="color: red;">
+                <%= messages %>
+            </p>
+            <% } %>
+                <p id="errormsg" style="color: red;"></p>
+
+                <label for="otp">OTP:</label>
+                <input type="text" id="otp" name="otp" pattern="\d*" minlength="4" maxlength="4" required
+                    placeholder="Enter OTP">
+                <input type="hidden" id="email" name="email" value="<%=email%>">
+                <button id="verify" type="submit">Verify OTP</button>
+                <!-- Timer and Resend Link -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <p id="timer">00:00</p>
+                    <a href="#" id="resend" style="display: none">Resend</a>
+                </div>
+
+
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const resend = document.getElementById('resend');
+            const timerElement = document.getElementById('timer');
+            const errormsg = document.getElementById('errormsg');
+            let timeLeft = 40;
+            let timer;
+
+            function startTimer() {
+                clearInterval(timer); // Clear existing timer if any
+                timer = setInterval(updateTimer, 1000);
+            }
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                timerElement.textContent = `${minutes}:${seconds}`;
+                timeLeft--;
+
+                if (timeLeft < 30) {
+                    resend.style.display = 'block';
+                }
+
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    errormsg.innerHTML = "OTP has expired. Please request a new one.";
+                    document.getElementById('verify').disabled = true;
+                }
+            }
+
+
+            startTimer();
+
+            resend.addEventListener('click', function (e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                console.log("email resent", email);
+
+
+                timeLeft = 40;
+                errormsg.innerHTML = "";
+                document.getElementById('verify').disabled = false;
+                startTimer();
+
+                axios.post('/forgotResendOtp', { email })
+                    .then(res => {
+                        if (res.data.success) {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Your work has been saved",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            console.log('failed to send email');
+                        }
+                    }).catch(err => {
+                        console.log('error in resend otp forgot', err);
+                    });
+            });
+
+            document.getElementById('verify').addEventListener('click', function (e) {
+                e.preventDefault();
+                const otp = document.getElementById('otp').value;
+                axios.post('/verifyOtp', { otp })
+                    .then(res => {
+                        if (res.data.success) {
+                            window.location.href = '/resetPassword';
+                        } else {
+                            errormsg.innerHTML = "Something went wrong";
+                        }
+                    }).catch(err => {
+                        console.log('error', err);
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>

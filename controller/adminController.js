@@ -53,18 +53,8 @@ const loadAddCategory = async (req, res) => {
     try {
         const messages = req.flash('message')
         let categories = await category.find({}).sort({ _id: -1 })
+   
         res.render("addCategory", { category: categories, messages })
-    } catch (error) {
-        console.log("error in categoris:", error);
-    }
-}
-const loadEditCategory = async (req, res) => {
-    try {
-        const id = req.query.id
-
-        let categories = await category.find({ _id: id })
-
-        res.render("editCategory", { category: categories })
     } catch (error) {
         console.log("error in categoris:", error);
     }
@@ -111,7 +101,7 @@ const addCategory = async (req, res) => {
             catName: catName,
             description: description
         })
-
+        
         const save = await newCategory.save()
         if (save) {
             res.redirect('/admin/category')
@@ -120,6 +110,56 @@ const addCategory = async (req, res) => {
         }
     } catch (error) {
         console.log("error in addCategory:", error)
+    }
+}
+
+const loadEditCategory = async (req, res) => {
+    try {
+        const messages=req.flash('message')
+        const id = req.query.id
+
+        let categories = await category.findOne({ _id: id })
+             
+        res.render("editCategory", {category: categories,messages})
+    } catch (error) {
+        console.log("error in categoris:", error);
+    }
+}
+const checkCategory=async(req,res)=>{
+    try {
+        const catName=req.body.name
+        const id=req.body.id
+        const regexPattern = new RegExp(`^${catName}$`, 'i')
+        const alreadyExist = await category.find({_id:{$ne:id},catName: regexPattern, })
+        console.log("already existed item",alreadyExist);
+        if (alreadyExist.length > 0) {
+            req.flash('message', "already exist")
+            return res.status(200).json({success:true})
+        }else{
+            res.json({success:false})
+        }
+    } catch (error) {
+        console.log('error in check category');
+    }
+}
+
+const editCategory = async (req, res) => {
+    try {
+        const { catName, description, id } = req.body
+        console.log("req.body",req.body);
+        
+        
+            const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
+            console.log(editcat);
+            if (editcat) {
+                res.redirect('category')
+            }
+        
+
+
+    } catch (error) {
+        console.log("error in editcategory:", error);
+        res.json({ message: "Something went wrong try again" })
     }
 }
 
@@ -152,20 +192,6 @@ const unblockCategory = async (req, res) => {
     }
 }
 
-const editCategory = async (req, res) => {
-    try {
-        const { catName, description, id } = req.body
-        const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
-
-        if (editcat) {
-            res.redirect('category')
-        }
-
-    } catch (error) {
-        console.log("error in editcategory:", error);
-        res.json({ message: "Something went wrong try again" })
-    }
-}
 
 const deleteCategory = async (req, res) => {
     try {
@@ -242,6 +268,7 @@ module.exports = {
     loadEditCategory,
     oderDetails,
     singleProduct,
-    updateSts
+    updateSts,
+    checkCategory
 
 }

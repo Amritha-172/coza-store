@@ -7,7 +7,7 @@ let transporter = nodemailer.createTransport({
     service:'gmail' ,
     host: 'smtp.gmail.com',
       port: 587,
-      secure: true, 
+      secure: false, 
     auth: {
         user: process.env.NODE_MAILER_EMAIL,
         pass: process.env.NODE_MAILER_PASS,
@@ -18,7 +18,7 @@ let transporter = nodemailer.createTransport({
     try {
         const otp=`${Math.floor(1000+ Math.random()*9000)}`
         console.log(otp);
-        console.log("iam thei otp generator");
+        console.log("iam the otp generator");
          const mailoption={
             from :process.env.NODE_MAILER_EMAIL,
             to:email,
@@ -29,13 +29,14 @@ let transporter = nodemailer.createTransport({
          }
          const hashedOtp=await bcrypt.hash(otp,10)
          await transporter.sendMail(mailoption)
-         const newOtp= new OTPModel({
-            userid:id,
-            email: email,
-            otp:hashedOtp
-         })
+        //  const newOtp= new OTPModel({
+        //     userid:id,
+        //     email: email,
+        //     otp:hashedOtp
+        //  })
 
-         await newOtp.save()
+        const update= await OTPModel.updateOne({userid:id},{$set:{userid:id,otp:hashedOtp}},{upsert:true})
+        console.log(update);
          console.log("email send successfully");
 
 

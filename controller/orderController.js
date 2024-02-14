@@ -141,7 +141,13 @@ const checkname=async(req,res)=>{
     try {
         const userId=req.session.user_id
         const orderDetail=await Order.findOne({userId:userId})
-        const formattedCreatedAt = orderDetail.createdAt.toISOString().split('T')[0];
+      
+        const formattedCreatedAt = orderDetail.createdAt.toLocaleDateString('en-US', {
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric', 
+          });
+          
         console.log(orderDetail.deliveryAddress);
         const addressID=orderDetail.deliveryAddress
         const findAddress= await address.findOne({_id:addressID})

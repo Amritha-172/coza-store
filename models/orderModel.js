@@ -22,6 +22,11 @@ const orderSchema = new mongoose.Schema({
         quantity:{
             type:Number,
             required:true
+        },
+        productStatus:{
+            type: String,
+            default:"pending",
+            required: true
         }
     }],
     orderAmount: {
@@ -38,7 +43,8 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        required: true
+        required: true,
+        default:"pending"
     },
     deliveryDate:{
         type:Date

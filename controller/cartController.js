@@ -83,6 +83,7 @@ const shoppingcart = async (req, res) => {
         };
       })
     );
+   
     res.render('user/shoppingCart', { cartItems: cartItemsWithProductDetails });
   } catch (error) {
     console.log('error in shopping cart:', error);
@@ -116,11 +117,11 @@ const editPrice=async(req,res)=>{
   try {
     const userId=req.session.user_id
     const {productId,totalPrice,quantity}=req.body
-    console.log(productId);
-    const cart=await Cart.updateOne({productId:productId},{$set:{price:totalPrice,quantity:quantity}})
-    console.log(cart);
+
+    await Cart.updateOne({productId:productId},{$set:{price:totalPrice,quantity:quantity}})
+   
       const total= await Cart.find({userId:userId})
-      console.log(total);
+
       let newTotal=0
       total.forEach(element => {
         newTotal=element.price+newTotal

@@ -125,17 +125,19 @@ const verifyOtp = async (req, res) => {
         const input = `${noOne}${noTwo}${noThree}${noFour}`
         console.log(input);
         console.log(userID);
+    
 
         if (!userID) {
             console.log("no userid");
         }
-        const findOtp = await OTP.find({ userid: userID }, { otp: 1, _id: 0 }).sort({ _id: -1 }).limit(1)
-
+        const findOtp = await OTP.find({ userid: userID }).sort({_id:-1}).limit(1)
+               console.log(findOtp);
         if (findOtp.length > 0) {
-
+             
+           
             const verifyOtp = await bcrypt.compare(input, findOtp[0].otp)
 
-
+              console.log('verifyotp',verifyOtp);
             if (verifyOtp) {
                 await user.updateOne({ _id: userID }, { $set: { is_verified: true } }).catch((err) => {
                     console.log(err);
@@ -157,14 +159,125 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp=async(req,res)=>{
     try {
-        const userId=req.session.user_id
-        const email=req.session.user_email
+        const userId= req.session.user_sign
+        const email=req.session.user_email  
+        console.log("userId",userId);
         await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
         Here is the verification code.Please enter otp and verify Email`)
-        res.status(200).json({})
+        res.status(200).json({success:true})
          
     } catch (error) {
         console.log('Error in resend otp ',error);
+        res.status(404).json({success:false})
+    }
+}
+
+
+
+
+//---------forgot otp--------------//
+
+const forgotPass=async(req,res)=>{
+    try {
+        const messages=req.flash('message')
+        res.render('user/user/forgetPassword',{messages})
+    } catch (error) {
+        console.log('error in forgetpass',error);
+    }
+}
+const forgotOtp=async(req,res)=>{
+    try {
+        const email=req.body.email
+   
+        const existemail= await user.findOne({email:email,is_verified:true})
+       
+        console.log(existemail);
+        if(!existemail){
+            req.flash('message',"Email does not exist")
+           res.redirect('/forgot')
+        }else{
+            req.session.email_id=email
+            req.session.userid=existemail._id
+            await util.mailsender(email, existemail._id, `It seems you logging at CoZA store and trying to verify your Email.
+            Here is the verification code.Please enter otp and verify Email`)
+             res.render('user/user/forgotOtp',{email})
+                
+
+        }
+
+    } catch (error) {
+        console.log('error in forgot');
+    }
+}
+ const forgotResend=async(req,res)=>{
+    try {
+          
+       const email= req.body.email
+ 
+       const existemail= await user.findOne({email:email})
+      
+       if(existemail){
+       await util.mailsender(email, existemail._id, `It seems you logging at CoZA store and trying to verify your Email.
+            Here is the verification code.Please enter otp and verify Email`)
+                 res.status(200).json({success:true})
+       }
+
+    } catch (error) {
+        console.log('error in forgotResend',error);
+    }
+ }
+ 
+const forgotVerifyOtp=async(req,res)=>{
+   try {
+       const userId=req.session.userid
+       const otp=req.body.otp
+       console.log("otp ",otp);
+       console.log("userId",userId);
+       const findOtp= await OTP.findOne({userid:userId})
+       console.log(findOtp);
+        if(findOtp){
+            const verifyOtp = await bcrypt.compare(otp, findOtp.otp)
+            console.log(verifyOtp);
+             if(verifyOtp){
+                 console.log("verify otp");
+                res.json({success:true})
+             }else{
+                res.json({success:false})
+             }
+
+        }
+
+   } catch (error) {
+    console.log('error in  forgot password otp',error);
+   }
+}
+
+
+const loadresetPass=async(req,res)=>{
+    try {
+        res.render('user/user/forgotPasschange')
+        
+
+    } catch (error) {
+        console.log("error in resetpassword");
+    }
+}
+
+ const resetPass= async(req,res)=>{
+    try {
+        const password= await securePassword(req.body.password)
+        const userId=req.session.userid
+        const update=await user.updateOne({_id:userId},{$set:{password:password}})
+        console.log(update);
+        if(update){
+           res.status(200).json({success:true})
+        }else{
+            res.json({success:false})
+        }
+
+        
+    } catch (error) {
+        console.log('error in resetpassword',error);
     }
 }
 
@@ -249,5 +362,11 @@ module.exports = {
     shop,
     home,
     checkEmail,
-    resendOtp
+    resendOtp,
+    forgotPass,
+    forgotOtp,
+    loadresetPass,
+    forgotVerifyOtp,
+    resetPass,
+    forgotResend
 }

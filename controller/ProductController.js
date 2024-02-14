@@ -1,10 +1,11 @@
 const product = require('../models/productModel')
 const category = require('../models/categoryModel')
-const { categories } = require('./adminController')
+
 
 const loadProduct = async (req, res) => {
     try {
-        const products = await product.find({})
+        const products = await product.find({}).populate('categoryId')
+        console.log('prodcuct',products);
 
         res.render("products", { products })
     } catch (error) {
@@ -15,6 +16,7 @@ const loadAddProduct = async (req, res) => {
     try {
         const messages = req.flash('message')
         const categories = await category.find({})
+       
         res.render("addProduct", { categories, messages })
     } catch (error) {
         console.log('error in load addproduct');
@@ -24,6 +26,7 @@ const loadAddProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const details = req.body
+        console.log("add prodcut details",details);
         const files = req.files
         const alreadyExist = await product.findOne({ productName: req.body.productName })
         if (alreadyExist) {
@@ -44,7 +47,7 @@ const addProduct = async (req, res) => {
                 image: images,
                 color: details.color,
                 size: details.size,
-                category: details.category,
+                categoryId: details.category,
                 offer: details.offer,
                 description: details.description,
 
@@ -98,11 +101,12 @@ const unlistProduct = async (req, res) => {
 const loadeditProduct = async (req, res) => {
     try {
 
-        const { id } = req.query
+        const { id} = req.query
         const products = await product.findOne({ _id: id })
         const categories = await category.find({})
+        console.log(categories);
         console.log(products);
-        res.render('editProducts', { product: products })
+        res.render('editProducts', { product: products,category:categories,})
 
     } catch (error) {
         console.log("error in loadeditProdut:", error);
@@ -136,6 +140,13 @@ const editProduct = async (req, res) => {
     }
 }
 
+const deleteProduct=async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        console.log("error in delete product");
+    }
+}
 
 module.exports = {
     loadProduct,
@@ -144,5 +155,6 @@ module.exports = {
     unlistProduct,
     listProduct,
     loadeditProduct,
-    editProduct
+    editProduct,
+    deleteProduct
 }
