@@ -59,7 +59,7 @@
             <div class="content">
                 <h1>ORDER LIST</h1>
                 <p>List of Orders:</p>
-    
+       
                     <table class="table table-bordered" style="table-layout: fixed;">
                         <thead>
                             <tr>
@@ -72,7 +72,9 @@
                                 <th style="width: 200px;">Action</th>
                             </tr>
                         </thead>
+                      
                         <% for(i=0; i< orderDetails.length;i++){%>
+                           
                             <tbody>
                                 <tr>
                                     <td>
@@ -85,7 +87,7 @@
                                         <%=orderDetails[i].formattedCreatedAt %>
                                     </td>
                                     <td>
-                                       >
+                                        <%=orderDetails[i].deliveryAddress.name%>
                                     </td>
                                     <td>
                                         <%=orderDetails[i].orderAmount%>

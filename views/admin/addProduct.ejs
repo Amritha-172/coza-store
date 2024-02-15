@@ -63,8 +63,9 @@
                                 </div>
                                 <%}%>
                                     <label for="productName" class="form-label">Product Name</label>
+                                    <p id="erroname"></p>
                                     <input type="text" class="form-control" id="productName"
-                                        pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName" required>
+                                       name="productName" required>
                         </div>
                                
                         <div class="col-md-12">
@@ -162,6 +163,25 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+        document.addEventListener('DOMContentLoaded',function(){
+             const productElem=document.getElementById('productName')
+             productElem.addEventListener('blur',function(){
+                 const erroname=document.getElementById('erroname')
+                const productname=document.getElementById('productName').value
+                console.log(productname);
+                if(productname.trim() == " "){
+                    erroname.innerHTML='product name required'
+                    erroname.style.color='red'
+                    
+                }else{
+                    erroname.innerHTML=' '
+                }
+                
+
+             })
+
+        })
         </script>
 
     <script src="js/dashboard.js"></script>

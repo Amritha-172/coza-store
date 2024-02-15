@@ -27,6 +27,7 @@ const loadshop = async (req, res) => {
 }
 const profile = async (req, res) => {
     try {
+        
         let userData = await User.findOne({ _id: req.session.user_id, is_blocked: false })
         let address = null
         if (userData) {
@@ -40,9 +41,10 @@ const profile = async (req, res) => {
 }
 const loadeditProfile = async (req, res) => {
     try {
+        const messages=req.flash('message')
         const userId = req.session.user_id
         const userData = await User.findOne({ _id: userId })
-        res.render('user/user/profileEdit', { userData })
+        res.render('user/user/profileEdit', { userData ,messages})
 
     } catch (error) {
         console.log('error in edit profile page');
@@ -54,8 +56,18 @@ const updateProfile = async (req, res) => {
 
         console.log(req.body);
         const { fullname, email, age, gender, phone } = req.body
+
+        if(!fullname||fullname.trim()==" "){
+           req.flash("message","User name is required")
+           return res.redirect('/user/profileEdit')
+        }
+        if(phone.length!==10){
+            req.flash("message","Please Enter valid number")
+           return res.redirect('/user/profileEdit')
+        }
+
         const update = await User.updateOne({ _id: userId }, { $set: { name: fullname, email: email, age: age, gender: gender, mobile: phone } })
-        console.log(update);
+         console.log(update);
         if (update) {
             res.status(200).json('success')
 
@@ -123,12 +135,27 @@ const checkpass = async (req, res) => {
 
 const updatePass=async(req,res)=>{
     try {
-         const {newPassword}=req.body
-         console.log(newPassword);
+         const {newPassword,confirmPassword}=req.body
+
+    //      if(newPassword!==confirmPassword){
+    //         req.flash('message',"Password is not matching")
+    //         return res.redirect('/user/changePassword')
+    //      }
+         
+    //      if(!newPassword||newPassword.trim()==" "){
+    //         req.flash('message',"Password is required")
+    //         return res.redirect('/user/changePassword')
+    //      }
+    //      if(newPassword.lenght<8){
+    //         req.flash('message',"Password length must be 8")
+    //         return res.redirect('/user/changePassword')
+    //      }
+    // ;
          const spassword = await securePassword(newPassword)
       
          const userId=req.session.user_id
          const update=await  User.updateOne({_id:userId},{$set:{password:spassword}})
+           req.session.user_id=null
          if(update){
             res.json({success:true})
          }else{
@@ -155,18 +182,62 @@ const address=async(req,res)=>{
 
 const addAddress=async(req,res)=>{
     try {
-        res.render('user/user/addAddress')
+        const messages=req.flash('message')
+        res.render('user/user/addAddress',{messages})
     } catch (error) {
         console.log('error in add address');
     }
 }
- const editAddress=async(req,res)=>{
+ const loadeditAddress=async(req,res)=>{
     try {
-        res.render('user/user/editAddress')
+        const messages=req.flash('message')
+        const {adddressId}=req.query
+         const address=await Address.findOne({_id:adddressId})
+        res.render('user/user/editAddress',{address,messages})
     } catch (error) {
         console.log("error in edit address");
     }
  }
+  const editAddress=async(req,res)=>{
+   try {
+    const {name,mobile,pincode,locality,streetAddress,city,state,landmark,addressType,id}=req.body
+    if(!name||name.trim()==" "){
+        req.flash('message',"user Name is required")
+        return res.redirect('/user/addAddress')
+     }
+     
+     if(mobile.lenght!==10){
+      req.flash('message',"Please Enter Valid Number")
+      return res.redirect('/user/addAddress')
+     }
+     
+     if(pincode!==6){
+      req.flash('message',"Please Enter Valid Pincode")
+      return res.redirect('/user/addAddress')
+     }
+
+ 
+    const details=await Address.updateOne({_id:id},{$set:{name:name,mobile:mobile,pincode:pincode,locality:locality,streetAddress:streetAddress,city:city,state:state,landmark:landmark,addressType:addressType}})
+      if(details){
+        res.redirect('/userAddress')
+      }
+   } catch (error) {
+    console.log('error in editAddress',error);
+   }
+  }
+   const deleteAddress=async(req,res)=>{
+    try {
+        const{adddressId}=req.query
+        const remove=await Address.deleteOne({_id:adddressId})
+        if(remove){
+            res.redirect('/userAddress')
+        }
+        
+    } catch (error) {
+        console.log('error in delete address');
+    }
+   }
+  
 
 module.exports = {
     singleProduct,
@@ -179,7 +250,9 @@ module.exports = {
     address,
     updatePass,
     addAddress,
-    editAddress
+    loadeditAddress,
+    editAddress,
+    deleteAddress
 
 }
 

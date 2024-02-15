@@ -342,7 +342,7 @@
                                             href="#tab-downloads">Wallet</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-address-link"
+                                        <a class="nav-link border active" style="border-radius: 1rem;" id="tab-address-link"
                                             href="/userAddress">Addresses</a>
                                     </li>
                                     <li class="nav-item">
@@ -381,17 +381,17 @@
                                             <div class="p-3 border d-flex justify-content-between "
                                                 style="border-radius: 10px; background-color: #fff;">
                                                 <div class="">
-                                                    <p><strong><%=item.userId.name%></strong></p>
+                                                    <p><strong><%=item.name%></strong></p>
                                                     <p><%=item.streetAddress%> <br><%=item.city%>, <%=item.state%>, <%=item.pincode%><br></p>
                                                     <p>Phone: <%=item.mobile%></p>
                                                     <!-- Add edit and delete button if needed -->
                                                 </div>
                                                 <div class="">
-                                                    <a href="/editAddress" class="btn btn-primary"
+                                                    <a href="/editAddress?adddressId=<%=item._id%>" class="btn btn-primary"
                                                         style="width: 100px;">
                                                         <i class="fa fa-pencil" aria-hidden="true"></i> Edit
                                                     </a>
-                                                    <a href="" class="btn"
+                                                    <a href="/deleteAddress?adddressId=<%=item._id%>" class="btn"
                                                         style="width: 100px; background-color: #adb2ce;">
                                                         <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                     </a>

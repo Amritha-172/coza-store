@@ -274,11 +274,11 @@
 
         <h5 class="mb-3 mt-3 " style="color: #7280e0;"><strong>Shipping Address</strong></h5>
 	
-        <p><%=findAddress.name%></p>
-        <p><%=findAddress.mobile%></p>
+        <p><%=orderDetail.deliveryAddress.name%></p>
+        <p><%=orderDetail.deliveryAddress.mobile%></p>
   
-		<p><%=findAddress.streetAddress%></p>
-		<p><%=findAddress.city%>, <%=findAddress.state%><%=findAddress.pincode%></p>
+		<p><%=orderDetail.deliveryAddress.streetAddress%></p>
+		<p><%=orderDetail.deliveryAddress.city%>,<%=orderDetail.deliveryAddress.locality%><%=orderDetail.deliveryAddress.state%> ,<%=orderDetail.deliveryAddress.pincode%></p>
         
         
         <!-- Add more details as needed -->

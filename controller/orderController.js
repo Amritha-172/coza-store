@@ -46,6 +46,22 @@ const addAddress=async(req,res)=>{
       console.log(req.body);
        const {addressType,alternativePhone,landmark,mobile,state,city,streetAddress,locality,pincode,name}=req.body
       
+       if(!name||name.trim()==" "){
+          req.flash('message',"user Name is required")
+          return res.redirect('/user/addAddress')
+       }
+       
+       if(mobile.lenght!==10){
+        req.flash('message',"Please Enter Valid Number")
+        return res.redirect('/user/addAddress')
+       }
+       
+       if(pincode!==6){
+        req.flash('message',"Please Enter Valid Pincode")
+        return res.redirect('/user/addAddress')
+       }
+
+
       const newAddress=new address({
         userId:userId,
         name:name,
@@ -140,8 +156,8 @@ const checkname=async(req,res)=>{
  const ordersuccess=async(req,res)=>{
     try {
         const userId=req.session.user_id
-        const orderDetail=await Order.findOne({userId:userId})
-      
+        const orderDetail=await Order.findOne({userId:userId}).populate('userId').populate('deliveryAddress')
+           console.log("order details",orderDetail);
         const formattedCreatedAt = orderDetail.createdAt.toLocaleDateString('en-US', {
             day: 'numeric', 
             month: 'long', 
@@ -149,12 +165,11 @@ const checkname=async(req,res)=>{
           });
           
         console.log(orderDetail.deliveryAddress);
-        const addressID=orderDetail.deliveryAddress
-        const findAddress= await address.findOne({_id:addressID})
+
         
           console.log(formattedCreatedAt);
 
-        res.render('user/orderSuccess',{orderDetail,formattedCreatedAt,findAddress})
+        res.render('user/orderSuccess',{orderDetail,formattedCreatedAt})
     } catch (error) {
         console.log('error in order details page');
     }
@@ -162,9 +177,9 @@ const checkname=async(req,res)=>{
  const  orderpage=async(req,res)=>{
     try {
         const userId=req.session.user_id
-        console.log(userId);
+    
         const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId')
-        console.log("order details",orderDetails);
+   
         res.render('user/user/orderpage',{orderDetails})
         
         

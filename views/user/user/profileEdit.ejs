@@ -353,6 +353,9 @@
                                             <div class="tab-pane fade show active" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
                                                 <form  class="p-5 shadow rounded bg-white">
                                                     <h2 class="mb-5 text-center"> Profile</h2>
+                                                    <% if(messages.length>0){%>
+                                                        <p style="color: red;"><%=messages%></p>
+                                                        <%}%>
                                                     <div class="row g-3">
                                                         <div class="col-12">
                                                             <label for="firstName" class="form-label">Full Name</label>
@@ -381,6 +384,7 @@
                                                             <label class="form-label">Gender</label>
                                                             <div class="d-flex align-items-center">
                                                                 <div class="form-check form-check-inline">
+                                                                    <input type="hidden" name="" id="selectgender" value="<%=userData.gender%>">
                                                                     <input class="form-check-input ms-0" type="radio"name="gender" id="male" value="male" >
                                                                     <label class="form-check-label" for="male">Male</label>
                                                                 </div>
@@ -439,6 +443,13 @@
 
  <script>
   document.addEventListener('DOMContentLoaded',function(){
+
+    const selectgender=document.getElementById('selectgender').value
+    if(selectgender=="female"){
+        document.getElementById('female').checked = true;
+    }else if(selectgender=="male"){
+        document.getElementById('male').checked = true;
+    }
       const update=document.getElementById('update')
       const errorname=document.getElementById("errorname")
       
@@ -468,7 +479,7 @@
         })
       update.addEventListener('click',function(e){
           e.preventDefault()
-
+    
      const fullname=document.getElementById('fullname').value
      const  email=document.getElementById('email').value 
      const age= document.getElementById("age").value

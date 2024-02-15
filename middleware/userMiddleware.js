@@ -29,7 +29,8 @@ const isBlocked = async (req, res, next) => {
         } else {
             console.log(userData.is_blocked)
             if (userData.is_blocked) {
-                res.redirect('/login')
+                req.session.user_id=null
+                res.redirect('/home')
             } else {
                 next();
             }

@@ -343,7 +343,7 @@
                                             href="#tab-downloads">Wallet</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border "style="border-radius: 1rem;" id="tab-address-link"  href="/userAddress" >Addresses</a>
+                                        <a class="nav-link border active "style="border-radius: 1rem;" id="tab-address-link"  href="/userAddress" >Addresses</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link border " style="border-radius: 1rem;"id="tab-dashboard-link"  href="/changePassword" >Change password</a>
@@ -372,41 +372,47 @@
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active" id="tab-account" role="tabpanel"
                                             aria-labelledby="tab-account-link">
-                                            <form action="" class="p-5 shadow rounded bg-white">
+                                            <form action="/editAddress" method="post" class="p-5 shadow rounded bg-white">
                                                 <h2 class="mb-5 text-center">Edit Address</h2>
+                                                <% if(messages.length>0){%>
+                                                    <p style="color: red;"><%=messages%></p>
+                                                    <%}%>
                                                 <div class="row g-3">
                                                     <!-- Existing fields for name, email, age, gender, phone -->
-
+                                             
                                                     <!-- Additional fields for address details -->
                                                     <div class="col-md-6">
                                                         <label for="Name" class="form-label">Name</label>
-                                                        <input type="text" class="form-control" id="Name"
+                                                        <p id="errorname"></p>
+                                                        <input type="text" class="form-control" id="name" name="name" value="<%=address.name%>"
                                                             placeholder="Enter your Name" required>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="mobile" class="form-label">Mobile Number </label>
-                                                        <input type="text" class="form-control" id="mobbile"
+                                                        <p id="errorphone"></p>
+                                                        <input type="number" class="form-control" id="mobile" name="mobile" value="<%=address.mobile%>"
                                                             placeholder="10-digit number" required>
                                                     </div>
 
                                                     <div class="col-md-6">
                                                         <label for="postalCode" class="form-label">Postal Code</label>
-                                                        <input type="text" class="form-control" id="postalCode"
+                                                        <p id="erropin"></p>
+                                                        <input type="number" class="form-control" id="postalCode" name="pincode"  value="<%=address.pincode %>"
                                                             placeholder="Postal Code" required>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="locality" class="form-label">Locality</label>
-                                                        <input type="text" class="form-control" id="locality"
+                                                        <input type="text" class="form-control" id="locality" name="locality" value="<%=address.locality %>"
                                                             placeholder="Locality" required>
                                                     </div>
-
+                                                           <input type="hidden" name="id" value="<%=address._id%>" >
                                                     <div class="col-md-12">
                                                         <div class="mb-3">
                                                             <label for="Street Address" class="form-label">Address (Area
                                                                 and Street)</label>
-                                                            <textarea class="form-control" id="description"
-                                                                name="description" placeholder="" rows="3"
-                                                                required></textarea>
+                                                            <textarea class="form-control" id="streetAddress"
+                                                               rows="3" name="streetAddress"
+                                                                required><%= address.streetAddress %></textarea>
                                                         </div>
 
                                                     </div>
@@ -414,14 +420,14 @@
                                                     <div class="col-md-6">
                                                         <label for="city" class="form-label">City/District/Town</label>
                                                         <input type="text" class="form-control" id="city" placeholder=""
-                                                            required>
+                                                         value="<%= address.city %>"  name="city" required>
                                                     </div>
 
                                                     <div class="col-md-6">
                                                         <label for="country" class="form-label">State</label>
-                                                        <select class="form-select" id="country" required>
-                                                            <option selected>--Select State--</option>
-                                                            <option selected>--Select State--</option>
+                                                        <select class="form-select" name="state" id="state"  required>
+                                                            
+                                                            <option value="<%=address.state%>"><%=address.state%></option>
                                                             <option value="AP">Andhra Pradesh</option>
                                                             <option value="AR">Arunachal Pradesh</option>
                                                             <option value="AS">Assam</option>
@@ -456,18 +462,19 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="landmark" class="form-label">Landmark</label>
-                                                        <input type="text" class="form-control" id="city" placeholder="optional"
-                                                            required>
+                                                        <input type="text" class="form-control" name="landmark" id="landmark" placeholder="optional"
+                                                        >
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="alternatephone" class="form-label">Alternate Phone</label>
-                                                        <input type="text" class="form-control" id="city" placeholder="optional"
-                                                            required>
+                                                        <input type="text" class="form-control" id="alterPhone" name="alterPhone" placeholder="optional"
+                                                            >
                                                     </div>
                                                     <div class="col-4">
+                                                        <input type="hidden"  id="states" name="" value="<%=address.state%>">
                                                         <label for="addresstype" class="form-label">Address Type</label>
-                                                        <select class="form-select" id="country" required>
-                                                            <option selected>--Select--</option>
+                                                        <select class="form-select" name="addressType" id="addressType" required>
+                                                            <option selected><%=address.addressType%></option>
                                                             <option value="home">Home</option>
                                                             <option value="Work">Work</option>
 
@@ -496,24 +503,69 @@
 
 
                         </div>
-                    </div><!-- End .col-lg-9 -->
+                    </div>
 
-                </div><!-- End .row -->
-
-
-
-            </div><!-- End .container -->
-    </div><!-- End .dashboard -->
-    </div><!-- End .page-content -->
-    </main><!-- End .main -->
-    </div><!-- End .page-wrapper -->
+                </div>
 
 
+
+            </div>
+    </div>
+    </div>
+    </main>
+    </div>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+           const state= document.getElementById('states').value
+          document.getElementById('state').value = 'TG'; 
+        });
+      </script> -->
     <!-- Add Address Modal -->
 
 
     <div class="bg-black mt-5 " style="width: 100%; height: 50px;"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
 
+document.getElementById('name').addEventListener('blur',function(){
+    const errorname=document.getElementById('errorname')
+        const username=document.getElementById('name').value
+        if(!username ||username.trim()==''){
+            errorname.innerHTML='User name required'
+            errorname.style.color="red"
+      
+    }else{
+        errorname.innerHTML=''
+    }
+
+})
+
+document.getElementById('mobile').addEventListener('blur',function(){ 
+       const mobilenumber= this.value
+      
+       const errorphone=document.getElementById('errorphone')
+        if(mobilenumber.length!==10){
+            errorphone.innerHTML='Please Enter a valid Number'
+            errorphone.style.color='red'
+        }else{
+            errorphone.innerHTML=""
+        }
+    })
+
+    document.getElementById('postalCode').addEventListener('blur',function(){ 
+       const mobilenumber= this.value
+      
+       const errorphone=document.getElementById('erropin')
+        if(mobilenumber.length!==6){
+            errorphone.innerHTML='Please Enter a valid Pincode'
+            errorphone.style.color='red'
+        }else{
+            errorphone.innerHTML=""
+        }
+    })
+})
+  </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>

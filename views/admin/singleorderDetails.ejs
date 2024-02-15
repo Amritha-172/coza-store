@@ -100,7 +100,7 @@
                                     <div class="mb-3 row">
                                         <label class="col-sm-3 col-form-label">Customer:</label>
                                         <div class="col-sm-9">
-                                            <p class="form-control-plaintext"></p>
+                                            <p class="form-control-plaintext"><%= orderDetails.deliveryAddress.name %> </p>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
@@ -148,6 +148,7 @@
 document.addEventListener('DOMContentLoaded',function(){
     const updatebtn= document.getElementById('update')
     updatebtn.addEventListener('click',function(e){
+        
         const orderId=document.getElementById('orderId').value
         const selectedOrderStatus = document.getElementById('orderStatus').value;
         e.preventDefault()

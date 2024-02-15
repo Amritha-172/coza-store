@@ -74,7 +74,12 @@ userRoute.get('/ordersuccess',auth.isLogin,auth.isBlocked,orderController.orders
 userRoute.get('/orderpage',auth.isLogin,auth.isBlocked,orderController.orderpage)
 userRoute.get('/singleorder',auth.isLogin,orderController.singleorder)
 userRoute.get('/addAddress',auth.isLogin,auth.isBlocked,userController.addAddress)
-userRoute.get('/editAddress',auth.isLogin,auth.isBlocked,userController.editAddress)
+userRoute.get('/editAddress',auth.isLogin,auth.isBlocked,userController.loadeditAddress)
+userRoute.post('/editAddress',auth.isLogin,auth.isBlocked,userController.editAddress)
+userRoute.get('/deleteAddress',auth.isLogin,auth.isBlocked,userController.deleteAddress)
+
+
+
 userRoute.patch('/cancelorder',auth.isLogin,auth.isBlocked,orderController.cancelOrder)
 
 

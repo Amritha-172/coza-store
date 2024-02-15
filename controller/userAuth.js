@@ -295,6 +295,7 @@ const Homepage = async (req, res) => {
 
         let userData = req.session.user_id;
         let userdata = await user.findOne({ _id: userData ,is_blocked:false})
+       
         let productData = await products.find({ is_blocked: false, is_categoryBlocked: false })
 
         if (userdata) {
@@ -305,7 +306,7 @@ const Homepage = async (req, res) => {
                 userdata:userdata
             })
         } else {
-            req.session.user_id=null
+          
             res.render('user/user/home', {
                 
                 userName: null,

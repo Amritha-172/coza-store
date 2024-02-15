@@ -1,5 +1,8 @@
 const product = require('../models/productModel')
 const category = require('../models/categoryModel')
+const fs = require('fs').promises
+const path=require('path')
+const { find } = require('../models/cartModel')
 
 
 const loadProduct = async (req, res) => {
@@ -104,8 +107,8 @@ const loadeditProduct = async (req, res) => {
         const { id} = req.query
         const products = await product.findOne({ _id: id })
         const categories = await category.find({})
-        console.log(categories);
-        console.log(products);
+        
+ 
         res.render('editProducts', { product: products,category:categories,})
 
     } catch (error) {
@@ -130,8 +133,8 @@ const editProduct = async (req, res) => {
      
         const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, offer: offer, size: size, color: color, image: array } })
         console.log(edit);
-        if (edit.modifiedCount===1) {
-              console.log(edit.modifiedCount===1);
+        if (edit) {
+              console.log(edit);
               res.status(200).json({success:true})
          
         }
@@ -141,7 +144,18 @@ const editProduct = async (req, res) => {
 }
 
 const deleteProduct=async(req,res)=>{
+
     try {
+        const {preview,filename,id}=req.body  
+        const fullpath=path.join(__dirname,"..","public",preview)
+        console.log(fullpath);
+        await fs.unlink(fullpath);
+         
+
+      const result = await product.updateOne({_id:id},{$pull:{image:filename}})
+      console.log(result);
+       
+        res.status(200).json({success:true})
         
     } catch (error) {
         console.log("error in delete product");

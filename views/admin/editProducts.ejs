@@ -103,6 +103,9 @@
 
             <div class="content">
                 <h1>EDIT PRODUCT</h1>
+                <% if(messages.length>0){%>
+                    <p style="color: red;"><%=messages%></p>
+                    <%}%>
                 <!-- Inside your form for editing product details -->
                 <form class="" >
                     <div class="add">
@@ -213,8 +216,11 @@
 
 
     function deleteImage(inputId, previewId) {
-
-    axios.post('/deleteImage',{inputId,previewId})
+        const id=document.getElementById('id').value
+        var preview = document.getElementById(previewId).getAttribute('src')
+        const segments = preview.split('/');
+            const filename = segments[segments.length - 1]
+         axios.post('/admin/deleteImage',{preview,filename,id})
 
     .then(res=>{
         if(res.data.success){
@@ -235,6 +241,7 @@
             const oldurl = preview.src
             const segments = oldurl.split('/');
             const filename = segments[segments.length - 1];
+            console.log(filename);
               oldimageUrl.push(filename)
            
 

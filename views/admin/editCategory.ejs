@@ -49,7 +49,9 @@
 
             <div class="content">
                 <h1>EDIT CATEGORY</h1>
-                
+                <% if(messages.length>0){%>
+                    <p style="color: red;"><%=messages%></p>
+                    <%}%>
                 <form class=" " action="/admin/editcategory" method="post">
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name</label>
