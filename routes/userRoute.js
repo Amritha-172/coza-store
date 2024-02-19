@@ -5,19 +5,13 @@ const userAuth=require('../controller/userAuth')
 const userController=require("../controller/userController")
 const cartController=require('../controller/cartController')
 const orderController=require('../controller/orderController')
-
+const paymentController=require('../controller/paymentController')
+const productControlller = require('../controller/ProductController');
+const couponController=require('../controller/couponController')
 const  userRoute=express()
     
 
 
-// userRoute.set("view engine",'ejs')
-// userRoute.set("views","./views/user")
-
-
-
-
-// userRoute.get('/',auth.isLogin,userAuth.Homepage)
-// userRoute.post('/',userAuth.Homepage)
 userRoute.get('/',userAuth.Homepage)
 userRoute.get('/home',auth.isLogin,userAuth.Homepage)
 userRoute.get('/login',auth.isLogout,userAuth.userLogin)
@@ -50,6 +44,7 @@ userRoute.get('/shoppingcart',auth.isLogin,auth.isBlocked,cartController.shoppin
 userRoute.get('/product',auth.isLogin,auth.isBlocked,userController.singleProduct)
 userRoute.post('/addcart',auth.isLogin,auth.isBlocked,cartController.addToCart)
 userRoute.get('/addcart/:id',auth.isLogin,auth.isBlocked,cartController.itemExist)
+userRoute.post('/checkStock',auth.isLogin,auth.isBlocked,cartController.checkStock)
 userRoute.patch('/editprice',auth.isLogin,auth.isBlocked,cartController.editPrice)
 userRoute.post('/removeProduct',auth.isBlocked,cartController.removeProduct)
 
@@ -60,14 +55,26 @@ userRoute.get('/changePassword',auth.isLogin,auth.isBlocked,userController.chang
 userRoute.post('/check-password',auth.isLogin,auth.isBlocked,userController.checkpass)
 userRoute.post('/passwordChange',auth.isLogin,auth.isBlocked,userController.updatePass)
 
+userRoute.get('/wallet',auth.isLogin,auth.isBlocked,userController.wallet)
 
-userRoute.post('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
-userRoute.post('/checkname',auth.isLogin,auth.isBlocked,orderController.checkname)
-userRoute.post('/placeorder',auth.isLogin,auth.isBlocked,orderController.placeorder)
+userRoute.get('/coupon',auth.isLogin,auth.isBlocked,couponController.usercoupon)
+userRoute.post('/coupoCheck',auth.isLogin,auth.isBlocked,couponController.checkCoupon)
+
+userRoute.get('/wishlist',auth.isLogin,auth.isBlocked,userController.wishlist)
+userRoute.post('/wishlist',auth.isLogin,auth.isBlocked,userController.addWishlist)
+userRoute.post('/checkwishlist',userController.checkWishlist)
+userRoute.post('/removeWhishlist',auth.isLogin,auth.isBlocked,userController.removeWishlist)
 
 userRoute.get('/userAddress',auth.isLogin,auth.isBlocked,userController.address)
 userRoute.post('/AddressSave',auth.isLogin,auth.isBlocked,orderController.addAddress)
 userRoute.post('/userAddressSave',auth.isLogin,auth.isBlocked,orderController.useraddAddress)
+
+userRoute.post('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
+userRoute.post('/checkname',auth.isLogin,auth.isBlocked,orderController.checkname)
+userRoute.post('/placeorder',auth.isLogin,auth.isBlocked,orderController.placeorder)
+userRoute.post('/createOrder',auth.isLogin,paymentController.createorder)
+userRoute.post('/verifiaction',auth.isLogin,paymentController.verifypayment)
+
 
 userRoute.get('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
 userRoute.get('/ordersuccess',auth.isLogin,auth.isBlocked,orderController.ordersuccess)
@@ -79,8 +86,10 @@ userRoute.post('/editAddress',auth.isLogin,auth.isBlocked,userController.editAdd
 userRoute.get('/deleteAddress',auth.isLogin,auth.isBlocked,userController.deleteAddress)
 
 
-
+userRoute.get('/products',auth.isLogin,auth.isBlocked,productControlller.findbyCategory)
 userRoute.patch('/cancelorder',auth.isLogin,auth.isBlocked,orderController.cancelOrder)
+
+
 
 
 

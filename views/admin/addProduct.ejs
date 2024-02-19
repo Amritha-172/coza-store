@@ -81,8 +81,9 @@
                             </div>
                         </div>
                         <div class="mb-3">
+                            <p id="error"></p>
                             <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" value="120" required>
+                            <input type="number" class="form-control" id="price" name="price" value="" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">description</label>
@@ -93,17 +94,17 @@
 
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" value="10" required>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="size" class="form-label">Size</label>
-                            <input type="text" class="form-control" id="size" name="size" value="Medium" required>
+                            <input type="text" class="form-control" id="size" name="size" value="" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color" name="color" value="Blue" required>
+                            <input type="text" class="form-control" id="color" name="color" value="" required>
                         </div>
 
                         <div class="mb-3">
@@ -180,6 +181,20 @@
                 
 
              })
+             document.getElementById('price').addEventListener('blur',function(e){
+            e.preventDefault()
+              const price=  document.getElementById('price').value
+              if(price<1){
+                const error=document.getElementById('error')
+                   error.innerHTML="Please Eneter Valid number"
+                   error.style.color='red'
+
+              }else{
+                error.innerHTML=" "
+              }
+
+           })
+
 
         })
         </script>

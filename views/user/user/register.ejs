@@ -101,7 +101,7 @@
 
                 <div class="d-flex justify-content-center ">
                     
-                       <button type="submit" class="btn btn-primary " >Signup</button>
+                       <button type="submit" id="signbtn" class="btn btn-primary " >Signup</button>
                 </div>
             </form>
             <div class="login-link">
@@ -125,20 +125,26 @@
         const errorEmail=document.getElementById('errorEmail')
         const name=document.getElementById('name')
         const errorname=document.getElementById('errorname')
+        const registerBtn=document.getElementById('signbtn')
        
         document.getElementById('password').addEventListener('blur',function(){
              const pass=this.value
              const passwordErr= document.getElementById('passwordErr')
              if(pass.length === 0){
+
             passwordErr.innerHTML = 'Password is required'
             passwordErr.style.color='red'
+            registerBtn.disabled=true 
         }else if(pass.length < 8) {
             passwordErr.innerHTML = 'Password min length is 8'
             passwordErr.style.color='red'
+            registerBtn.disabled=true 
         }else if(!pass||pass.trim()==""){
             passwordErr.innerHTML = "Phone number is required"
+            passwordErr.style.color='red'
         }else{
-            passwordErr.innerHTML=""
+            passwordErr.innerHTML=" "
+            registerBtn.disabled=false
         }
 
         })
@@ -187,9 +193,12 @@
             if(mobilenumber.length!==10){
                 errorphone.innerHTML='Please Enter a valid Number'
                 errorphone.style.color='red'
-            }else{
-                errorphone.innerHTML=""
-            }
+                registerBtn.disabled=true 
+             }else{
+                errorphone.innerHTML=''
+            registerBtn.disabled=false
+
+           }
         })
       
 

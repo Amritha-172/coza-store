@@ -42,13 +42,17 @@
 	<script src="vendor/sweetalert/sweetalert.min.js"></script>
     <!-- Additional styles for the order success page -->
     <style>
+		body{
+			background-color:rgb(241, 243, 246);
+		}
         .order-success {
             padding: 20px;
             max-width: 800px;
             margin: auto;
         }
         .order-details {
-            background-color: #f4f4f4;
+			
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
         }
@@ -263,10 +267,10 @@
     <h2 class="text-center text-success ">Thank You for Your Order!</h2>
     <p class="text-center">Your order has been placed and is being processed. You will receive an email confirmation shortly.</p>
 
-    <div class="order-details">
+    <div class="order-details border shadow " >
         <h4 class="mb-3 " style="color: #7280e0;">Order Summary</h4>
         <p class="mb-2"><strong >Order Number:</strong> #MN0124</p>
-        <p class="mb-2"><strong>Total:</strong> $<%=orderDetail.orderAmount%></p>
+        <p class="mb-2"><strong>Total:</strong> ₹<%=orderDetail.orderAmount%></p>
         <p class="mb-2"><strong>Order Date:</strong> <%=formattedCreatedAt%></p>
         <p class="mb-2"><strong>Payment Method:</strong><%=orderDetail.paymentMethod%> </p>
         

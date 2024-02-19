@@ -80,12 +80,8 @@
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li>
-								<a href="index.html">Home</a>
-								<ul class="sub-menu">
-									<li><a href="index.html">Homepage 1</a></li>
-									<li><a href="home-02.html">Homepage 2</a></li>
-									<li><a href="home-03.html">Homepage 3</a></li>
-								</ul>
+								<a href="/home">Home</a>
+								
 							</li>
 
 							<li>
@@ -116,13 +112,11 @@
 							<i class="zmdi zmdi-search"></i>
 						</div>
 
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11  "
-							data-notify="2">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11  " data-notify="2">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 "
-							data-notify="0">
+						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 " data-notify="0">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -376,9 +370,11 @@
 										</td>
 										<td class="column-2">
 											<%=item.productDetails.productName%>
+												<p id="stock" style="color: red; display: none;"><strong>out of
+														Stock</strong></p>
 										</td>
 										<td class="column-3 productprice" data-price="<%=item.productDetails.price%>"
-											id="p<%=i%>">$ <%=item.productDetails.price%>
+											id="p<%=i%>">₹ <%=item.productDetails.price%>
 										</td>
 										<td class="column-4">
 											<div class="wrap-num-product flex-w m-l-auto m-r-0">
@@ -397,7 +393,7 @@
 												</div>
 											</div>
 										</td>
-										<td class="column-5 totalPrice" id="t<%=i%>">$ <%=item.price%>
+										<td class="column-5 totalPrice" id="t<%=i%>">₹ <%=item.price%>
 										</td>
 										<td>
 											<button class="btn btn-danger remove-btn"
@@ -412,23 +408,10 @@
 
 							</table>
 						</div>
-
-						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-							<div class="flex-w flex-m m-r-20 m-tb-5">
-								<input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text"
-									name="coupon" placeholder="Coupon Code">
-
-								<div
-									class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-									Apply coupon
-								</div>
-							</div>
-
-							<div
-								class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-								Update Cart
-							</div>
+						<div class="">
+							<p id="errCpn" style="color: red; margin-left: 100px;"></p>
 						</div>
+						
 					</div>
 				</div>
 
@@ -452,7 +435,7 @@
 
 											<div class="size-200">
 												<span class="mtext-110 cl2 p-5" id="Amount">
-													$ <%= totalPrice %>
+													₹ <%= totalPrice %>
 												</span>
 											</div>
 
@@ -465,7 +448,7 @@
 							</div>
 							<div class="size-200 pl-5 ">
 								<span class="mtext-110 cl2 p-5">
-									
+
 								</span>
 							</div>
 						</div>
@@ -484,23 +467,25 @@
 
 						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
-								<span class="mtext-101 cl2" >
+								<span class="mtext-101 cl2">
 									Total:
 								</span>
 							</div>
 
 							<div class="size-209 p-t-1">
 								<span class="mtext-110 cl2" id="Total">
-									$ <%=totalPrice%>
+									₹ <%=totalPrice%>
 								</span>
 							</div>
 						</div>
 						<%if(cartItems.length>0){%>
-                           <input type="hidden" id="totalamount" name="totalpice" value="<%=totalPrice%>">
-						<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" value="<%=totalPrice%>">
-						Proceed to Checkout
-						</button>
-						<%}%>
+							<input type="hidden" id="totalamount" name="totalpice" value="<%=totalPrice%>">
+							<button type="submit" id="proceedPay"
+								class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+								value="<%=totalPrice%>">
+								Proceed to Checkout
+							</button>
+							<%}%>
 					</div>
 				</div>
 			</div>
@@ -677,15 +662,29 @@
 			const btnDecrease = document.querySelectorAll('.btn-num-product-down');
 			const btnIncrease = document.querySelectorAll('.btn-num-product-up');
 			const total = document.getElementById('Total')
+			const proceedPay = document.getElementById('proceedPay')
 
 			function updateTotalPrice(id, inputQuantity, PriceElement, productId) {
-			   const totalamount=document.getElementById('totalamount')
+				const totalamount = document.getElementById('totalamount')
 				const productPrice = PriceElement.getAttribute('data-price')
-
+				const stock = document.getElementById('stock')
 				const quantity = parseInt(inputQuantity.value, 10);
 				const totalPrice = (quantity * productPrice)
 				const totalPriceElement = document.getElementById(id)
 				totalPriceElement.innerText = '$ ' + totalPrice;
+
+				axios.post('/checkStock', { productId, quantity })
+					.then(res => {
+						if (res.data.success) {
+							stock.style.display = 'block'
+							proceedPay.disabled = true
+						} else {
+							stock.style.display = 'none'
+							proceedPay.disabled = false
+						}
+					}).catch(err => {
+						console.log('error', err);
+					})
 
 				axios.patch('/editprice', { totalPrice, productId, quantity })
 					.then(res => {
@@ -693,9 +692,9 @@
 							const amount = document.getElementById('Amount')
 							const total = document.getElementById('Total')
 							amount.innerHTML = '$ ' + res.data.newTotal;
-							total.innerHTML = '$ ' + (res.data.newTotal )
+							total.innerHTML = '$ ' + (res.data.newTotal)
 
-                            totalamount.value=res.data.newTotal 
+							totalamount.value = res.data.newTotal
 
 						}
 					}).catch(err => {
@@ -741,7 +740,7 @@
 		document.addEventListener('DOMContentLoaded', function () {
 
 			const removeElement = document.querySelectorAll('.remove-btn')
-
+			
 
 			removeElement.forEach(button => {
 				button.addEventListener("click", function (e) {
@@ -751,18 +750,21 @@
 					axios.post('/removeProduct', { productId })
 						.then(res => {
 							if (res.data.success) {
-						
-								window.location.href='/shoppingcart'
+
+								window.location.href = '/shoppingcart'
 							}
 
 						}).catch(err => {
-					console.log('error');
-				})	
+							console.log('error');
+						})
 
 
 				})
 
 			})
+
+			
+
 
 
 		})

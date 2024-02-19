@@ -91,12 +91,8 @@
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li>
-								<a href="index.html">Home</a>
-								<ul class="sub-menu">
-									<li><a href="index.html">Homepage 1</a></li>
-									<li><a href="home-02.html">Homepage 2</a></li>
-									<li><a href="home-03.html">Homepage 3</a></li>
-								</ul>
+								<a href="/home">Home</a>
+								
 							</li>
 
 							<li>
@@ -314,7 +310,7 @@
 						</h4>
 
 						<span class="mtext-106 cl2">
-							$<%=product.price%>
+							₹<%=product.price%>
 						</span>
 
 						<p class="stext-102 cl3 p-t-23">
@@ -1295,7 +1291,7 @@
 				} else {
 
 
-					const quantity = document.querySelector('#quantity').value; // Moved inside the click event listener
+					const quantity = document.querySelector('#quantity').value;
 
 					axios.post(`/addcart`, { productId: id, quantity })
 						.then(res => {

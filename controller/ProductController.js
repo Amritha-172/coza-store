@@ -54,8 +54,6 @@ const addProduct = async (req, res) => {
                 offer: details.offer,
                 description: details.description,
 
-
-
             })
             const save = await products.save()
             if (save) {
@@ -162,6 +160,16 @@ const deleteProduct=async(req,res)=>{
     }
 }
 
+const findbyCategory=async(req,res)=>{
+    try {
+        
+        
+    } catch (error) {
+        console.log();
+    }
+}
+
+
 module.exports = {
     loadProduct,
     loadAddProduct,
@@ -170,5 +178,6 @@ module.exports = {
     listProduct,
     loadeditProduct,
     editProduct,
-    deleteProduct
+    deleteProduct,
+    findbyCategory
 }

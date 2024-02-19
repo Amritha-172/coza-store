@@ -319,13 +319,7 @@ const Homepage = async (req, res) => {
         console.log("error in home after login:", error);
     }
 }
-const home = async (req, res) => {
-    try {
-        res.render('user/user/home')
-    } catch (error) {
-        console.log('error in home:', error);
-    }
-}
+
 
 const shop = async (req, res) => {
     try {
@@ -361,7 +355,6 @@ module.exports = {
     Homepage,
     verifyOtp,
     shop,
-    home,
     checkEmail,
     resendOtp,
     forgotPass,

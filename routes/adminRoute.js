@@ -5,7 +5,7 @@ const adminAuth=require('../controller/adminAuth')
 const adminController=require('../controller/adminController');
 const products = require('../controller/ProductController');
 const multer=require('../middleware/multerMiddleware')
-
+const couponController=require('../controller/couponController')
 
 admin_route.set("view engine",'ejs')
 admin_route.set("views","./views/admin")
@@ -46,6 +46,13 @@ admin_route.get('/singleorderview',adminMiddleware.isLogin,adminController.singl
 admin_route.post('/updatestatus',adminMiddleware.isLogin,adminController.updateSts)
 
 
+admin_route.get('/Coupon',adminMiddleware.isLogin,couponController.coupon)
+admin_route.post('/Coupon',adminMiddleware.isLogin,couponController.addCoupon)
+admin_route.post('/updatecoupon',adminMiddleware.isLogin,couponController.updateCoupon)
+admin_route.post('/editCoupon',adminMiddleware.isLogin,couponController.editCoupon)
+admin_route.post('/deletecoupon',adminMiddleware.isLogin,couponController.deleteCoupon)
+
+admin_route.get('/offer',adminMiddleware.isLogin,adminController.offer)
+
 
 module.exports = admin_route;
-    

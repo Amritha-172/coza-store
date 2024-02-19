@@ -8,29 +8,27 @@ const addToCart = async (req, res) => {
     try {
       
       let { productId, quantity } = req.body;
-         console.log(productId);
+       
          quantity=Number(quantity)
       const userId = req.session.user_id; 
    
 
-      // Find the product to get its price
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).send('Product not found');
       }
   
-      // Calculate the price based on the quantity
       const price = product.price * quantity;
   
-      // Check if the cart item already exists for this user and product
+      
       let cartItem = await Cart.findOne({ userId: userId, productId: productId });
   
       if (cartItem) {
-        // If the cart item exists, update its quantity and price
+        
         cartItem.quantity += quantity;
         cartItem.price += price;
       } else {
-        // If the cart item does not exist, create a new cart item
+       
         
         cartItem = new Cart({
           userId: userId,
@@ -40,7 +38,7 @@ const addToCart = async (req, res) => {
         });
       }
   
-      // Save the cart item
+      
       const savedCartItem = await cartItem.save();
         console.log("add to cart success");
   
@@ -53,10 +51,11 @@ const addToCart = async (req, res) => {
 
 const itemExist=async(req,res)=>{
     try {
+      const userId=req.session.user_id
       const id=new ObjectId(req.params.id)
         console.log('productId:',id);
         
-        const exist =await Cart.findOne({productId:id})
+        const exist =await Cart.findOne({productId:id,userId:userId})
              console.log('exist:',exist);
         if(exist){
             res.status(200).json({exist:true})
@@ -136,7 +135,8 @@ const editPrice=async(req,res)=>{
 const removeProduct=async(req,res)=>{
   try {
     const {productId}=req.body
-       const remove=await Cart. deleteOne({productId:productId}) 
+       const remove=await Cart.deleteOne({productId:productId}) 
+      
        if(remove){
         res.status(200).json({success:true})
        }
@@ -144,7 +144,21 @@ const removeProduct=async(req,res)=>{
      console.log('error in remove product',error);
   }
 }
-
+const checkStock=async(req,res)=>{
+  try {
+    const{productId,quantity}=req.body
+    console.log(productId);
+    const product= await Product.findOne({_id:productId})
+    if(product && product.quantity >= quantity){
+       res.json({success:false})
+    }else{
+      res.json({success:true})
+    }
+    
+  } catch (error) {
+    console.log('error in checkstock');
+  }
+}
 
 module.exports={
     addToCart,
@@ -152,5 +166,6 @@ module.exports={
     shoppingcart,
     checkout,
     editPrice,
-    removeProduct
+    removeProduct,
+    checkStock
 }

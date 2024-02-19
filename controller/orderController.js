@@ -3,100 +3,102 @@ const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
 const { deleteMany } = require('../models/otpModel');
 const product = require('../models/productModel')
+const payment = require('../models/paymentModel')
+const wallet = require('../models/walletModel');
 
 
-const useraddAddress=async(req,res)=>{
+const useraddAddress = async (req, res) => {
     try {
 
-      const userId=req.session.user_id;
-      console.log(req.body);
-       const {addressType,alternativePhone,landmark,mobile,state,city,streetAddress,locality,pincode,name}=req.body
-      
-      const newAddress=new address({
-        userId:userId,
-        name:name,
-        mobile:mobile,
-        pincode:pincode,
-        addressType:addressType,
-        streetAddress:streetAddress,
-        city:city,
-        landmark:landmark,
-        alterPhone:alternativePhone,
-        locality:locality,
-        state:state
-        
-      })
-     const save = await newAddress.save()
-     console.log(save);
-     if(save){
-         res.redirect('/userAddress')
+        const userId = req.session.user_id;
+        console.log(req.body);
+        const { addressType, alternativePhone, landmark, mobile, state, city, streetAddress, locality, pincode, name } = req.body
 
-     }else{
-        res.status(400).json({success:false})
-    }
-    
+        const newAddress = new address({
+            userId: userId,
+            name: name,
+            mobile: mobile,
+            pincode: pincode,
+            addressType: addressType,
+            streetAddress: streetAddress,
+            city: city,
+            landmark: landmark,
+            alterPhone: alternativePhone,
+            locality: locality,
+            state: state
+
+        })
+        const save = await newAddress.save()
+        console.log(save);
+        if (save) {
+            res.redirect('/userAddress')
+
+        } else {
+            res.status(400).json({ success: false })
+        }
+
     } catch (error) {
-        console.log('error in add address',error);
+        console.log('error in add address', error);
     }
 }
-const addAddress=async(req,res)=>{
+const addAddress = async (req, res) => {
     try {
 
-      const userId=req.session.user_id;
-      console.log(req.body);
-       const {addressType,alternativePhone,landmark,mobile,state,city,streetAddress,locality,pincode,name}=req.body
-      
-       if(!name||name.trim()==" "){
-          req.flash('message',"user Name is required")
-          return res.redirect('/user/addAddress')
-       }
-       
-       if(mobile.lenght!==10){
-        req.flash('message',"Please Enter Valid Number")
-        return res.redirect('/user/addAddress')
-       }
-       
-       if(pincode!==6){
-        req.flash('message',"Please Enter Valid Pincode")
-        return res.redirect('/user/addAddress')
-       }
+        const userId = req.session.user_id;
+        console.log(req.body);
+        const { addressType, alternativePhone, landmark, mobile, state, city, streetAddress, locality, pincode, name } = req.body
+
+        //    if(!name||name.trim()==" "){
+        //       req.flash('message',"user Name is required")
+        //       return res.redirect('/user/addAddress')
+        //    }
+
+        //    if(mobile.lenght!==10){
+        //     req.flash('message',"Please Enter Valid Number")
+        //     return res.redirect('/user/addAddress')
+        //    }
+
+        //    if(pincode!==6){
+        //     req.flash('message',"Please Enter Valid Pincode")
+        //     return res.redirect('/user/addAddress')
+        //    }
 
 
-      const newAddress=new address({
-        userId:userId,
-        name:name,
-        mobile:mobile,
-        pincode:pincode,
-        addressType:addressType,
-        streetAddress:streetAddress,
-        city:city,
-        landmark:landmark,
-        alterPhone:alternativePhone,
-        locality:locality,
-        state:state
-        
-      })
-     const save = await newAddress.save()
-     console.log(save);
-     if(save){
-         res.redirect('/checkout')
+        const newAddress = new address({
+            userId: userId,
+            name: name,
+            mobile: mobile,
+            pincode: pincode,
+            addressType: addressType,
+            streetAddress: streetAddress,
+            city: city,
+            landmark: landmark,
+            alterPhone: alternativePhone,
+            locality: locality,
+            state: state
 
-     }else{
-        res.status(400).json({success:false})
-    }
-    
+        })
+        const save = await newAddress.save()
+        console.log(save);
+        if (save) {
+            res.redirect('/checkout')
+
+        } else {
+            res.status(400).json({ success: false })
+        }
+
     } catch (error) {
-        console.log('error in add address',error);
+        console.log('error in add address', error);
     }
 }
-const checkname=async(req,res)=>{
+const checkname = async (req, res) => {
     try {
-        const {name}=req.body
+        const { name } = req.body
         console.log(name);
-        if(!name ||name.trim()==''){
-            res.json({success:false})
-        }else{
-            res.json({success:true})
+        if (!name || name.trim() == '') {
+            res.json({ success: false })
+        } else {
+            res.json({ success: true })
         }
     } catch (error) {
         console.log('error in check name');
@@ -105,120 +107,195 @@ const checkname=async(req,res)=>{
 
 
 
- const placeorder=async(req,res)=>{
+const placeorder = async (req, res) => {
     try {
-          const {newTotal ,selectedAddress,selectedPaymentMethod}=req.body
-          const userId=req.session.user_id
-        const cartItems=await Cart.find({userId:userId})
-        
-         const orderedItem=await cartItems.map(item=>({
+        const { transactionId } = req.query
+        console.log("razorpay", transactionId);
+        const { Amount, selectedAddress, selectedPaymentMethod } = req.body
+        const userId = req.session.user_id
+        const cartItems = await Cart.find({ userId: userId })
+        console.log("cart items", cartItems);
+        const orderedItem = await cartItems.map(item => ({
             productId: item.productId,
             quantity: item.quantity
-         }))
+        }))
 
-         for(let item of orderedItem ){
+        for (let item of orderedItem) {
             const { productId, quantity } = item
-         const products = await product.updateOne({_id:productId},{$inc:{quantity:-quantity}});
-            console.log('update product',product);
-         }
-         
 
-         const order=new Order({
-            userId:userId,
-            cartId:cartItems.map(item => item._id),
-            oderedItem:orderedItem,
-            orderAmount:newTotal,
-            deliveryAddress:selectedAddress,
-            paymentMethod:selectedPaymentMethod,
-            orderStatus:'pending'
-         })
-       const save=  await order.save()
+            const products = await product.updateOne({ _id: productId }, { $inc: { quantity: -quantity } });
 
-     const del=await Cart.deleteMany({userId:userId})
-     
-     console.log(del);
-       console.log(save);
-       if(save){
-          res.status(200).json({success:true})
-       }
-       else{
-        res.status(302).json({success:false})
-       }
-            
-        
+        }
+
+
+        const order = new Order({
+            userId: userId,
+            cartId: cartItems.map(item => item._id),
+            oderedItem: orderedItem,
+            orderAmount: Amount,
+            deliveryAddress: selectedAddress,
+            paymentMethod: selectedPaymentMethod,
+            orderStatus: 'pending'
+        })
+        const save = await order.save()
+
+        const del = await Cart.deleteMany({ userId: userId })
+        if (selectedPaymentMethod == "COD") {
+            const Payment = new payment({
+                userId: userId,
+                orderId: order._id,
+                amount: Amount ,
+                status: 'pending',
+                paymentMethod: selectedPaymentMethod
+
+            })
+            await Payment.save()
+        } else {
+            const Payment = new payment({
+                userId: userId,
+                orderId: order._id,
+                amount: Amount,
+                status: 'completed',
+                paymentMethod: selectedPaymentMethod,
+                transactionId: transactionId
+
+            })
+            await Payment.save()
+
+        }
+        if (save) {
+            console.log("orderId", order._id);
+            res.status(200).json({ success: true, orderId: order._id })
+
+        }
+        else {
+            res.status(302).json({ success: false })
+        }
+
+
 
 
 
     } catch (error) {
-           console.log('error in place order page',error);
+        console.log('error in place order page', error);
     }
- }
- const ordersuccess=async(req,res)=>{
+}
+const ordersuccess = async (req, res) => {
     try {
-        const userId=req.session.user_id
-        const orderDetail=await Order.findOne({userId:userId}).populate('userId').populate('deliveryAddress')
-           console.log("order details",orderDetail);
+
+        const { orderId } = req.query
+        const orderDetail = await Order.findOne({ _id: orderId }).populate('userId').populate('deliveryAddress')
+        console.log("order details", orderDetail);
         const formattedCreatedAt = orderDetail.createdAt.toLocaleDateString('en-US', {
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric', 
-          });
-          
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+
         console.log(orderDetail.deliveryAddress);
 
-        
-          console.log(formattedCreatedAt);
 
-        res.render('user/orderSuccess',{orderDetail,formattedCreatedAt})
+        console.log(formattedCreatedAt);
+
+        res.render('user/orderSuccess', { orderDetail, formattedCreatedAt })
     } catch (error) {
         console.log('error in order details page');
     }
- }
- const  orderpage=async(req,res)=>{
+}
+const orderpage = async (req, res) => {
     try {
-        const userId=req.session.user_id
-    
-        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId')
-   
-        res.render('user/user/orderpage',{orderDetails})
-        
-        
-    } catch (error) {
-        console.log('error in orderpage',error);
-    }
- }
+        const userId = req.session.user_id
 
- const singleorder=async(req,res)=>{
-     try {
-    const orderId=req.query.orderId
-    const productId=req.query.productId
-    console.log(orderId);
-      const orderDetails =await Order.findOne({_id:orderId}).populate('deliveryAddress')
-     const productDetails= await product.findOne({_id:productId})
-        
-      
-        res.render('user/user/singleOrder',{orderDetails,productDetails})
-        
-     } catch (error) {
-        console.log("error in singleorder");
-     }
- }
- const cancelOrder=async(req,res)=>{
+        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId')
+
+        res.render('user/user/orderpage', { orderDetails })
+
+
+    } catch (error) {
+        console.log('error in orderpage', error);
+    }
+}
+
+const singleorder = async (req, res) => {
     try {
-             const {orderId}=req.body
-             console.log(orderId);
-             const cancel=await Order.updateOne({_id:orderId},{$set:{orderStatus:"cancelled"}})
-             if(cancel){
-             res.status(200).json({success:true})
-             }else{
-                res.status(302).json({success:false})
+        const orderId = req.query.orderId
+        const productId = req.query.productId
+        console.log(orderId);
+        console.log("productId", productId);
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate({ path: 'oderedItem.productId' })
+
+        const products = orderDetails.oderedItem
+
+
+        const matchedItem = await products.find(item => item.productId._id.toString() === productId)
+
+        res.render('user/user/singleOrder', { orderDetails, productDetails: matchedItem })
+
+    } catch (error) {
+        console.log("error in singleorder");
     }
-} catch (error) {
-        console.log('error in cancel order',error);
+}
+const cancelOrder = async (req, res) => {
+    try {
+        const userId = req.session.user_id
+        const { orderId, productId } = req.body
+
+        console.log(orderId, productId);
+        const order = await Order.findOne({ _id: orderId }).populate({ path: 'oderedItem.productId' })
+        const products = order.oderedItem
+        const matchedItem = await products.find(item => item.productId._id.toString() === productId)
+        console.log('matched count', matchedItem);
+
+        const qnty = matchedItem.quantity
+        const amount = matchedItem.productId.price
+
+        const cancel = await Order.updateOne({ _id: orderId, 'oderedItem.productId': productId }, { $set: { 'oderedItem.$.productStatus': "cancelled" } })
+
+        if (order.paymentMethod !== "COD") {
+            const totalAmount = qnty * amount
+            const paymentDetails = await payment.findOne({ orderId: orderId });
+            const isExistWallet = await wallet.findOne({ userId: userId })
+
+            if (!isExistWallet) {
+
+                const newWallet = new wallet({
+                    userId: userId,
+                    balance: totalAmount,
+                    tratransaction: [{
+                        amount: totalAmount,
+                        transactionsMethod: "Refund",
+                    }]
+
+                })
+
+                await newWallet.save()
+            } else {
+
+                await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: {   transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
+
+            }
+
+
+        }else{
+            const totalAmount = qnty * amount
+            const isExistWallet = await wallet.findOne({ userId: userId })
+
+
+        }
+
+        if (cancel) {
+            await product.updateOne({ _id: productId }, { $inc: { quantity: qnty } })
+
+            res.status(200).json({ success: true, })
+        } else {
+            res.status(302).json({ success: false })
+        }
+    } catch (error) {
+        console.log('error in cancel order', error);
     }
- }
- 
-module.exports={
+}
+
+module.exports = {
     addAddress,
     checkname,
     ordersuccess,

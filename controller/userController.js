@@ -4,7 +4,8 @@ const product = require('../models/productModel')
 const Address = require('../models/addressModal');
 const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
-
+const Wallet=require('../models/walletModel');
+const moment = require('moment')
 
 const securePassword = async (password) => {
     try {
@@ -31,7 +32,7 @@ const profile = async (req, res) => {
         let userData = await User.findOne({ _id: req.session.user_id, is_blocked: false })
         let address = null
         if (userData) {
-            res.render('user/user/profile', { userData: userData, Address: address })
+            res.render('user/user/profile', {userData, Address: address })
         } else {
             res.render('error')
         }
@@ -201,20 +202,20 @@ const addAddress=async(req,res)=>{
   const editAddress=async(req,res)=>{
    try {
     const {name,mobile,pincode,locality,streetAddress,city,state,landmark,addressType,id}=req.body
-    if(!name||name.trim()==" "){
-        req.flash('message',"user Name is required")
-        return res.redirect('/user/addAddress')
-     }
+    // if(!name||name.trim()==" "){
+    //     req.flash('message',"user Name is required")
+    //     return res.redirect('/user/addAddress')
+    //  }
      
-     if(mobile.lenght!==10){
-      req.flash('message',"Please Enter Valid Number")
-      return res.redirect('/user/addAddress')
-     }
+    //  if(mobile.lenght!==10){
+    //   req.flash('message',"Please Enter Valid Number")
+    //   return res.redirect('/user/addAddress')
+    //  }
      
-     if(pincode!==6){
-      req.flash('message',"Please Enter Valid Pincode")
-      return res.redirect('/user/addAddress')
-     }
+    //  if(pincode!==6){
+    //   req.flash('message',"Please Enter Valid Pincode")
+    //   return res.redirect('/user/addAddress')
+    //  }
 
  
     const details=await Address.updateOne({_id:id},{$set:{name:name,mobile:mobile,pincode:pincode,locality:locality,streetAddress:streetAddress,city:city,state:state,landmark:landmark,addressType:addressType}})
@@ -238,7 +239,97 @@ const addAddress=async(req,res)=>{
     }
    }
   
+const wallet=async(req,res)=>{
+    try {
+        const userId=req.session.user_id
+        const WalletDetails=await Wallet.findOne({userId:userId}).populate('transaction')
+        console.log("wallert details",WalletDetails);
+        if(WalletDetails){
 
+
+        
+        
+          const formattedTransactions = WalletDetails.transaction.map(transaction=>{
+            const formattedDate = moment(transaction.date).format('YYYY-MM-DD');
+            return {
+                ...transaction.toObject(),
+                 formattedDate, 
+              }
+        
+          })
+          
+          const formattedWallet={
+            ...WalletDetails.toObject(),
+            transaction:formattedTransactions
+          }
+          console.log("formattedWallet",formattedWallet);
+     
+        res.render('user/user/wallet',{WalletDetails:formattedWallet})
+        }else{
+            res.render('user/user/wallet',{WalletDetails:0})
+        }
+    } catch (error) {
+        console.log('error in wallet page');
+    }
+}
+
+
+
+
+
+const wishlist=async(req,res)=>{
+
+    try {
+        const userId=req.session.user_id
+        const userData= await User.findOne({_id:userId}).populate('wishlist')
+     
+        res.render('user/user/wishlist',{userData})
+    } catch (error) {
+        console.log('error in wishlist');
+    }
+}
+const addWishlist=async(req,res)=>{
+    try {
+         const{productId}=req.body
+         const userId=req.session.user_id
+         const wishlist=await User.updateOne({_id:userId},{$push:{wishlist:productId }})
+         console.log(wishlist);
+        
+
+    } catch (error) {
+        console.log('error in add wishlist');
+    }
+}
+const removeWishlist=async(req,res)=>{
+    try {
+        const{productId}=req.body
+        console.log(req.body);
+        const userId=req.session.user_id
+        const removewishlist=await User.updateOne({_id:userId},{$pull:{wishlist:productId }})
+        console.log("removewishlist",removewishlist);
+        if(removewishlist){
+            res.status(200).json({success:true})
+        }else{
+            res.json({success:false})
+        }
+
+    } catch (error) {
+        console.log("error in remove wishlist",error);
+    }
+}
+const checkWishlist=async(req,res)=>{
+    try {
+        const {productId}=req.body
+        const userId= req.session.user_id
+        const userData=await User.findOne({_id:userId})
+        const isInWishlist = userData.wishlist.some(item => item.toString() === productId);
+        res.json({success:isInWishlist})
+        
+    } catch (error) {
+        console.log('error in wishlist check',error);
+        res.status(500).json({success:false})
+    }
+}
 module.exports = {
     singleProduct,
     loadshop,
@@ -252,8 +343,12 @@ module.exports = {
     addAddress,
     loadeditAddress,
     editAddress,
-    deleteAddress
-
+    deleteAddress,
+    wallet,
+    wishlist,
+    addWishlist,
+    removeWishlist,
+    checkWishlist
 }
 
 

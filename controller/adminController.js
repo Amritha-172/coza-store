@@ -214,10 +214,10 @@ const oderDetails=async(req,res)=>{
       const formattedOrders=orders.map(order=>{
         const date= new Date(order.createdAt)
         const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
-          return {
-            ...order.toObject(),
-            formattedCreatedAt: formattedDate,
-          }
+            return {
+                ...order.toObject(),
+                formattedCreatedAt: formattedDate,
+            }
       })
       console.log("formatted",formattedOrders);
       
@@ -252,6 +252,16 @@ const updateSts=async(req,res)=>{
          console.log('error in update status'); 
     }
 }
+
+
+const offer=async(req,res)=>{
+    try {
+        res.render('offerPage')
+        
+    } catch (error) {
+        console.log("error offer",error);
+    }
+}
 module.exports = {
     userList,
     blockUser,
@@ -269,6 +279,8 @@ module.exports = {
     oderDetails,
     singleProduct,
     updateSts,
-    checkCategory
+    checkCategory,
+    
+    offer
 
 }

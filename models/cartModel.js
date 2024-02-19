@@ -16,7 +16,8 @@ const cartItemShema = new mongoose.Schema({
     price: {
         type: Number,
         required: true
-    }, userId: {
+    },
+     userId: {
         type: mongoose.Schema.Types.ObjectId,
 
         required: true

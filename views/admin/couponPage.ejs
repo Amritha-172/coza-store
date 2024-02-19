@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/admindashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+
+    <style>
+        body {
+            background-color: rgb(235, 240, 247);
+        }
+    </style>
+
+    <header class="coza-header">
+        <div class="container">
+            <div class="logo">Coza Store</div>
+            <!-- Add more header elements or navigation links as needed -->
+        </div>
+    </header>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">Admin Dashboard</div>
+            <br> <br>
+            <ul class="">
+                <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
+                <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
+                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
+                <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
+                <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
+                <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
+                <li><a href="/admin/banner" class="active"><i class="fa-regular fa-note-sticky"></i>Banner</a></li>
+                <li><a href="/admin/logout" class="active"><i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="coupon">
+            <div class="content">
+                <h1>Coupon List</h1>
+                <p>List of Coupons:</p>
+
+                <form action="" method="">
+                    <button type="submit" id="addCoupon" class="btn btn-dark d-flex mb-3">Add New Coupon</button>
+                </form>
+
+                <table class="table table-bordered" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Coupon Code</th>
+                            <th>Discount</th>
+                            <th>Expiry Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(i=0; i < coupons.length; i++){%>
+                            <tr>
+                                <td>
+                                    <%=i+1%>
+                                </td>
+                                <td>
+                                    <%= coupons[i].couponCode%>
+                                </td>
+                                <td>
+                                    <%=coupons[i].dicountAmount%>
+                                </td>
+                                <td>
+                                    <%=coupons[i].formattedDate%>
+                                </td>
+                                <td class="d-flex">
+                                    <a href="/admin/editcoupon" data-coupon-code="<%= coupons[i].couponCode %>"
+                                        class="btn btn-primary editbtn text-decoration-none ms-2 text-white">Edit</a>
+                                    <a href="" data-coupon-code="<%= coupons[i].couponCode %>"
+                                        class=" btn btn-danger deletebtn text-decoration-none ms-2 text-white">Delete</a>
+                                </td>
+                            </tr>
+                            <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Add coupon -->
+        <main class="main-content col-6" style="display: none; margin-left: 150px;" id="Add">
+            <div class="content">
+                <h1>Coupons Management</h1>
+                <!-- Add Coupon Form -->
+                <form action="/admin/Coupon" method="POST">
+                    <div class="mb-3">
+                        <label for="couponCode" class="form-label">Coupon Code</label>
+                        <input type="text" class="form-control" id="couponCode" name="couponCode" required>
+                    </div>
+                    <div class="mb-3">
+                        <p id="errormsg" style="color: red;"></p>
+                        <label for="discountAmount" class="form-label">Discount Amount (₹)</label>
+                        <input type="number" class="form-control" id="discountAmount" name="discountAmount" required>
+                    </div>
+                    <div class="mb-3">
+                        <p id="errmsg" style="color: red;"></p>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+                    </div>
+                    <button type="submit" id="Addbutton" class="btn btn-primary">Add Coupon</button>
+                </form>
+
+
+
+            </div>
+        </main>
+
+        <main class="main-content col-6" style="display: none;margin-left: 150px;" id="edit">
+            <div class="content">
+                <h1>Edit Coupon</h1>
+                <!-- This form would be filled with data for the coupon being edited -->
+                <form action="/admin/updatecoupon" method="POST">
+                    <input type="hidden" name="couponId" value="COUPON_ID" />
+                    <!-- Replace COUPON_ID with actual coupon ID -->
+                    <div class="mb-3">
+                        <label for="couponCode" class="form-label">Coupon Code</label>
+                        <input type="text" class="form-control" id="editcouponCode" name="couponCode" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <p id="errorEdit" style="color: red;"></p>
+                        <label for="discountAmount" class="form-label">Discount Amount ()</label>
+                        <input type="number" class="form-control" id="editdiscountAmount" name="discountAmount"
+                            value="EXISTING_DISCOUNT_AMOUNT" required>
+                    </div>
+                    <div class="mb-3">
+                       <p id="err" style="color: red;"></p>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="editdescription" name="description" rows="3"
+                            required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="editexpiryDate" name="expiryDate" value="" required>
+                    </div>
+                    <button type="submit" id="updatebtn" class="btn btn-primary">Update Coupon</button>
+                </form>
+            </div>
+        </main>
+
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.getElementById('addCoupon').addEventListener('click', function (e) {
+                e.preventDefault()
+
+                document.getElementById('coupon').style.display = 'none'
+                document.getElementById('Add').style.display = 'block'
+                let result = '';
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                const charactersLength = characters.length;
+                for (let i = 0; i < 10; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                }
+                document.getElementById('couponCode').value = result;
+
+            })
+            const discountElem = document.getElementById('discountAmount')
+            discountElem.addEventListener('blur', function () {
+                const discountAmount = this.value
+
+                if (!discountAmount || discountAmount.trim() == "" || discountAmount < 0) {
+                    document.getElementById('errormsg').innerHTML = "Please Enter Valid Amount"
+                    document.getElementById('errormsg').style.color = 'red'
+                    document.getElementById('Addbutton').disabled = true
+
+
+                } else {
+                    document.getElementById('errormsg').innerHTML = ""
+                    document.getElementById('Addbutton').disabled = false
+
+                }
+            })
+            const DescriptionElem = document.getElementById('description')
+            DescriptionElem.addEventListener('blur', function () {
+                const description = this.value
+                console.log(description);
+                if (description.trim() == "") {
+
+                    document.getElementById('errmsg').innerHTML = "Enter Description"
+                    document.getElementById('Addbutton').disabled = true
+                } else {
+                    document.getElementById('errmsg').innerHTML = ""
+                    document.getElementById('Addbutton').disabled = false
+                }
+
+
+            })
+
+
+
+            const editBtn = document.querySelectorAll('.editbtn')
+            const editdiscountElem = document.getElementById('editdiscountAmount')
+            const editdescriptionElem=document.getElementById('editdescription')
+            editdiscountElem.addEventListener('blur', function () {
+               const  editdiscountAmount = this.value
+                if (!editdiscountAmount || editdiscountAmount.trim() == " " || editdiscountAmount < 0) {
+                    document.getElementById('errorEdit').innerHTML="Enter Valid amount"
+                      document.getElementById('updatebtn').disabled=true
+
+                }else{
+                    document.getElementById('errorEdit').innerHTML=""
+                    document.getElementById('updatebtn').disabled=false  
+                }
+            })
+            editdescriptionElem.addEventListener('blur',function(){
+              const editdescriptionElem= this.value
+              if(!editdescriptionElem||editdescriptionElem.trim()==""){
+                   document.getElementById("err").innerHTML="Enter Description"
+                   document.getElementById('updatebtn').disabled=true
+          
+              }else{
+                document.getElementById("err").innerHTML=" "
+                document.getElementById('updatebtn').disabled=false
+
+              }
+            })
+
+
+           
+            editBtn.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const couponCode = this.getAttribute('data-coupon-code');
+
+                    document.getElementById('coupon').style.display = 'none';
+                    document.getElementById('edit').style.display = 'block';
+                    axios.post('/admin/editCoupon', { couponCode })
+                        .then(res => {
+                            const couponDetails = res.data.couponDetails
+                            if (res.data.couponDetails) {
+                                document.getElementById('editcouponCode').value = couponDetails.couponCode
+                                document.getElementById('editdiscountAmount').value = couponDetails.dicountAmount
+                                document.getElementById('editdescription').innerHTML = couponDetails.description
+
+                                const expireDate = new Date(couponDetails.expireDate);
+                                const formattedDate = expireDate.toISOString().split('T')[0];
+                                console.log(formattedDate);
+
+                                document.getElementById('editexpiryDate').value = formattedDate
+
+                            }
+
+
+                        }).catch(err => {
+                            console.log('error', err);
+                        })
+
+
+                })
+
+            })
+
+            const deletebtn = document.querySelectorAll('.deletebtn')
+            deletebtn.forEach(button => {
+
+                button.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const couponCode = this.getAttribute('data-coupon-code')
+
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!"
+
+
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            axios.post('/admin/deleteCoupon', { couponCode })
+                                .then(res => {
+                                    console.log(res.data.success);
+
+                                    if (res.data.success) {
+
+                                        Swal.fire({
+                                            title: "Deleted!",
+                                            text: "Your file has been deleted.",
+                                            icon: "success"
+                                        }).then(res => {
+
+                                            if (res.isConfirmed) {
+                                                window.location.href = '/admin/Coupon'
+                                            }
+                                        })
+
+                                    }
+
+
+
+                                }).catch(err => {
+                                    Swal.fire({
+                                        title: "Deleted!",
+                                        text: "something wrong.",
+                                        icon: "error"
+                                    });
+                                    console.log('error in delete coupon', err);
+                                })
+
+                        }
+                    });
+
+
+                })
+            })
+
+        })
+
+
+    </script>
+    <script src="js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+
+
+</body>
+
+</html>

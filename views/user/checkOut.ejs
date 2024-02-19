@@ -45,10 +45,66 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </head>
 <style>
     body {
         background-color: rgb(241, 243, 246);
+    }
+
+    .payment-info-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-info-title {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .payment-info-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .payment-methods .payment-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .payment-option-label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .payment-icon {
+        font-size: 24px;
+        margin-right: 8px;
+    }
+
+    .card-radio-input:checked+.payment-option-label {
+        background-color: #e9ecef;
+        border-color: #007bff;
+    }
+
+    .payment-option-label:hover {
+        background-color: #c4cfda;
+
     }
 </style>
 
@@ -328,7 +384,7 @@
 
                                         <!-- Add more addresses as needed -->
 
-                                        <button class="btn btn-dark text-white"  type="button" id="addAddress">
+                                        <button class="btn btn-dark text-white" type="button" id="addAddress">
                                             + Add New Address
 
                                         </button>
@@ -346,27 +402,31 @@
                                                             <!-- Existing fields for name, email, age, gender, phone -->
 
                                                             <!-- Additional fields for address details -->
-                                                            <p id="error"></p>
                                                             <div class="col-md-6">
+                                                                <p id="error"></p>
                                                                 <label for="Name" class="form-label">Name</label>
                                                                 <input type="text" class="form-control" id="username"
                                                                     name="name" placeholder="Enter your Name" required>
                                                             </div>
                                                             <div class="col-md-6">
+                                                                <p id="errorphone"></p>
                                                                 <label for="mobile" class="form-label">Mobile Number
                                                                 </label>
-                                                                <input type="text" class="form-control" id="mobile"
+                                                                <input type="number" class="form-control" id="mobile"
                                                                     name="mobile" placeholder="10-digit number"
                                                                     required>
                                                             </div>
 
                                                             <div class="col-md-6">
+                                                                <p id="erropin"></p>
                                                                 <label for="postalCode" class="form-label">Postal
                                                                     Code</label>
-                                                                <input type="text" class="form-control" id="postalCode"
-                                                                    name="pincode" placeholder="Postal Code" required>
+                                                                <input type="number" class="form-control"
+                                                                    id="postalCode" name="pincode"
+                                                                    placeholder="Postal Code" required>
                                                             </div>
                                                             <div class="col-md-6">
+                                                                <p></p>
                                                                 <label for="locality"
                                                                     class="form-label">Locality</label>
                                                                 <input type="text" class="form-control" id="locality"
@@ -384,7 +444,6 @@
                                                                 </div>
 
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="city"
                                                                     class="form-label">City/District/Town</label>
@@ -392,6 +451,8 @@
                                                                     placeholder="" name="city" required>
                                                             </div>
 
+
+                                                           
                                                             <div class="col-md-6">
                                                                 <label for="country" class="form-label">State</label>
                                                                 <select class="form-select" name="state" id="state"
@@ -460,7 +521,7 @@
                                                         <div class="text-center mt-5">
                                                             <button type="submit" class="btn btn-primary px-4">Save
                                                             </button>
-                                                            
+
                                                         </div>
 
                                                     </form>
@@ -482,53 +543,43 @@
                                     </div>
                                 </div>
                                 <hr class="bg-dark-subtle ">
-                                <div class="feed-item-list">
-                                    <div>
-                                        <h5 class="font-size-16 mb-1">Payment Info</h5>
-                                        <p class="text-muted text-truncate mb-4">Duis arcu tortor, suscipit eget</p>
-                                    </div>
-                                    <div>
-                                        <h5 class="font-size-14 mb-3">Payment method :</h5>
-                                        <div class="row">
-                                            <div class="col-lg-3 col-sm-6">
-                                                <div data-bs-toggle="collapse">
-                                                    <label class="card-radio-label">
-                                                        <input type="radio" name="pay-method" id="pay-methodoption1"
-                                                            class="card-radio-input" value="credit">
-                                                        <span class="card-radio py-3 text-center text-truncate">
-                                                            <i class="bx bx-credit-card d-block h2 mb-3"></i>
-                                                            Credit / Debit Card
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6">
-                                                <div>
-                                                    <label class="card-radio-label">
-                                                        <input type="radio" name="pay-method" id="pay-methodoption2"
-                                                            class="card-radio-input" value="paypal">
-                                                        <span class="card-radio py-3 text-center text-truncate">
-                                                            <i class="bx bxl-paypal d-block h2 mb-3"></i>
-                                                            Paypal
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6">
-                                                <div>
-                                                    <label class="card-radio-label">
-                                                        <input type="radio" name="pay-method" id="pay-methodoption3"
-                                                            value="cash on delivey" class="card-radio-input" checked>
-                                                        <span class="card-radio py-3 text-center text-truncate">
-                                                            <i class="bx bx-money d-block h2 mb-3"></i>
-                                                            <span>Cash on Delivery</span>
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </div>
+                                <div class="payment-info-container">
+                                    <h5 class="payment-info-title">Payment Info</h5>
+                                    <p class="payment-info-description">Choose your preferred method for payment.</p>
+                                    <div class="payment-methods row">
+                                        <!-- Credit/Debit Card Option -->
+                                        <div class="payment-option col-lg-4 col-md-6">
+                                            <input type="radio" name="pay-method" id="pay-methodoption1"
+                                                class="card-radio-input d-none" value="credit"
+                                                aria-label="Credit / Debit Card">
+                                            <label for="pay-methodoption1" class="payment-option-label">
+                                                <i class="bx bx-credit-card payment-icon"></i>
+                                                Credit / Debit Card
+                                            </label>
+                                        </div>
+                                        <!-- PayPal Option -->
+                                        <div class="payment-option col-lg-4 col-md-6">
+                                            <input type="radio" name="pay-method" id="pay-methodoption2"
+                                                class="card-radio-input d-none" value="paypal" aria-label="PayPal">
+                                            <label for="pay-methodoption2" class="payment-option-label">
+                                                <i class="bx bxl-paypal payment-icon"></i>
+                                                PayPal
+                                            </label>
+                                        </div>
+                                        <!-- Cash on Delivery Option -->
+                                        <div class="payment-option col-lg-4 col-md-6">
+                                            <input type="radio" name="pay-method" id="pay-methodoption3"
+                                                class="card-radio-input d-none" value="COD"
+                                                aria-label="Cash on Delivery">
+                                            <label for="pay-methodoption3" class="payment-option-label">
+                                                <i class="bx bx-money payment-icon"></i>
+                                                Cash on Delivery
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
+
+
                             </li>
                         </ol>
                     </div>
@@ -555,18 +606,18 @@
                                 <tbody>
                                     <tr>
                                         <th>Subtotal:</th>
-                                        <td class="text-end">₹<%=newTotal%>
+                                        <td class="text-end" id="subtotal">₹<%=newTotal%>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>Coupon Discount:</th>
-                                        <td class="text-end">₹</td>
+                                        <td class="text-end" id="discount">₹ </td>
                                     </tr>
                                     <tr class="fw-bold ">
                                         <th>
                                             <h4>Order Total:</h4>
                                         </th>
-                                        <td class="text-end">₹<%=newTotal%>
+                                        <td class="text-end" id="orderTotal">₹<%=newTotal%>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -582,7 +633,25 @@
                     </div>
 
                 </div>
+                <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm"
+                    style="background-color: rgb(184, 185, 233);">
+                    <p id="errCpn" style="color: red; margin-left: 100px;"></p>
+
+                    <div class="flex-w flex-m m-r-20 m-tb-5">
+                        <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon"
+                            id="coupon" placeholder="Coupon Code">
+
+                        <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+                            <button type="button" id="applyCoupon">Apply coupon</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
             </div>
+
+
         </div>
 
 
@@ -773,6 +842,34 @@
                             console.log(err);
                         })
                 })
+                document.getElementById('mobile').addEventListener('blur', function () {
+                const mobilenumber = this.value
+                const pattern = /^[1-9]\d{9}$/
+
+                const errorphone = document.getElementById('errorphone')
+                if (mobilenumber === '0000000000') {
+                    errorphone.innerHTML = 'Please Enter a valid Number'
+                    errorphone.style.color = 'red'
+                }
+                else if (mobilenumber.length !== 10) {
+                    errorphone.innerHTML = 'Please Enter a valid Number'
+                    errorphone.style.color = 'red'
+                } else {
+                    errorphone.innerHTML = ""
+                }
+            })
+
+            document.getElementById('postalCode').addEventListener('blur', function () {
+                const mobilenumber = this.value
+
+                const errorphone = document.getElementById('erropin')
+                if (mobilenumber.length !== 6) {
+                    errorphone.innerHTML = 'Please Enter a valid Pincode'
+                    errorphone.style.color = 'red'
+                } else {
+                    errorphone.innerHTML = ""
+                }
+            })
 
             })
 
@@ -786,15 +883,113 @@
                     const newTotal = document.getElementById('newTotal').value
                     const selectedAddress = document.querySelector('input[name="shippingAddress"]:checked').value
                     const selectedPaymentMethod = document.querySelector('input[name="pay-method"]:checked').value
+            
+                    var orderAmount=document.getElementById('orderTotal').textContent
+                    var numericalPart = orderAmount.replace('₹', '');
+                    var Amount = parseFloat(numericalPart);
+                    console.log(Amount);
 
-                    axios.post('/placeorder', { newTotal, selectedAddress, selectedPaymentMethod })
+                    if (selectedPaymentMethod == "COD") {
+
+                        axios.post('/placeorder', { Amount, selectedAddress, selectedPaymentMethod })
+                            .then(res => {
+                                if (res.data.success) {
+                                    const orderId = res.data.orderId
+                                    window.location.href = `/ordersuccess?orderId=${orderId}`
+                                }
+                            }).catch(err => {
+                                console.log('error');
+                            })
+                    } else {
+
+                        axios.post('/createOrder', { Amount, selectedAddress, })
+                            .then(res => {
+                                if (res.data.success) {
+                                    const { orderId, } = res.data
+                                    console.log(res.data);
+                                    var options = {
+                                        key: res.data.key_id,
+                                        amount: Amount * 100,
+                                        currency: "INR",
+                                        name: "Coza store ",
+                                        description: "Test Transaction",
+                                        order_id: orderId,
+                                        handler: function (response) {
+
+                                            axios.post("/verifiaction", {
+                                                response,
+                                                razorpay_payment_id: response.razorpay_payment_id,
+                                                razorpay_order_id: response.razorpay_order_id,
+                                                razorpay_signature: response.razorpay_signature
+                                            }).then(res => {
+                                                if (res.data.success) {
+                                                    axios.post(`/placeorder?transactionId=${res.data.razorpay_payment_id}`, { Amount, selectedAddress, selectedPaymentMethod })
+                                                        .then(res => {
+                                                            if (res.data.success) {
+                                                                const orderId = res.data.orderId
+                                                                window.location.href = `/ordersuccess?orderId=${orderId}`
+                                                            }
+                                                        }).catch(err => {
+                                                            console.log('error');
+                                                        })
+
+                                                } else {
+                                                    alert('Payment verification failed');
+                                                }
+                                            }).catch(err => {
+                                                console.error('Verification request failed', error);
+                                                alert('Payment verification failed');
+                                            })
+
+
+                                        },
+                                        prefill: {
+
+                                        },
+                                        theme: {
+                                            color: "#3399cc"
+                                        }
+                                    };
+                                    var razorpayObject = new Razorpay(options)
+                                    razorpayObject.on('payment.failed', function (res) {
+                                        alert('payment failed')
+                                    })
+                                    razorpayObject.open()
+                                }
+
+                            }).catch(err => {
+                                console.log('error');
+                            })
+
+
+
+
+                    }
+
+                })
+                const couponBtn = document.getElementById('applyCoupon')
+                couponBtn.addEventListener('click', function () {
+                    const couponCode = document.getElementById('coupon').value
+                    axios.post("/coupoCheck", { couponCode })
                         .then(res => {
-                            if (res.data.success) {
-                                window.location.href = '/ordersuccess'
-                            }
+                            if (!res.data.success) {
+                                document.getElementById('errCpn').innerHTML = "Coupon Expired"
+                                console.log('failed');
+                            } else {
+                                document.getElementById('errCpn').innerHTML = " "
+                                const discount = res.data.coupon.dicountAmount
+                                document.getElementById('discount').innerHTML = `₹${discount}`
+                                var subtotalContent = document.getElementById('subtotal').textContent;
+                                var numericalPart = subtotalContent.replace('₹', '');
+                                var subtotalAmount = parseFloat(numericalPart);
+
+                                document.getElementById('orderTotal').innerHTML =`₹ ${subtotalAmount-discount}`
+
+						}
                         }).catch(err => {
-                            console.log('error');
+                            console.log('error in');
                         })
+
                 })
 
 
@@ -802,20 +997,20 @@
         </script>
         <script>
 
-      
+
 
             document.addEventListener('DOMContentLoaded', function () {
                 const addAddress = document.getElementById('addAddress')
-                const mydiv=document.getElementById('mydiv').style.display='none'
+                const mydiv = document.getElementById('mydiv').style.display = 'none'
                 addAddress.addEventListener('click', function (e) {
                     e.preventDefault()
                     var x = document.getElementById("mydiv");
-                if (x.style.display === "none") {
-                    x.style.display = "block"; // Show the div
-                } else {
-                    x.style.display = "none"; // Hide the div
-                }
-                
+                    if (x.style.display === "none") {
+                        x.style.display = "block"; // Show the div
+                    } else {
+                        x.style.display = "none"; // Hide the div
+                    }
+
                 })
             })
         </script>

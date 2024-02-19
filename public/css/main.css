@@ -2071,25 +2071,25 @@ input.num-product::-webkit-inner-spin-button {
   width: 30px;
 }
 
-.btn-addwish-b2 .icon-heart2 {
+/* .btn-addwish-b2 .icon-heart2 {
   opacity: 0;
-}
+} */
 
-.btn-addwish-b2:hover .icon-heart2 {
+/* .btn-addwish-b2:hover .icon-heart2 {
   opacity: 1;
-}
+} */
 
-.btn-addwish-b2:hover .icon-heart1 {
+/* .btn-addwish-b2:hover .icon-heart1 {
   opacity: 0;
-}
+} */
 
-.js-addedwish-b2 .icon-heart2 {
+/* .js-addedwish-b2 .icon-heart2 {
   opacity: 1;
-}
+} */
 
-.js-addedwish-b2 .icon-heart1 {
+/* .js-addedwish-b2 .icon-heart1 {
   opacity: 0;
-}
+} */
 
 /*---------------------------------------------*/
 .label-new {

@@ -35,8 +35,14 @@ const userShema = mongoose.Schema({
     },
     age:{
         type:Number
-    }
-
+    },
+    wishlist:[{
+      
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'product'
+    
+    }]
+   
 
    
 })
