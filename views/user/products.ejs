@@ -33,6 +33,9 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!--===============================================================================================-->
 </head>
 <body class="animsition">
@@ -80,25 +83,13 @@
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li>
-								<a href="index.html">Home</a>
-								<ul class="sub-menu">
-									<li><a href="index.html">Homepage 1</a></li>
-									<li><a href="home-02.html">Homepage 2</a></li>
-									<li><a href="home-03.html">Homepage 3</a></li>
-								</ul>
+								<a href="/home">Home</a>
+								
 							</li>
 
 							<li class="active-menu">
-								<a href="product.html">Shop</a>
-							</li>
-
-							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Features</a>
-							</li>
-
-							<li>
-								<a href="blog.html">Blog</a>
-							</li>
+								<a href="/shops">Shop</a>
+							</li>	
 
 							<li>
 								<a href="about.html">About</a>
@@ -331,31 +322,7 @@
 	<div class="bg0 m-t-23 p-b-140">
 		<div class="container">
 			<div class="flex-w flex-sb-m p-b-52">
-				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-						All Products
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
-				</div>
+			
 
 				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
@@ -573,40 +540,51 @@
 			</div>
 
 			<div class="row isotope-grid">
+				<%productData.forEach(item=>{%>
+
+			
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
-							<img src="images/product-01.jpg" alt="IMG-PRODUCT">
+							<img src="/multerimages/<%=item.image[0]%>" alt="IMG-PRODUCT">
 
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+							<a href="/product?productId=<%= item._id %>"
+								class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
 								Quick View
-							</a>
+
+							</a>a>
 						</div>
 
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Esprit Ruffle Shirt
+									<%=item.productName%>
 								</a>
 
 								<span class="stext-105 cl3">
-									$16.64
+									₹<%=item.price%>
 								</span>
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-								</a>
+								<a href="#"
+										class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 wishlist-button"
+										data-product-id="<%= item._id %>">
+										<img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png"
+											alt="ICON">
+
+										<img class="icon-heart2 dis-block trans-04 ab-t-l"
+											src="images/icons/icon-heart-02.png" style="opacity: 0;" alt="ICON">
+
+									</a>
 							</div>
 						</div>
 					</div>
 				</div>
-
+			<%})%>
 				
-
+			</div>
 		
 
 			<!-- Load more -->
@@ -925,6 +903,83 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 			</div>
 		</div>
 	</div>
+	<script>
+		function cart() {
+			window.location.href = '/shoppingcart	'
+		}
+
+		document.addEventListener('DOMContentLoaded', function () {
+
+
+			const wishlist = document.querySelectorAll('.wishlist-button')
+			console.log('wishlist', wishlist);
+			wishlist.forEach((button) => {
+
+				const productId = button.getAttribute('data-product-id');
+
+				const iconHeart1 = button.querySelector('.icon-heart1');
+				const iconHeart2 = button.querySelector('.icon-heart2');
+				console.log('iconHeart1', iconHeart1);
+
+				axios.post('/checkwishlist', { productId })
+					.then(res => {
+						if (res.data.success) {
+							console.log("successfully");
+							iconHeart1.style.opacity = "0";
+							iconHeart2.style.opacity = "1";
+						} else {
+							console.log('failed');
+							iconHeart1.style.opacity = "1";
+							iconHeart2.style.opacity = "0";
+						}
+					}).catch(err => {
+						console.log('error', err);
+					})
+
+
+
+				button.addEventListener('click', function (e) {
+					e.preventDefault();
+
+					const productId = this.getAttribute('data-product-id');
+					const iconHeart1 = this.querySelector('.icon-heart1');
+					const iconHeart2 = this.querySelector('.icon-heart2');
+
+
+					if (getComputedStyle(iconHeart1).opacity === "1") {
+						iconHeart1.style.opacity = "0";
+						iconHeart2.style.opacity = "1";
+
+						axios.post('/wishlist', { productId })
+							.then(res => {
+
+								console.log('success');
+							}).catch(err => {
+								console.log('error in wishlist', err);
+							})
+
+					} else {
+						iconHeart1.style.opacity = "1";
+						iconHeart2.style.opacity = "0";
+						axios.post('/removeWhishlist', { productId })
+							.then(res => {
+								console.log('success');
+							}).catch(err => {
+								console.log('error in wishlist', err);
+							})
+
+					}
+
+
+
+
+
+				});
+
+			})
+
+		})
+	</script>
 
 <!--===============================================================================================-->	
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>

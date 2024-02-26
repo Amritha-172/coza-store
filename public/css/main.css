@@ -493,7 +493,7 @@ a .zmdi-shopping-cart {
 }
 
 /*---------------------------------------------*/
-.icon-header-noti::after {
+/* .icon-header-noti::after {
   content: attr(data-notify);
   font-family: Poppins-Regular;
   font-size: 12px;
@@ -509,7 +509,7 @@ a .zmdi-shopping-cart {
   height: 15px;
   padding: 0 3px;
   background-color: #717fe0;
-}
+} */
 
 /*---------------------------------------------*/
 .wrap-header-mobile .wrap-icon-header {
@@ -3455,3 +3455,7 @@ input.num-product::-webkit-inner-spin-button {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}

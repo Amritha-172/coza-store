@@ -31,6 +31,7 @@ userRoute.get('/signupOtp',auth.isLogout,userAuth.otp)
 userRoute.post('/signupOtp',auth.isLogout,userAuth.verifyOtp)
 userRoute.post('/resendOtp',auth.isLogout,userAuth.resendOtp)
 
+
 userRoute.get('/forgot',auth.isLogout,userAuth.forgotPass)
 userRoute.post('/send-otp',auth.isLogout,userAuth.forgotOtp)
 userRoute.post('/forgotResendOtp',auth.isLogout,userAuth.forgotResend)
@@ -38,7 +39,7 @@ userRoute.post('/verifyOtp',auth.isLogout,userAuth.forgotVerifyOtp)
 userRoute.get('/resetPassword',auth.isLogout,userAuth.loadresetPass)
 userRoute.post('/resetPassword',auth.isLogout,userAuth.resetPass)
 
-userRoute.get('/shops',auth.isBlocked,userAuth.shop)
+userRoute.get('/shops',auth.isLogin,auth.isBlocked,userAuth.shop)
 userRoute.get('/home',auth.isLogin,auth.isBlocked,userAuth.Homepage)
 userRoute.get('/shoppingcart',auth.isLogin,auth.isBlocked,cartController.shoppingcart)
 userRoute.get('/product',auth.isLogin,auth.isBlocked,userController.singleProduct)
@@ -62,7 +63,7 @@ userRoute.post('/coupoCheck',auth.isLogin,auth.isBlocked,couponController.checkC
 
 userRoute.get('/wishlist',auth.isLogin,auth.isBlocked,userController.wishlist)
 userRoute.post('/wishlist',auth.isLogin,auth.isBlocked,userController.addWishlist)
-userRoute.post('/checkwishlist',userController.checkWishlist)
+userRoute.post('/checkwishlist',auth.isLogin,auth.isBlocked,userController.checkWishlist)
 userRoute.post('/removeWhishlist',auth.isLogin,auth.isBlocked,userController.removeWishlist)
 
 userRoute.get('/userAddress',auth.isLogin,auth.isBlocked,userController.address)
@@ -86,8 +87,14 @@ userRoute.post('/editAddress',auth.isLogin,auth.isBlocked,userController.editAdd
 userRoute.get('/deleteAddress',auth.isLogin,auth.isBlocked,userController.deleteAddress)
 
 
-userRoute.get('/products',auth.isLogin,auth.isBlocked,productControlller.findbyCategory)
+userRoute.get('/productsCat',auth.isLogin,auth.isBlocked,productControlller.findbyCategory)
 userRoute.patch('/cancelorder',auth.isLogin,auth.isBlocked,orderController.cancelOrder)
+
+userRoute.post('/addfunds',auth.isLogin,paymentController.addFunds)
+userRoute.post('/fundVerification',auth.isLogin,paymentController.fundVerification)
+userRoute.post('/addWallet',auth.isLogin,auth.isBlocked,userController.addWallet)
+
+userRoute.post('/placeorderWallet',auth.isLogin,auth.isBlocked,orderController.placeorderWallet)
 
 
 

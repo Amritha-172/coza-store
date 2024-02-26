@@ -1,25 +1,26 @@
 const product = require('../models/productModel')
 const category = require('../models/categoryModel')
 const fs = require('fs').promises
-const path=require('path')
+const path = require('path')
 const { find } = require('../models/cartModel')
 
 
 const loadProduct = async (req, res) => {
     try {
-        const products = await product.find({}).populate('categoryId')
-        console.log('prodcuct',products);
+        const products = await product.find({}).populate('categoryId').sort({_id:-1})
+
 
         res.render("products", { products })
     } catch (error) {
         console.log('error in load product:', error);
     }
 }
+
 const loadAddProduct = async (req, res) => {
     try {
         const messages = req.flash('message')
         const categories = await category.find({})
-       
+
         res.render("addProduct", { categories, messages })
     } catch (error) {
         console.log('error in load addproduct');
@@ -29,20 +30,20 @@ const loadAddProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const details = req.body
-        console.log("add prodcut details",details);
+
         const files = req.files
+
+
         const alreadyExist = await product.findOne({ productName: req.body.productName })
+
         if (alreadyExist) {
             req.flash('message', "Product already existed")
             return res.redirect('addproduct')
         }
         else {
-            const images = [
-                files[0].filename,
-                files[1].filename,
-                files[2].filename,
+            const images = files.map(file => file.filename);
 
-            ]
+
             const products = new product({
                 productName: details.productName,
                 price: details.price,
@@ -56,16 +57,20 @@ const addProduct = async (req, res) => {
 
             })
             const save = await products.save()
+
             if (save) {
-                res.redirect('/admin/productlist')
+                res.status(200).json({ success: true })
+
             }
         }
 
 
     } catch (error) {
+        res.status(302).json({ success: false })
         console.log("error in addproduct:", error);
     }
 }
+
 const listProduct = async (req, res) => {
     try {
         const { productName } = req.query
@@ -102,12 +107,12 @@ const unlistProduct = async (req, res) => {
 const loadeditProduct = async (req, res) => {
     try {
 
-        const { id} = req.query
-        const products = await product.findOne({ _id: id })
+        const { id } = req.query
+        const products = await product.findOne({ _id: id }).sort({_id:-1})
         const categories = await category.find({})
-        
- 
-        res.render('editProducts', { product: products,category:categories,})
+
+
+        res.render('editProducts', { product: products, category: categories, })
 
     } catch (error) {
         console.log("error in loadeditProdut:", error);
@@ -116,54 +121,64 @@ const loadeditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
-       
+
 
         const { productName, category, price, description, quantity, offer, id, size, color, oldimageUrl } = req.body
-         const filename = req.files.map(item => {
+        console.log("req.body", req.body);
+        console.log(" req.files", req.files);
+        const filename = req.files.map(item => {
             return item.filename
         })
+
         const upload = await product.findOne({ _id: id })
         let array = upload.image
-       
-        array = array.filter(item => !oldimageUrl.includes(item))
-        console.log(array);
+        console.log("upload", upload);
+
+        if (oldimageUrl && oldimageUrl.length) {
+            const oldImagesToRemove = JSON.parse(oldimageUrl);
+            array = array.filter(item => !oldImagesToRemove.includes(item));
+
+        }
         array.push(...filename)
-     
+        console.log("array", array);
+
         const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, offer: offer, size: size, color: color, image: array } })
-        console.log(edit);
+        console.log('edit', edit);
         if (edit) {
-              console.log(edit);
-              res.status(200).json({success:true})
-         
+
+            res.status(200).json({ success: true })
+
         }
     } catch (error) {
         console.log("error in editproduct:", error);
     }
 }
 
-const deleteProduct=async(req,res)=>{
+const deleteProduct = async (req, res) => {
 
     try {
-        const {preview,filename,id}=req.body  
-        const fullpath=path.join(__dirname,"..","public",preview)
-        console.log(fullpath);
-        await fs.unlink(fullpath);
-         
+        const { preview, filename, id } = req.body
+        const fullpath = path.join(__dirname, "..", "public", preview)
 
-      const result = await product.updateOne({_id:id},{$pull:{image:filename}})
-      console.log(result);
-       
-        res.status(200).json({success:true})
-        
+        await fs.unlink(fullpath);
+
+
+        const result = await product.updateOne({ _id: id }, { $pull: { image: filename } })
+        console.log(result);
+
+        res.status(200).json({ success: true })
+
     } catch (error) {
         console.log("error in delete product");
     }
 }
 
-const findbyCategory=async(req,res)=>{
+const findbyCategory = async (req, res) => {
     try {
-        
-        
+        const { categoryId } = req.query
+        const productData = await product.find({categoryId:categoryId })
+        res.render('user/products', { productData })
+
     } catch (error) {
         console.log();
     }

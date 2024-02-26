@@ -6,6 +6,7 @@ const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
 const Wallet=require('../models/walletModel');
 const moment = require('moment')
+const Category=require('../models/categoryModel')
 
 const securePassword = async (password) => {
     try {
@@ -26,6 +27,7 @@ const loadshop = async (req, res) => {
         res.render('error')
     }
 }
+
 const profile = async (req, res) => {
     try {
         
@@ -40,6 +42,7 @@ const profile = async (req, res) => {
         console.log("Error in profile:", error)
     }
 }
+
 const loadeditProfile = async (req, res) => {
     try {
         const messages=req.flash('message')
@@ -51,6 +54,7 @@ const loadeditProfile = async (req, res) => {
         console.log('error in edit profile page');
     }
 }
+
 const updateProfile = async (req, res) => {
     try {
         const userId = req.session.user_id
@@ -86,14 +90,15 @@ const singleProduct = async (req, res,) => {
 
         const productId = req.query.productId
 
-        console.log(productId, typeof (productId))
-
+    
+        
         const productData = await product.findOne({ _id: productId })
-
+        
+        const categoryData=await product.find({categoryId:productData.categoryId,_id:{$ne:productId}})
         const userData = await User.findOne({ email: req.session.user_email })
 
         if (productData) {
-            res.render('user/singleProduct', { product: productData, userData })
+            res.render('user/singleProduct', { product: productData, userData ,categoryData})
         } else {
             res.render('error')
         }
@@ -116,6 +121,7 @@ const changePass = async (req, res) => {
         console.log('error in change password');
     }
 }
+
 const checkpass = async (req, res) => {
     try {
         const {currentPassval}=req.body
@@ -137,21 +143,26 @@ const checkpass = async (req, res) => {
 const updatePass=async(req,res)=>{
     try {
          const {newPassword,confirmPassword}=req.body
+         console.log('newPassword',newPassword);
+         console.log('confirmPassword',confirmPassword);
 
-    //      if(newPassword!==confirmPassword){
-    //         req.flash('message',"Password is not matching")
-    //         return res.redirect('/user/changePassword')
-    //      }
+         if(newPassword!==confirmPassword){
+            
+            req.flash('message',"Password is not matching")
+            return res.redirect('user/user/changePassword')
+         }
          
-    //      if(!newPassword||newPassword.trim()==" "){
-    //         req.flash('message',"Password is required")
-    //         return res.redirect('/user/changePassword')
-    //      }
-    //      if(newPassword.lenght<8){
-    //         req.flash('message',"Password length must be 8")
-    //         return res.redirect('/user/changePassword')
-    //      }
-    // ;
+         if(!newPassword||newPassword.trim()==" "){
+            
+            req.flash('message',"Password is required")
+            return res.redirect('user/user/changePassword')
+         }
+         if(newPassword.lenght<8){
+          
+            req.flash('message',"Password length must be 8")
+            return res.redirect('user/user/changePassword')
+         }
+    
          const spassword = await securePassword(newPassword)
       
          const userId=req.session.user_id
@@ -189,6 +200,7 @@ const addAddress=async(req,res)=>{
         console.log('error in add address');
     }
 }
+
  const loadeditAddress=async(req,res)=>{
     try {
         const messages=req.flash('message')
@@ -199,6 +211,7 @@ const addAddress=async(req,res)=>{
         console.log("error in edit address");
     }
  }
+
   const editAddress=async(req,res)=>{
    try {
     const {name,mobile,pincode,locality,streetAddress,city,state,landmark,addressType,id}=req.body
@@ -226,6 +239,7 @@ const addAddress=async(req,res)=>{
     console.log('error in editAddress',error);
    }
   }
+
    const deleteAddress=async(req,res)=>{
     try {
         const{adddressId}=req.query
@@ -243,11 +257,9 @@ const wallet=async(req,res)=>{
     try {
         const userId=req.session.user_id
         const WalletDetails=await Wallet.findOne({userId:userId}).populate('transaction')
-        console.log("wallert details",WalletDetails);
+        
         if(WalletDetails){
 
-
-        
         
           const formattedTransactions = WalletDetails.transaction.map(transaction=>{
             const formattedDate = moment(transaction.date).format('YYYY-MM-DD');
@@ -262,7 +274,7 @@ const wallet=async(req,res)=>{
             ...WalletDetails.toObject(),
             transaction:formattedTransactions
           }
-          console.log("formattedWallet",formattedWallet);
+         
      
         res.render('user/user/wallet',{WalletDetails:formattedWallet})
         }else{
@@ -273,9 +285,34 @@ const wallet=async(req,res)=>{
     }
 }
 
+const addWallet=async(req,res)=>{
+    try {
+        const { Amount}=req.body
+         const userId=req.session.user_id
+         const WalletDetail= await Wallet.findOne({userId:userId})
+         if(!WalletDetail){
 
+            const newWallet = new Wallet({
+                userId: userId,
+                balance: Amount,
+                tratransaction: [{
+                    amount: Amount,
+                    transactionsMethod: "Debit",
+                }]
 
+            })
+            await newWallet.save()
 
+         }else{
+            await Wallet.updateOne({ userId: userId }, { $inc: { balance:Amount  }, $push: { transaction: { amount: Amount, transactionsMethod: "Debit" } } })
+         }
+         res.status(200).json({success:true})
+        
+    } catch (error) {
+        res.status(302).json({success:false})
+        console.log('error in add wallet',error);
+    }
+}
 
 const wishlist=async(req,res)=>{
 
@@ -288,6 +325,7 @@ const wishlist=async(req,res)=>{
         console.log('error in wishlist');
     }
 }
+
 const addWishlist=async(req,res)=>{
     try {
          const{productId}=req.body
@@ -300,6 +338,7 @@ const addWishlist=async(req,res)=>{
         console.log('error in add wishlist');
     }
 }
+
 const removeWishlist=async(req,res)=>{
     try {
         const{productId}=req.body
@@ -317,6 +356,7 @@ const removeWishlist=async(req,res)=>{
         console.log("error in remove wishlist",error);
     }
 }
+
 const checkWishlist=async(req,res)=>{
     try {
         const {productId}=req.body
@@ -330,6 +370,7 @@ const checkWishlist=async(req,res)=>{
         res.status(500).json({success:false})
     }
 }
+
 module.exports = {
     singleProduct,
     loadshop,
@@ -348,7 +389,8 @@ module.exports = {
     wishlist,
     addWishlist,
     removeWishlist,
-    checkWishlist
+    checkWishlist,
+    addWallet
 }
 
 

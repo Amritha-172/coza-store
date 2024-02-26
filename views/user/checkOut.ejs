@@ -49,63 +49,7 @@
 
 </head>
 <style>
-    body {
-        background-color: rgb(241, 243, 246);
-    }
 
-    .payment-info-container {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .payment-info-title {
-        font-size: 18px;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .payment-info-description {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 20px;
-    }
-
-    .payment-methods .payment-option {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        padding: 10px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .payment-option-label {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        text-align: center;
-    }
-
-    .payment-icon {
-        font-size: 24px;
-        margin-right: 8px;
-    }
-
-    .card-radio-input:checked+.payment-option-label {
-        background-color: #e9ecef;
-        border-color: #007bff;
-    }
-
-    .payment-option-label:hover {
-        background-color: #c4cfda;
-
-    }
 </style>
 
 <body class="animsition">
@@ -452,7 +396,7 @@
                                                             </div>
 
 
-                                                           
+
                                                             <div class="col-md-6">
                                                                 <label for="country" class="form-label">State</label>
                                                                 <select class="form-select" name="state" id="state"
@@ -557,13 +501,14 @@
                                                 Credit / Debit Card
                                             </label>
                                         </div>
-                                        <!-- PayPal Option -->
+                                        <!-- wallet Option -->
                                         <div class="payment-option col-lg-4 col-md-6">
                                             <input type="radio" name="pay-method" id="pay-methodoption2"
-                                                class="card-radio-input d-none" value="paypal" aria-label="PayPal">
+                                                class="card-radio-input d-none" value="Wallet" aria-label="PayPal">
                                             <label for="pay-methodoption2" class="payment-option-label">
-                                                <i class="bx bxl-paypal payment-icon"></i>
-                                                PayPal
+                                                <i class="bx bx-wallet payment-icon "></i>
+
+                                                Wallet
                                             </label>
                                         </div>
                                         <!-- Cash on Delivery Option -->
@@ -595,7 +540,7 @@
 
             <div class="col-xl-4">
                 <div class="card checkout-order-summary">
-
+                    <p id="errorsg" style="color: red; margin-left: 150px;"></p>
                     <div class="card-body">
                         <div class="p-3 bg-light mb-3">
                             <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span>
@@ -843,33 +788,33 @@
                         })
                 })
                 document.getElementById('mobile').addEventListener('blur', function () {
-                const mobilenumber = this.value
-                const pattern = /^[1-9]\d{9}$/
+                    const mobilenumber = this.value
+                    const pattern = /^[1-9]\d{9}$/
 
-                const errorphone = document.getElementById('errorphone')
-                if (mobilenumber === '0000000000') {
-                    errorphone.innerHTML = 'Please Enter a valid Number'
-                    errorphone.style.color = 'red'
-                }
-                else if (mobilenumber.length !== 10) {
-                    errorphone.innerHTML = 'Please Enter a valid Number'
-                    errorphone.style.color = 'red'
-                } else {
-                    errorphone.innerHTML = ""
-                }
-            })
+                    const errorphone = document.getElementById('errorphone')
+                    if (mobilenumber === '0000000000') {
+                        errorphone.innerHTML = 'Please Enter a valid Number'
+                        errorphone.style.color = 'red'
+                    }
+                    else if (mobilenumber.length !== 10) {
+                        errorphone.innerHTML = 'Please Enter a valid Number'
+                        errorphone.style.color = 'red'
+                    } else {
+                        errorphone.innerHTML = ""
+                    }
+                })
 
-            document.getElementById('postalCode').addEventListener('blur', function () {
-                const mobilenumber = this.value
+                document.getElementById('postalCode').addEventListener('blur', function () {
+                    const mobilenumber = this.value
 
-                const errorphone = document.getElementById('erropin')
-                if (mobilenumber.length !== 6) {
-                    errorphone.innerHTML = 'Please Enter a valid Pincode'
-                    errorphone.style.color = 'red'
-                } else {
-                    errorphone.innerHTML = ""
-                }
-            })
+                    const errorphone = document.getElementById('erropin')
+                    if (mobilenumber.length !== 6) {
+                        errorphone.innerHTML = 'Please Enter a valid Pincode'
+                        errorphone.style.color = 'red'
+                    } else {
+                        errorphone.innerHTML = ""
+                    }
+                })
 
             })
 
@@ -883,13 +828,13 @@
                     const newTotal = document.getElementById('newTotal').value
                     const selectedAddress = document.querySelector('input[name="shippingAddress"]:checked').value
                     const selectedPaymentMethod = document.querySelector('input[name="pay-method"]:checked').value
-            
-                    var orderAmount=document.getElementById('orderTotal').textContent
+
+                    var orderAmount = document.getElementById('orderTotal').textContent
                     var numericalPart = orderAmount.replace('₹', '');
                     var Amount = parseFloat(numericalPart);
                     console.log(Amount);
 
-                    if (selectedPaymentMethod == "COD") {
+                    if (selectedPaymentMethod === "COD") {
 
                         axios.post('/placeorder', { Amount, selectedAddress, selectedPaymentMethod })
                             .then(res => {
@@ -900,12 +845,12 @@
                             }).catch(err => {
                                 console.log('error');
                             })
-                    } else {
+                    } else if (selectedPaymentMethod === "credit") {
 
                         axios.post('/createOrder', { Amount, selectedAddress, })
                             .then(res => {
                                 if (res.data.success) {
-                                    const { orderId, } = res.data
+                                    const { orderId } = res.data
                                     console.log(res.data);
                                     var options = {
                                         key: res.data.key_id,
@@ -964,6 +909,22 @@
 
 
 
+                    } else {
+
+                        axios.post('/placeorderWallet', { Amount, selectedAddress, selectedPaymentMethod })
+                            .then(res => {
+                                if (res.data.message) {
+                                    document.getElementById('errorsg').innerHTML=res.data.message
+                                }
+                                if (res.data.success) {
+                               
+                                    const orderId = res.data.orderId
+                                    window.location.href = `/ordersuccess?orderId=${orderId}`
+                                }
+                            }).catch(err => {
+                                console.log('error');
+                            })
+
                     }
 
                 })
@@ -983,9 +944,9 @@
                                 var numericalPart = subtotalContent.replace('₹', '');
                                 var subtotalAmount = parseFloat(numericalPart);
 
-                                document.getElementById('orderTotal').innerHTML =`₹ ${subtotalAmount-discount}`
+                                document.getElementById('orderTotal').innerHTML = `₹ ${subtotalAmount - discount}`
 
-						}
+                            }
                         }).catch(err => {
                             console.log('error in');
                         })

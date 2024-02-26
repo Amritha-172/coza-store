@@ -5,7 +5,8 @@ const { find } = require('../models/otpModel');
 
 const coupon = async (req, res) => {
     try {
-        const coupons = await Coupon.find({})
+        const message=req.flash('message')
+        const coupons = await Coupon.find({}).sort({_id:-1})
 
         const formattedCoupon = coupons.map(item => {
             const formattedDate = moment(item.expireDate).format('DD-MM-YYYY')
@@ -15,15 +16,24 @@ const coupon = async (req, res) => {
             }
         })
 
-        res.render('couponPage', { coupons: formattedCoupon })
+        res.render('couponPage', { coupons: formattedCoupon ,message})
     } catch (error) {
         console.log("error in coupon page");
     }
 }
+
 const addCoupon = async (req, res) => {
     try {
-        const { couponCode, discountAmount, description, expiryDate } = req.body
+        const { couponCode, discountAmount, description, expiryDate,minimumAmount } = req.body
 
+         if(!discountAmount||discountAmount.trim()==""||discountAmount<1){
+
+           return res.json({success:false,message:"Please Enter valid number"})
+               
+         }
+         if(Number(minimumAmount) < Number(discountAmount)){
+            return res.json({success:false,message:"Discount Amount is greater than Minimum amount"})
+         }
 
         console.log("coupon", req.body);
 
@@ -31,11 +41,12 @@ const addCoupon = async (req, res) => {
             couponCode: couponCode,
             dicountAmount: discountAmount,
             description: description,
+            minimumAmount:minimumAmount,
             expireDate: expiryDate
 
         })
         await coupon.save()
-        res.redirect('/admin/Coupon')
+        res.status(200).json({success:true})
 
     } catch (error) {
         console.log('error in coupon controller');
@@ -58,13 +69,14 @@ const editCoupon = async (req, res) => {
         console.log('error in in edit coupon', error);
     }
 }
+
 const updateCoupon = async (req, res) => {
     try {
 
-        const { discountAmount, expiryDate, description, couponCode } = req.body
-        console.log(discountAmount);
+        const { discountAmount, expiryDate, description, couponCode,minimumAmount } = req.body
+ 
 
-        const couponUpdate = await Coupon.updateOne({ couponCode: couponCode }, { $set: { dicountAmount: discountAmount, expiryDate: expiryDate, description: description } })
+        const couponUpdate = await Coupon.updateOne({ couponCode: couponCode }, { $set: { dicountAmount: discountAmount, expiryDate: expiryDate, description: description ,minimumAmount:minimumAmount} })
         if (couponUpdate) {
             res.redirect('/admin/Coupon')
         }
@@ -74,6 +86,7 @@ const updateCoupon = async (req, res) => {
         console.log('error in update coupon', error);
     }
 }
+
 const usercoupon = async (req, res) => {
 
     try {

@@ -18,12 +18,12 @@ const paymentSchema= new mongoose.Schema({
     status:{
         type:String,
         required:true,
-        enum: ['pending', 'completed', 'failed']
+        enum: ['pending', 'completed', 'failed',]
     },
     paymentMethod:{
         type:String,
         required:true,
-        enum: ['COD',"online",'credit']
+        enum: ['COD',"online",'credit','Wallet']
     },
     transactionId:{
         type:String,

@@ -229,7 +229,63 @@
         font-size: 13px;
         font-weight: 500
     }
-    
+    body {
+        background-color: rgb(241, 243, 246);
+    }
+
+    .payment-info-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-info-title {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .payment-info-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .payment-methods .payment-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .payment-option-label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .payment-icon {
+        font-size: 24px;
+        margin-right: 8px;
+    }
+
+    .card-radio-input:checked+.payment-option-label {
+        background-color: #83a1c0;
+        border-color: #007bff;
+    }
+
+    .payment-option-label:hover {
+        background-color: #c4cfda;
+
+    }
     
     
     

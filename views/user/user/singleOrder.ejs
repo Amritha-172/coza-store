@@ -36,18 +36,22 @@
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="css/util.css">
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!--=========================================product details page css=================================================-->
+    <link rel="stylesheet" type="text/css" href="css/util.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/myStyle.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/profile.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -65,80 +69,12 @@
 <body>
 
 
-    <style>
-        body {
-            background-color: rgb(241, 243, 246);
-        }
 
-        .order-status {
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            position: relative;
-            margin: 20px 0;
-        }
-
-        .status-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-
-
-        .status-item::before {
-            content: '';
-            position: absolute;
-            left: -50%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-            height: 2px;
-            background-color: #ccc;
-            z-index: 0;
-        }
-
-
-        .status-item:first-child::before {
-            display: none;
-        }
-
-        .status-icon {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 5px;
-            font-size: 16px;
-            color: #fff;
-            border-radius: 50%;
-            background-color: #ddd;
-            z-index: 1;
-        }
-
-        .active .status-icon {
-            background-color: #4CAF50;
-        }
-
-        .active::before {
-            background-color: #4CAF50;
-        }
-
-        .status-line {
-            width: 250px;
-        }
-
-        .actives .status-icon {
-            background-color: #c7300b;
-        }
-    </style>
 
 
 
     <!-- Header -->
-    <!-- Header -->
-    <header>
+    <header style="position: relative; z-index: 40;">
         <div class="container-menu-desktop">
             <!-- Topbar -->
             <div class="top-bar">
@@ -338,71 +274,106 @@
                                         </h6>
                                         <small class="text-muted">Size: M, Color: Red</small>
                                         <div><span>seller:MOKSHI</span></div>
-                                        <div><span>Price: ₹<%=productDetails.productId.price%></span></div>
+                                        <div><span>Price: ₹<%=productDetails.productId.price%> </span></div>
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="" id="productId" value="<%=productDetails.productId._id%>">
-                            <input type="hidden" name="" id="Status" value="<%=productDetails.productStatus%>">
+                            <div class="col-11 mt-3 d-flex justify-content-end align-items-start">
+                                <input type="hidden" name="" id="productId" value="<%=productDetails._id%>">
+                                <input type="hidden" name="" id="Status" value="<%=productDetails.productStatus%>">
 
-                            <% if (productDetails.productStatus !=="cancelled" ){%>
 
-                                <div class="col -6 mt-5" style="margin-left: 320px;"><a href="" id="cancel"
-                                        class="text-decoration-none btn border btn-dark"
-                                        onclick="setOrderToCancelled();"> <i class="fa-solid fa-xmark"></i>Cancel</a>
+                                <a href="" id="cancel" class="text-decoration-none btn border border-primary me-2"><i
+                                        class="fa-solid fa-xmark"></i> Cancel</a>
+                                <a href="" id="return"
+                                    class="text-decoration-none  d-none btn border border-primary">Return</a>
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-center ">
+                            <div class="order-status " style="width: 600px;">
+
+                                <div class="status-item order active">
+                                    <span class="status-icon mt-2 "><i class="fas fa-check"></i></span>
+                                    <span>Ordered</span>
+                                    <div class="status-line"></div> <!-- Connecting line -->
                                 </div>
-                                <%}%>
+
+
+                                <div class="status-item shipped ">
+                                    <div class="status-line"></div>
+                                    <span class="status-icon"><i class="fas fa-shipping-fast"></i></span>
+                                    <span>Shipped</span>
+                                    <div class="status-line"></div>
+                                </div>
+
+
+
+
+
+                                <div class="status-item d-flex" id="cancelled">
+
+                                    <span class="status-icon " style="background-color: #c7300b;"><i
+                                            class="fas fa-ban"></i></span>
+                                    <span>Cancelled</span>
+                                    <div class="status-line"></div>
+
+
+                                </div>
+
+
+                                <div class="status-item delivered d-flex ">
+                                    <span class="status-icon"><i class="fas fa-box-open"></i></span>
+                                    <span>Delivered</span>
+                                    <div class="status-line"></div>
+
+                                </div>
+
+                            </div>
+
+
                         </div>
                         <%}%>
-
-                            <div class="d-flex justify-content-center ">
-                                <div class="order-status" style="width: 600px;">
-
-                                    <div class="status-item active">
-                                        <span class="status-icon mt-2 "><i class="fas fa-check"></i></span>
-                                        <span>Ordered</span>
-                                        <div class="status-line"></div> <!-- Connecting line -->
-                                    </div>
-
-
-                                    <div class="status-item  ">
-                                        <div class="status-line"></div>
-                                        <span class="status-icon"><i class="fas fa-shipping-fast"></i></span>
-                                        <span>Shipped</span>
-                                        <div class="status-line"></div>
-                                    </div>
-
-
-                               <%if(productDetails.productStatus =="cancelled" ){%>
-                                
-                              
-                                    <div class="status-item d-flex " id="cancelled">
-                                      
-                                        <span class="status-icon " style="background-color: #c7300b;"><i
-                                                class="fas fa-ban"></i></span>
-                                        <span>Cancelled</span>
-                                        <div class="status-line"></div>
-                                       
-
-                                    </div>
-                                    <%} else{%>
-                  
-                                    <div class="status-item d-flex " id="delivered">
-                                        <span class="status-icon"><i class="fas fa-box-open"></i></span>
-                                        <span>Delivered</span>
-                                        <div class="status-line"></div>
-
-                                    </div>
-                                     <%}%>
-                                </div>
-
-
-                            </div>
                     </div>
                 </div>
             </div>
     </div>
     </div>
+    </div>
+    <!-- Return Reason Modal -->
+    <div class="modal fade" id="returnReasonModal" tabindex="-1" aria-labelledby="returnReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnReasonModalLabel">Return Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="returnReasonForm">
+                        <div class="mb-3">
+                            <label for="returnReason" class="form-label">Why are you returning this item?</label>
+                            <select class="form-select" id="returnReason">
+                                <option selected>Choose...</option>
+                                <option value="damaged">Item was damaged</option>
+                                <option value="incorrect">Incorrect item was sent</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 d-none" id="otherReasonContainer">
+                            <label for="otherReason" class="form-label">Please specify:</label>
+                            <textarea class="form-control" id="otherReason" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmReturn">Confirm Return</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -413,38 +384,71 @@
 
 
 
-
-        function setOrderToCancelled() {
-
-            const orderedItem = document.querySelector('.order-status .status-item:first-child');
-            const cancelledItem = document.querySelector('.order-status .status-item:nth-child(2)');
-
-            orderedItem.classList.remove('active');
-            cancelledItem.classList.add('active');
-        }
-
-
-
         document.addEventListener('DOMContentLoaded', function () {
+
             const status = document.getElementById('Status').value
 
-            if (status === "cancelled") {
 
+            function clearActiveClasses() {
                 document.querySelectorAll('.status-item').forEach(function (element) {
-                    element.classList.add('active');
+                    element.classList.remove('active');
                 });
-                document.getElementById("delivered").style.display = "none"
-                document.getElementById("cancelled").style.display = "block"
-
-                
-            } 
-            if( status === "delivered"){
-                document.querySelectorAll('.status-item').forEach(function (element) {
-                    element.classList.add('active');
-                })
             }
 
+            function setActiveStatus(status) {
+                clearActiveClasses()
+                switch (status) {
+                    case 'processing':
+                        document.querySelector('.status-item.order').classList.add('active');
+                        document.getElementById("cancelled").classList.add('d-none')
+                        break;
+
+                    case 'pending':
+                        document.querySelector('.status-item.order').classList.add('active');
+                        document.getElementById("cancelled").classList.add('d-none')
+                        break;
+
+
+                    case 'shipped':
+                        document.querySelector('.status-item.order').classList.add('active');
+                        document.querySelector('.status-item.shipped').classList.add('active');
+                        document.getElementById("cancelled").classList.add('d-none')
+                        break;
+
+                    case 'delivered':
+                        document.querySelectorAll('.status-item').forEach(function (element) {
+                            element.classList.add('active');
+                        });
+                        document.getElementById("cancelled").classList.add('d-none')
+                        document.getElementById('cancel').classList.add('d-none')
+                        document.getElementById('return').classList.remove('d-none')
+
+                        break;
+
+                    case 'cancelled':
+                        document.querySelectorAll('.status-item').forEach(function (element) {
+                            element.classList.remove('active');
+                        });
+                        document.querySelector('.status-item.order').classList.add('active');
+                        document.querySelector('.status-item.shipped').classList.add('active');
+                        document.getElementById("cancelled").classList.add('active');
+                        document.querySelector(".status-item.delivered").classList.add('d-none')
+                        document.getElementById("cancelled").style.display = "block";
+                        document.getElementById('cancel').classList.add('d-none')
+                        document.getElementById('return').classList.add('d-none')
+                        break;
+                    default:
+                        console.log('Unknown status');
+                }
+
+
+            }
+            setActiveStatus(status);
+
+
             const cancelbtn = document.getElementById("cancel");
+
+
             cancelbtn.addEventListener('click', function (e) {
                 e.preventDefault();
 
@@ -458,8 +462,12 @@
                     confirmButtonText: 'Yes, cancel it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
+
                         const productId = document.getElementById('productId').value
+
                         const orderId = document.getElementById('orderId').value.trim();
+
+
                         axios.patch('/cancelorder', { orderId, productId })
                             .then(res => {
                                 if (res.data.success) {
@@ -468,26 +476,19 @@
                                         title: 'Cancelled!',
                                         text: 'Your item has been cancelled.',
                                         icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    });
 
-                                    cancelbtn.style.display = 'none'
+                                    })
 
                                     document.querySelectorAll('.status-item').forEach(function (element) {
                                         element.classList.add('active');
                                     });
-                                    document.getElementById("delivered").style.display = "none"
-                                    document.getElementById("cancelled").style.display = "block"
+                                    document.getElementById("cancelled").classList.add('active');
+                                    document.getElementById("cancelled").classList.remove('d-none')
+                                    document.querySelector(".status-item.delivered").classList.add('d-none')
 
+                                    document.getElementById('cancel').classList.add('d-none')
+                                    document.getElementById('return').classList.add('d-none')
 
-                                } else {
-
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'There was a problem cancelling your item.',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
                                 }
                             }).catch(err => {
 
@@ -502,9 +503,45 @@
                     }
                 });
             });
+
+
+            const returnBtn = document.getElementById('return');
+            const returnModal = new bootstrap.Modal(document.getElementById('returnReasonModal'));
+            const returnReasonSelect = document.getElementById('returnReason');
+            const otherReasonContainer = document.getElementById('otherReasonContainer');
+
+            returnBtn.addEventListener('click', function (e) {
+                e.preventDefault(); 
+                returnModal.show();
+            });
+
+            returnReasonSelect.addEventListener('change', function () {
+              
+                if (this.value === 'other') {
+                    otherReasonContainer.classList.remove('d-none');
+                } else {
+                    otherReasonContainer.classList.add('d-none');
+                }
+            });
+
+            
+            document.getElementById('confirmReturn').addEventListener('click', function () {
+                
+                const selectedReason = returnReasonSelect.value;
+                const otherReason = document.getElementById('otherReason').value;
+                console.log('Selected reason:', selectedReason, 'Other reason:', otherReason);
+
+            
+                returnModal.hide();
+            });
+
+
+
         });
 
+
     </script>
+
 
 
     <!-- Add Address Modal -->

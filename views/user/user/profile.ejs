@@ -54,80 +54,7 @@
 
 <body>
     <style>
-  body {
-            background-color: rgb(241, 243, 246);
-        }
-
-        
-        
-     .form-check-input:checked {
-    background-color: #717fe0;
-    border-color: #717fe0;
-}
-.input-group-text {
-    background-color: #f8f9fa; 
-    border: 1px solid #ced4da; 
-    color: #495057;
-    height: 36px;
-}
-
-
-.form-control {
-    border-radius: 0.25rem;
-}
-
-/* Button styling */
-.btn-primary {
-    background-color:#717fe0; /* Primary blue background */
-    border: none; /* Remove border */
-    padding: 0.5rem 1rem; /* Padding for better touch */
-    transition: background-color 0.2s; /* Smooth transition */
-}
-
-.btn-primary:hover {
-    background-color: #5050d2; /* Darker shade on hover */
-}
-
-/* Add
-
-
-        /* Sidebar Styling */
-.nav-dashboard {
-    background-color: #fff; /* Light background */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Shadow for depth */
-    border-radius: 5px; /* Rounded corners */
-    padding: 20px; /* Spacing around items */
-}
-
-.nav-dashboard .nav-item {
-    margin-bottom: 1rem; /* Spacing between items */
-}
-
-.nav-dashboard .nav-link {
-    color: #717fe0; /* Base color */
-    font-weight: 500; /* Make text a bit bolder */
-    text-transform: uppercase; /* Uppercase text for style */
-    transition: color 0.3s ease; /* Smooth transition for hover effect */
-}
-
-.nav-dashboard .nav-link:hover {
-    color: #5050d2; /* Darker shade for hover state */
-    text-decoration: none; /* No underline on hover */
-}
-
-.nav-dashboard .nav-link.active {
-    color: #ffffff; /* White text for active state */
-    background-color: #717fe0; /* Highlight color for active state */
-    border-radius: 4px; /* Rounded corners for active state */
-}
-
-/* Adjustments for small screens */
-@media (max-width: 768px) {
-    .nav-dashboard {
-        margin-bottom: 20px; /* Extra spacing at the bottom on small screens */
-    }
-}
-
+ 
     </style>
     <!-- Header -->
     <!-- Header -->
@@ -172,7 +99,7 @@
                             </li>
 
                             <li>
-                                <a href="/shop">Shop</a>
+                                <a href="/shops">Shop</a>
                             </li>
 
                             <li>
@@ -291,16 +218,9 @@
     </header>
 
     <div class="page-wrapper" style="background-color: rgb(241, 243, 246);">
-        <div style="width: 100%; height: 77px; background-color: white;"></div>
+        <div style="width: 100%; height: 77px; background-color: white;"></div> 
         <main class="main">
-            <!-- <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3 mt-5 ">
-                <div class="container">
-                    <ol class="breadcrumb">
-                       
-                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
-                    </ol>
-                </div>
-            </nav> -->
+            
 
             <div class="page-content">
                 <div class="dashboard">
@@ -309,35 +229,43 @@
                         <div class="row mt-5">
                             
    
-                            <aside class="col-md-4 col-lg-3" >
-                                <ul class="nav nav-dashboard flex-column mb-3 ms-5" style="height: 570px;" >
+                          
+                            <aside class="col-md-4 col-lg-3">
+                                <ul class="nav nav-dashboard flex-column mb-3 ms-5" style="height: 570px;">
                                     <li class="nav-item">
-                                        <a class="nav-link active border" style="border-radius: 1rem;" id="tab-account-link"  href="/profile">My Profile</a>
+                                        <a class="nav-link border active" style="border-radius: 1rem;" id="tab-account-link"
+                                            href="/profile">My Profile</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-orders-link"  href="/orderpage"   >Orders</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;"
+                                            id="tab-orders-link" href="/orderpage">Orders</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " id="tab-downloads-link" style="border-radius: 1rem;" href="/wallet">Wallet</a>
+                                        <a class="nav-link border " id="tab-downloads-link" style="border-radius: 1rem;"
+                                            href="/wallet">Wallet</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border "style="border-radius: 1rem;" id="tab-address-link"  href="/userAddress" >Addresses</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-address-link"
+                                            href="/userAddress">Addresses</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border "style="border-radius: 1rem;" id="tab-wishlist-link"  href="/wishlist" >Wishlist</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-wishlist-link"
+                                            href="/wishlist">Wishlist</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " style="border-radius: 1rem;"id="tab-dashboard-link"  href="/changePassword" >Change password</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-dashboard-link"
+                                            href="/changePassword">Change password</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " style="border-radius: 1rem;"id="tab-dashboard-link"  href="/coupon" >Coupon</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;" id="tab-dashboard-link"
+                                            href="/coupon">Coupon</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link border " style="border-radius: 1rem;"href="/logout" id="signOutLink">Logout</a>
+                                        <a class="nav-link border " style="border-radius: 1rem;" href="/logout"
+                                            id="signOutLink">Logout</a>
                                     </li>
                                 </ul>
                             </aside>
-                            
                          
 
                             <div class="col-md-8 col-lg-9">
@@ -394,13 +322,13 @@
 
 
                 </div><!-- End .container -->
-            </div><!-- End .dashboard -->
-    </div><!-- End .page-content -->
-    </main><!-- End .main -->
-    </div><!-- End .page-wrapper -->
+            </div>
+    </div>
+    </main>
+    </div>
 
 
-    <!-- Add Address Modal -->
+
  
 
  <div class="bg-black mt-5 " style="width: 100%; height: 50px;"></div>

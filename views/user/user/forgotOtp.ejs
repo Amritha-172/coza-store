@@ -5,60 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm OTP</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(to right, #eef2f3, #8e9eab);
-        }
-
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            font-size: 14px;
-            color: #666;
-            display: block;
-            margin-top: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        #verify {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background-color: #717fe0;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #4f61d6;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/forgotOtp.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
@@ -74,28 +22,45 @@
                 <p id="errormsg" style="color: red;"></p>
 
                 <label for="otp">OTP:</label>
+
+                <div class="d-flex justify-content-center d-none" id="spinnerContainer">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
                 <input type="text" id="otp" name="otp" pattern="\d*" minlength="4" maxlength="4" required
                     placeholder="Enter OTP">
                 <input type="hidden" id="email" name="email" value="<%=email%>">
                 <button id="verify" type="submit">Verify OTP</button>
                 <!-- Timer and Resend Link -->
-                <div style="text-align: center; margin-top: 20px;">
-                    <p id="timer">00:00</p>
-                    <a href="#" id="resend" style="display: none">Resend</a>
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                    <a href="#" id="resend">Resend OTP</a>
+                    <p id="timer" style="margin-right: 10px; margin-left: 10px; margin-top: 15px;"> 00:00</p>
                 </div>
-
 
     </form>
     <script>
+
+        function showSpinner() {
+            document.getElementById('spinnerContainer').classList.remove('d-none');
+        }
+        function hideSpinner() {
+            document.getElementById('spinnerContainer').classList.add('d-none');
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+
             const resend = document.getElementById('resend');
+            resend.classList.add('disabled-link')
             const timerElement = document.getElementById('timer');
             const errormsg = document.getElementById('errormsg');
-            let timeLeft = 40;
+            let timeLeft = 30;
             let timer;
 
+
             function startTimer() {
-                clearInterval(timer); // Clear existing timer if any
+                clearInterval(timer);
                 timer = setInterval(updateTimer, 1000);
             }
 
@@ -107,11 +72,12 @@
                 timerElement.textContent = `${minutes}:${seconds}`;
                 timeLeft--;
 
-                if (timeLeft < 30) {
-                    resend.style.display = 'block';
+                if (timeLeft == 0) {
+                    resend.classList.remove('disabled-link')
+                    timerElement.style.display = 'none'
                 }
 
-                if (timeLeft < 0) {
+                if (timeLeft == 0) {
                     clearInterval(timer);
                     errormsg.innerHTML = "OTP has expired. Please request a new one.";
                     document.getElementById('verify').disabled = true;
@@ -127,21 +93,18 @@
                 console.log("email resent", email);
 
 
-                timeLeft = 40;
+                timeLeft = 30;
                 errormsg.innerHTML = "";
                 document.getElementById('verify').disabled = false;
                 startTimer();
-
+                showSpinner()
                 axios.post('/forgotResendOtp', { email })
                     .then(res => {
+                        hideSpinner()
                         if (res.data.success) {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Your work has been saved",
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
+                            resend.classList.add('disabled-link')
+                            timerElement.style.display = 'block'
+
                         } else {
                             console.log('failed to send email');
                         }
@@ -152,13 +115,15 @@
 
             document.getElementById('verify').addEventListener('click', function (e) {
                 e.preventDefault();
-                const otp = document.getElementById('otp').value;
-                axios.post('/verifyOtp', { otp })
+                const otp = document.getElementById('otp');
+                console.log(otp);
+                axios.post('/verifyOtp', { otp:otp.value })
                     .then(res => {
                         if (res.data.success) {
                             window.location.href = '/resetPassword';
                         } else {
                             errormsg.innerHTML = "Something went wrong";
+                            otp.value=""
                         }
                     }).catch(err => {
                         console.log('error', err);
@@ -166,6 +131,8 @@
             });
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

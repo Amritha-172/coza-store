@@ -6,203 +6,442 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product - Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/adminEdit.css">
+    <link rel="stylesheet" href="/css/admindashboard.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"
+        integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+        integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
-    <header class="coza-header">
-        <div class="container">
-            <div class="logo">Coza Store</div>
-            <!-- Add more header elements or navigation links as needed -->
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="/admin/logout">Sign out</a>
+            </div>
         </div>
     </header>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="logo">Admin Dashboard</div>
-            <br> <br>
-            <ul class="">
-                <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
-                <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
-                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
-                <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
-                <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
-                <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
-                <li><a href="/admin/banner" class="active"><i class="fa-regular fa-note-sticky"></i>Banner</a></li>
-                <li><a href="/admin/logout" class="active"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</a></li>
-            </ul>
-        </aside>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="topbar">
-                <div class="menu-toggle">&#9776; Menu</div>
-                <div class="user-profile">
-                    <!-- <img src="images/user-avatar.jpg" alt="User Avatar"> -->
-                    <span>Admin User</span>
+                    <div class="position-sticky sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <aside class="sidebar col-12">
+
+
+                                <ul class="">
+                                    <li class="nav-item">
+                                        <a href="/admin/dashboard" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-home me-2"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/userlist" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-users me-2"></i> Users
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/productlist" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-shopping-cart me-2"></i> Products
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/oderDetails" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-file-alt me-2"></i> Orders
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/category" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-list me-2"></i> Categories
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-money-bill me-2"></i> Coupon
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/offer" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-tag me-2"></i> offer
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/banner" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-regular fa-note-sticky me-2"></i> Banner
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/logout" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                            </aside>
+
+                        </ul>
+                    </div>
+
                 </div>
-            </div>
-
-            <div class="content">
-                <h1>Add PRODUCT</h1>
-                <!-- Inside your form for editing product details -->
-                <form class="" action="/admin/addproduct" method="post" enctype="multipart/form-data">
-                    <div class="add">
-                        <div class="mb-3">
-
-                            <%if(messages.length>0){%>
-                                <div style="color: red;">
-                                    <%=messages[0]%>
+            </nav>
+            <!-- Main Content -->
+            <main class="main-content container-fluid">
+                <div class="row justify-content-center">
+                    <div class="content col-12 col-lg-8">
+                        <h1 class="mb-5">Add PRODUCT</h1>
+                        <form action="/admin/addproduct" method="post" enctype="multipart/form-data" class="row g-3">
+                            <div class="row">
+                                <!-- Product Name -->
+                                <div class="mb-3 col-md-6">
+                                    <% if (messages.length> 0) { %>
+                                        <div class="alert alert-danger">
+                                            <%= messages[0] %>
+                                        </div>
+                                        <% } %>
+                                            <p id="erroname"></p>
+                                            <label for="productName" class="form-label">Product Name</label>
+                                            <input type="text" class="form-control" id="productName" name="productName"
+                                                required>
                                 </div>
-                                <%}%>
-                                    <label for="productName" class="form-label">Product Name</label>
-                                    <p id="erroname"></p>
-                                    <input type="text" class="form-control" id="productName"
-                                       name="productName" required>
-                        </div>
-                               
-                        <div class="col-md-12">
-                            <!-- Category Dropdown -->
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Category:</label>
-                                <select name="category" id="category" class="form-select">
-                                    <option ><--select category --></option>
-                                    <% categories.forEach((category)=>{ %>
-                                        <option  value="<%= category._id %>"><%= category.catName %></option>
-                                    <% }) %>
-                                </select>
+
+                                <!-- Category Dropdown -->
+                                <div class="mb-3 col-md-6">
+                                    <p></p>
+                                    <label for="category" class="form-label">Category:</label>
+                                    <select name="category" id="category" class="form-select">
+                                        <option value="">--select category--</option>
+                                        <% categories.forEach((category)=> { %>
+                                            <option value="<%= category._id %>">
+                                                <%= category.catName %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="mb-3 col-md-6">
+                                    <p id="error"></p>
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="price" name="price" required>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="mb-3 col-md-6">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                </div>
+
+                                <!-- Size -->
+                                <div class="mb-3 col-md-6">
+                                    <label for="size" class="form-label">Size</label>
+                                    <input type="text" class="form-control" id="size" name="size" required>
+                                </div>
+
+                                <!-- Color -->
+                                <div class="mb-3 col-md-6">
+                                    <label for="color" class="form-label">Color</label>
+                                    <input type="text" class="form-control" id="color" name="color" required>
+                                </div>
+
+                                <!-- Offer -->
+                                <div class="mb-3 col-md-6">
+                                    <label for="offer" class="form-label">Offer</label>
+                                    <input type="text" class="form-control" id="offer" name="offer" required>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-3 col-md-6">
+                                    <label for="description" class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="description" name="description"
+                                        required>
+                                </div>
+
+                                <!-- Images -->
+                                <div class="d-flex justify-content-center" style="width: 700px;">
+                                    <div class="d-flex justify-content-evenly">
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image1', 'preview1');">&times;
+                                            </div>
+                                            <label for="image1" class="form-label">
+                                                <img id="preview1" src="https://bit.ly/3ubuq5o" alt="">
+                                            </label>
+                                            <input type="file" class="form-control" id="image1" name="cropImages"
+                                                style="display: none;">
+                                            <button type="button"
+                                                onclick="document.getElementById('image1').click();">Upload
+                                                Image</button>
+                                        </div>
+
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image2', 'preview2');">&times;
+                                            </div>
+                                            <label for="image2" class="form-label">
+                                                <img id="preview2" src="https://bit.ly/3ubuq5o" alt="images">
+                                            </label>
+                                            <input type="file" class="form-control" id="image2" name="cropImages"
+                                                style="display: none;">
+                                            <button type="button"
+                                                onclick="document.getElementById('image2').click();">Upload
+                                                Image</button>
+                                        </div>
+
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image3', 'preview3');">&times;
+                                            </div>
+                                            <label for="image3" class="form-label">
+                                                <img id="preview3" src="https://bit.ly/3ubuq5o" alt="">
+                                            </label>
+                                            <input type="file" class="form-control" id="image3" name="cropImages"
+                                                style="display: none;">
+                                            <button type="button"
+                                                onclick="document.getElementById('image3').click();">Upload
+                                                Image</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Modal  for cropping image  -->
+                                <div class="modal fade" id="imageCropModal" tabindex="-1"
+                                    aria-labelledby="imageCropModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="imageCropModalLabel">Crop Image</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img id="imageToCrop" src="" alt="Crop this image"
+                                                    style="max-width: 100%;">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    id="cropImageBtn">Crop</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="d-flex justify-content-center col-12">
+                                    <button type="submit" id="submitBtn" class="btn btn-dark mt-4">Add</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <p id="error"></p>
-                            <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" value="" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">description</label>
-
-                            <input type="text" class="form-control" id="price" name="description" required>
-
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" value="" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="size" class="form-label">Size</label>
-                            <input type="text" class="form-control" id="size" name="size" value="" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color" name="color" value="" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="offer" class="form-label">offer</label>
-                            <input type="text" class="form-control" id="offer" name="offer" value="" required>
-                        </div>
+                        </form>
                     </div>
-                    <div class=" d-flex justify-content-center " style="width: 700px;">
-                        <div class="d-flex justify-content-evenly ">
-                            <div style="width: 120px; height: 120px;">
-                                <label for="image1" class="form-label">Image
-                                    <img id="preview1" style="width: 110px; height: 110px;" src="https://bit.ly/3ubuq5o" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image1" name="cropImages" value=""
-                                    style="display: none;"  onchange="updateImage('image1', 'preview1')">
-                            </div>
+                </div>
+            </main>
 
-                            <div class="" style="width: 120px; height: 120px;">
-                                <label for="image2" style="width: 100px; height: 100px;" class="form-label">Image
-                                    <img id="preview2" style="width: 110px; height: 110px;" src="https://bit.ly/3ubuq5o" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image2" name="cropImages" value=""
-                                    style="display: none;"  onchange="updateImage('image2', 'preview2')">
-                            </div>
-
-                            <div class="mb-3 ">
-                                <label for="image3" id="fisrtimg" style="width: 100px; height: 100px;"
-                                    class="form-label">Image
-                                    <img id="preview3" style="width: 110px; height: 110px;" src="https://bit.ly/3ubuq5o" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image3" name="cropImages" value=""
-                                    style="display: none;"  onchange="updateImage('image3', 'preview3')">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex  justify-content-center ">
-
-                        <button type="submit" class="btn btn-dark   mt-4 "
-                            style="width: 100px; height: 50px; ">Add</button>
-                    </div>
-
-                </form>
-
-            </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        function updateImage(inputId, previewId) {
+        function deleteImage(inputId, previewId) {
             var input = document.getElementById(inputId);
             var preview = document.getElementById(previewId);
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
+            input.value = "";
+            preview.src = "https://bit.ly/3ubuq5o";
+
         }
 
-        document.addEventListener('DOMContentLoaded',function(){
-             const productElem=document.getElementById('productName')
-             productElem.addEventListener('blur',function(){
-                 const erroname=document.getElementById('erroname')
-                const productname=document.getElementById('productName').value
-                console.log(productname);
-                if(productname.trim() == " "){
-                    erroname.innerHTML='product name required'
-                    erroname.style.color='red'
-                    
-                }else{
-                    erroname.innerHTML=' '
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const productElem = document.getElementById('productName')
+            productElem.addEventListener('blur', function () {
+                const erroname = document.getElementById('erroname')
+                const productname = document.getElementById('productName').value
+
+                if (productname.trim() == " ") {
+                    erroname.innerHTML = 'product name required'
+                    erroname.style.color = 'red'
+
+                } else {
+                    erroname.innerHTML = ' '
                 }
-                
 
-             })
-             document.getElementById('price').addEventListener('blur',function(e){
-            e.preventDefault()
-              const price=  document.getElementById('price').value
-              if(price<1){
-                const error=document.getElementById('error')
-                   error.innerHTML="Please Eneter Valid number"
-                   error.style.color='red'
 
-              }else{
-                error.innerHTML=" "
-              }
+            })
+            document.getElementById('price').addEventListener('blur', function (e) {
+                e.preventDefault()
+                const price = document.getElementById('price').value
+                if (price < 1) {
+                    const error = document.getElementById('error')
+                    error.innerHTML = "Please Eneter Valid number"
+                    error.style.color = 'red'
 
-           })
+                } else {
+                    error.innerHTML = " "
+                }
+
+            })
 
 
         })
-        </script>
+    </script>
+
+    <script>
+        let currentInputId, currentPreviewId, cropper;
+        let croppedImages = {};
+        let originalFileNames = {};
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.getElementById('image1').addEventListener('change', function () { prepareImageForCropping('image1', 'preview1'); });
+            document.getElementById('image2').addEventListener('change', function () { prepareImageForCropping('image2', 'preview2'); });
+            document.getElementById('image3').addEventListener('change', function () { prepareImageForCropping('image3', 'preview3'); });
+
+
+            document.getElementById('cropImageBtn').addEventListener('click', function () {
+                performCropping();
+            });
+
+
+            $('#imageCropModal').on('shown.bs.modal', function () {
+                let image = document.getElementById('imageToCrop');
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: "move",
+                    minContainerWidth: 450,
+                    minContainerHeight: 500,
+                    minCropBoxWidth: 400,
+                    minCropBoxHeight: 400,
+                    minCanvasHeight: 500,
+                    minCanvasWidth: 500,
+
+                });
+            });
+
+
+            $('#imageCropModal').on('hidden.bs.modal', function () {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            });
+        });
+
+        function prepareImageForCropping(inputId, previewId) {
+            currentInputId = inputId;
+            currentPreviewId = previewId;
+            const input = document.getElementById(inputId);
+            const file = input.files[0];
+            originalFileNames[inputId] = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imageToCrop').src = e.target.result;
+                $('#imageCropModal').modal('show');
+            };
+            reader.readAsDataURL(file);
+        }
+
+
+        function performCropping() {
+            if (!cropper) {
+                console.error("Cropper is not initialized.");
+                return;
+            }
+            cropper.getCroppedCanvas().toBlob((blob) => {
+
+                const preview = document.getElementById(currentPreviewId);
+                preview.src = URL.createObjectURL(blob);
+
+                croppedImages[currentInputId] = blob;
+
+
+                $('#imageCropModal').modal('hide');
+            }, 'image/png')
+
+
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const form = document.querySelector('form')
+            form.addEventListener('submit', function (e) {
+                e.preventDefault()
+                const productName = document.getElementById('productName').value
+                const category = document.getElementById('category').value
+                const price = document.getElementById('price').value
+                const description = document.getElementById('description').value
+                const quantity = document.getElementById('quantity').value
+                const size = document.getElementById('size').value
+                const color = document.getElementById('color').value
+                const offer = document.getElementById('offer').value
+                const image1 = document.getElementById('image1').files[0]
+                const image2 = document.getElementById('image2').files[0]
+                const image3 = document.getElementById('image3').files[0]
+
+
+                const formData = new FormData();
+                formData.append('productName', productName)
+                formData.append('category', category)
+                formData.append('price', price)
+                formData.append('description', description)
+                formData.append('quantity', quantity)
+                formData.append('size', size)
+                formData.append('color', color)
+                formData.append('offer', offer)
+                
+
+                Object.keys(croppedImages).forEach(key => {
+                    const originalFileName = originalFileNames[key];
+                    formData.append('cropImages', croppedImages[key],originalFileName);
+                });
+
+                console.log(formData);
+
+                axios.post('/admin/addproduct', formData, {
+                    headers: {
+                        'Content-type': "multipart/form-data"
+                    }
+                }).then((res) => {
+                    if (res.data.success) {
+                        window.location.href = '/admin/productlist'
+                    }
+
+                }).catch((err) => {
+                    console.log('error', err);
+                });
+
+            })
+        })
+
+
+
+
+    </script>
 
     <script src="js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 </body>
 

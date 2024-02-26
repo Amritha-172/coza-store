@@ -2,6 +2,7 @@ const multer = require('multer');
 
 
 const upload = multer.diskStorage({
+   
     destination: './public/multerimages',
     filename: (req, file, cb) => {
         const filename = file.originalname;

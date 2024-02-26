@@ -21,30 +21,83 @@
 
     </style>
 
-    <header class="coza-header">
-        <div class="container">
-            <div class="logo">Coza Store</div>
-            <!-- Add more header elements or navigation links as needed -->
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+            <a class="nav-link px-3" href="/admin/logout">Sign out</a>
         </div>
-    </header>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="logo">Admin Dashboard</div>
-            <br> <br>
-            <ul class="">
-                <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
-                <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
-                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
-                <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
-                <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
-                <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
-                <li><a href="/admin/banner" class="active"><i class="fa-regular fa-note-sticky"></i>Banner</a></li>
-                <li><a href="/admin/logout" class="active"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</a></li>
-            </ul>
-        </aside>
+    </div>
+</header>
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+              
+                    <div class="position-sticky sidebar-sticky">
+                        <ul class="nav flex-column">
+                          <aside class="sidebar col-12">
+                            <div class="logo ms-5 ">Admin Dashboard</div>
+                            <br> <br>
+                            <ul class="">
+                              <li class="nav-item">
+                                <a href="/admin/dashboard" class="nav-link active d-flex align-items-center">
+                                    <i class="fas fa-home me-2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                              <a href="/admin/userlist" class="nav-link active d-flex align-items-center">
+                                  <i class="fa-solid fa-users me-2"></i> Users
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/productlist" class="nav-link active d-flex align-items-center">
+                                  <i class="fas fa-shopping-cart me-2"></i> Products
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/oderDetails" class="nav-link active d-flex align-items-center">
+                                  <i class="fas fa-file-alt me-2"></i> Orders
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/category" class="nav-link active d-flex align-items-center">
+                                  <i class="fas fa-list me-2"></i> Categories
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
+                                  <i class="fa-solid fa-money-bill me-2"></i> Coupon
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/offer" class="nav-link active d-flex align-items-center">
+                                  <i class="fa-solid fa-tag me-2"></i> offer
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/banner" class="nav-link active d-flex align-items-center">
+                                  <i class="fa-regular fa-note-sticky me-2"></i> Banner
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/admin/logout" class="nav-link active d-flex align-items-center">
+                                  <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                              </a>
+                          </li>
+                          
+                          
+                                </ul>
+                        </aside>
+                
+                        </ul>
+                    </div>
+               
+            </div>
+        </nav>
 
         <!-- Main Content -->
         <main class="main-content" id="offer">
@@ -137,7 +190,7 @@
                 </div>
             </div>
         </main>
-
+    </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

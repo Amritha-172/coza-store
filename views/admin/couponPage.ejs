@@ -25,143 +25,227 @@
         }
     </style>
 
-    <header class="coza-header">
-        <div class="container">
-            <div class="logo">Coza Store</div>
-            <!-- Add more header elements or navigation links as needed -->
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="/admin/logout">Sign out</a>
+            </div>
         </div>
     </header>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="logo">Admin Dashboard</div>
-            <br> <br>
-            <ul class="">
-                <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
-                <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
-                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
-                <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
-                <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
-                <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
-                <li><a href="/admin/banner" class="active"><i class="fa-regular fa-note-sticky"></i>Banner</a></li>
-                <li><a href="/admin/logout" class="active"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</a></li>
-            </ul>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content" id="coupon">
-            <div class="content">
-                <h1>Coupon List</h1>
-                <p>List of Coupons:</p>
 
-                <form action="" method="">
-                    <button type="submit" id="addCoupon" class="btn btn-dark d-flex mb-3">Add New Coupon</button>
-                </form>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
 
-                <table class="table table-bordered" style="table-layout: fixed;">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">ID</th>
-                            <th>Coupon Code</th>
-                            <th>Discount</th>
-                            <th>Expiry Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(i=0; i < coupons.length; i++){%>
+                    <div class="position-sticky sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <aside class="sidebar col-12">
+                                <div class="logo ms-5 ">Admin Dashboard</div>
+                                <br> <br>
+                                <ul class="">
+                                    <li class="nav-item">
+                                        <a href="/admin/dashboard" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-home me-2"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/userlist" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-users me-2"></i> Users
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/productlist" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-shopping-cart me-2"></i> Products
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/oderDetails" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-file-alt me-2"></i> Orders
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/category" class="nav-link active d-flex align-items-center">
+                                            <i class="fas fa-list me-2"></i> Categories
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-money-bill me-2"></i> Coupon
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/offer" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-tag me-2"></i> offer
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/banner" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-regular fa-note-sticky me-2"></i> Banner
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/logout" class="nav-link active d-flex align-items-center">
+                                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                            </aside>
+
+                        </ul>
+                    </div>
+
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content" id="coupon">
+                <div class="content">
+                    <h1>Coupon List</h1>
+                    <p>List of Coupons:</p>
+
+                    <form action="" method="">
+                        <button type="submit" id="addCoupon" class="btn btn-dark d-flex mb-3">Add New Coupon</button>
+                    </form>
+
+                    <table class="table table-bordered" style="table-layout: fixed;">
+                        <thead>
                             <tr>
-                                <td>
-                                    <%=i+1%>
-                                </td>
-                                <td>
-                                    <%= coupons[i].couponCode%>
-                                </td>
-                                <td>
-                                    <%=coupons[i].dicountAmount%>
-                                </td>
-                                <td>
-                                    <%=coupons[i].formattedDate%>
-                                </td>
-                                <td class="d-flex">
-                                    <a href="/admin/editcoupon" data-coupon-code="<%= coupons[i].couponCode %>"
-                                        class="btn btn-primary editbtn text-decoration-none ms-2 text-white">Edit</a>
-                                    <a href="" data-coupon-code="<%= coupons[i].couponCode %>"
-                                        class=" btn btn-danger deletebtn text-decoration-none ms-2 text-white">Delete</a>
-                                </td>
+                                <th style="width: 80px;">ID</th>
+                                <th>Coupon Code</th>
+                                <th>Discount</th>
+                                <th>Minumum Amount</th>
+                                <th>Description</th>
+                                <th>Expiry Date</th>
+                                <th>Action</th>
                             </tr>
-                            <%}%>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+                        </thead>
+                        <tbody>
+                            <% for(i=0; i < coupons.length; i++){%>
+                                <tr>
+                                    <td>
+                                        <%=i+1%>
+                                    </td>
+                                    <td>
+                                        <%= coupons[i].couponCode%>
+                                    </td>
+                                    <td>
+                                        ₹ <%=coupons[i].dicountAmount%>
+                                    </td>
+                                    <td>
+                                        ₹ <%=coupons[i].minimumAmount%>
+                                    </td>
+                                    <td>
+                                        <%=coupons[i].description%>
+                                    </td>
+                                    <td>
+                                        <%=coupons[i].formattedDate%>
+                                    </td>
+                                    <td class="d-flex">
+                                        <a href="/admin/editcoupon" data-coupon-code="<%= coupons[i].couponCode %>"
+                                            class="btn btn-primary editbtn text-decoration-none ms-2 text-white">Edit</a>
+                                        <a href="" data-coupon-code="<%= coupons[i].couponCode %>"
+                                            class=" btn btn-danger deletebtn text-decoration-none ms-2 text-white">Delete</a>
+                                    </td>
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
 
-        <!-- Add coupon -->
-        <main class="main-content col-6" style="display: none; margin-left: 150px;" id="Add">
-            <div class="content">
-                <h1>Coupons Management</h1>
-                <!-- Add Coupon Form -->
-                <form action="/admin/Coupon" method="POST">
-                    <div class="mb-3">
-                        <label for="couponCode" class="form-label">Coupon Code</label>
-                        <input type="text" class="form-control" id="couponCode" name="couponCode" required>
+            <!-- Add coupon -->
+            <main class="main-content col-6" style="display: none; margin-left: 150px;" id="Add">
+                <div class="content">
+                    <h1>Coupons Management</h1>
+                    <p id="errorMessage"></p>
+                    <div class="row">
+                        <!-- Add Coupon Form -->
+                        <form action="/admin/Coupon" method="POST">
+                            <div class="mb-3">
+                                <label for="couponCode" class="form-label">Coupon Code</label>
+                                <input type="text" class="form-control" id="couponCode" name="couponCode" required
+                                    style="background-color: #f0f0f0;" readonly>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <p id="discountErrorMsg" style="color: red;"></p>
+                                    <label for="discountAmount" class="form-label">Discount Amount (₹)</label>
+                                    <input type="number" class="form-control" id="discountAmount" name="discountAmount"
+                                        required style="background-color: #f0f0f0;">
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <p id="minimumAmountErrorMsg" style="color: red;"></p>
+                                    <label for="minimumAmount" class="form-label">Minimum Amount (₹)</label>
+                                    <input type="number" class="form-control" id="minimumAmount" name="minimumAmount"
+                                        required style="background-color: #f0f0f0;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p id="descriptionErrorMsg" style="color: red;"></p>
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea style="background-color: #f0f0f0;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate" required style="background-color: #f0f0f0;">
+                            </div>
+                            <button type="submit" id="Addbutton" class="btn btn-primary">Add Coupon</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <p id="errormsg" style="color: red;"></p>
-                        <label for="discountAmount" class="form-label">Discount Amount (₹)</label>
-                        <input type="number" class="form-control" id="discountAmount" name="discountAmount" required>
-                    </div>
-                    <div class="mb-3">
-                        <p id="errmsg" style="color: red;"></p>
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="expiryDate" class="form-label">Expiry Date</label>
-                        <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
-                    </div>
-                    <button type="submit" id="Addbutton" class="btn btn-primary">Add Coupon</button>
-                </form>
+                </div>
+            </main>
+            
 
+            <main class="main-content col-6" style="display: none; margin-left: 150px;" id="edit">
+                <div class="content">
+                    <h1>Edit Coupon</h1>
+                    <!-- This form would be filled with data for the coupon being edited -->
+                    <form action="/admin/updatecoupon" method="POST">
+                        <input type="hidden" name="couponId" value="COUPON_ID" />
+                        <!-- Replace COUPON_ID with actual coupon ID -->
+                        <div class="mb-3">
+                            <label for="editcouponCode" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" id="editcouponCode" name="couponCode" value="" required style="background-color: #f0f0f0;" readonly>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <p id="errorEditDiscount" style="color: red;"></p>
+                                <label for="editdiscountAmount" class="form-label">Discount Amount (₹)</label>
+                                <input type="number" class="form-control" id="editdiscountAmount" name="discountAmount"
+                                    value="EXISTING_DISCOUNT_AMOUNT" required style="background-color: #f0f0f0;">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <p id="errorEditMinimum" style="color: red;"></p>
+                                <label for="editminimumAmount" class="form-label">Minimum Amount (₹)</label>
+                                <input type="number" class="form-control" id="editminimumAmount" name="minimumAmount" value="EXISTING_MINIMUM_AMOUNT" required style="background-color: #f0f0f0;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <p id="errorEditDescription" style="color: red;"></p>
+                            <label for="editdescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editdescription" name="description" rows="3" required></textarea style="background-color: #f0f0f0;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editexpiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="editexpiryDate" name="expiryDate" value="" required style="background-color: #f0f0f0;">
+                        </div>
+                        <button type="submit" id="updatebtn" class="btn btn-primary">Update Coupon</button>
+                    </form>
+                </div>
+            </main>
+            
 
-
-            </div>
-        </main>
-
-        <main class="main-content col-6" style="display: none;margin-left: 150px;" id="edit">
-            <div class="content">
-                <h1>Edit Coupon</h1>
-                <!-- This form would be filled with data for the coupon being edited -->
-                <form action="/admin/updatecoupon" method="POST">
-                    <input type="hidden" name="couponId" value="COUPON_ID" />
-                    <!-- Replace COUPON_ID with actual coupon ID -->
-                    <div class="mb-3">
-                        <label for="couponCode" class="form-label">Coupon Code</label>
-                        <input type="text" class="form-control" id="editcouponCode" name="couponCode" value="" required>
-                    </div>
-                    <div class="mb-3">
-                        <p id="errorEdit" style="color: red;"></p>
-                        <label for="discountAmount" class="form-label">Discount Amount ()</label>
-                        <input type="number" class="form-control" id="editdiscountAmount" name="discountAmount"
-                            value="EXISTING_DISCOUNT_AMOUNT" required>
-                    </div>
-                    <div class="mb-3">
-                       <p id="err" style="color: red;"></p>
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="editdescription" name="description" rows="3"
-                            required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="expiryDate" class="form-label">Expiry Date</label>
-                        <input type="date" class="form-control" id="editexpiryDate" name="expiryDate" value="" required>
-                    </div>
-                    <button type="submit" id="updatebtn" class="btn btn-primary">Update Coupon</button>
-                </form>
-            </div>
-        </main>
-
+        </div>
     </div>
 
 
@@ -183,31 +267,68 @@
 
             })
             const discountElem = document.getElementById('discountAmount')
+
             discountElem.addEventListener('blur', function () {
+                const minumumAmountElem = document.getElementById('minimumAmount').value
                 const discountAmount = this.value
 
                 if (!discountAmount || discountAmount.trim() == "" || discountAmount < 0) {
-                    document.getElementById('errormsg').innerHTML = "Please Enter Valid Amount"
-                    document.getElementById('errormsg').style.color = 'red'
+                    document.getElementById('discountErrorMsg').innerHTML = "Please Enter Valid Amount"
+                    document.getElementById('discountErrorMsg').style.color = 'red'
                     document.getElementById('Addbutton').disabled = true
 
 
-                } else {
-                    document.getElementById('errormsg').innerHTML = ""
+                }
+
+                else {
+                    document.getElementById('discountErrorMsg').innerHTML = ""
                     document.getElementById('Addbutton').disabled = false
 
                 }
             })
+
+            const minumumAmountElem = document.getElementById('minimumAmount')
+
+
+            minumumAmountElem.addEventListener('blur', function () {
+                const discountAmount = document.getElementById('discountAmount').value
+
+                const minumumAmount = this.value
+
+                if (!minumumAmount || minumumAmount.trim() == "" || minumumAmount < 0) {
+                    document.getElementById('minimumAmountErrorMsg').innerHTML = "Please Enter Valid Amount"
+                    document.getElementById('minimumAmountErrorMsg').style.color = 'red'
+                    document.getElementById('Addbutton').disabled = true
+
+
+
+                } else if (Number(minumumAmount) <= Number(discountAmount)) {
+                    document.getElementById('minimumAmountErrorMsg').innerHTML = "Amount must be greater than discount"
+                    document.getElementById('minimumAmountErrorMsg').style.color = 'red'
+                    document.getElementById('Addbutton').disabled = true
+
+                }
+                else {
+                    document.getElementById('minimumAmountErrorMsg').innerHTML = ""
+                    document.getElementById('Addbutton').disabled = false
+
+                }
+
+            })
+
+
+
+
             const DescriptionElem = document.getElementById('description')
             DescriptionElem.addEventListener('blur', function () {
                 const description = this.value
-                console.log(description);
+
                 if (description.trim() == "") {
 
-                    document.getElementById('errmsg').innerHTML = "Enter Description"
+                    document.getElementById('descriptionErrorMsg').innerHTML = "Enter Description"
                     document.getElementById('Addbutton').disabled = true
                 } else {
-                    document.getElementById('errmsg').innerHTML = ""
+                    document.getElementById('descriptionErrorMsg').innerHTML = ""
                     document.getElementById('Addbutton').disabled = false
                 }
 
@@ -216,35 +337,103 @@
 
 
 
+            //<-------------Add coupons------------------>
+            document.getElementById('Addbutton').addEventListener('click', function (e) {
+                e.preventDefault()
+                const couponCode = document.getElementById('couponCode').value
+                const discountAmount = document.getElementById('discountAmount').value
+                const description = document.getElementById('description').value
+                const minimumAmount = document.getElementById('minimumAmount').value
+                const expiryDate = document.getElementById('expiryDate').value
+
+                axios.post('/admin/Coupon', { couponCode, discountAmount, description, minimumAmount, expiryDate })
+                    .then(res => {
+                        if (!res.data.success) {
+                            console.log(res.data);
+                            document.getElementById('errorMessage').innerHTML = res.data.message
+                            document.getElementById('errorMessage').style.color = 'red'
+
+                        } else {
+                            document.getElementById('errorMessage').innerHTML = " "
+                            window.location.href = '/admin/Coupon'
+
+                        }
+                    }).catch(err => {
+                        console.log('error', err);
+                    })
+
+
+
+            })
+
+
+            //<--------------edit coupon section-------------->//
+
             const editBtn = document.querySelectorAll('.editbtn')
             const editdiscountElem = document.getElementById('editdiscountAmount')
-            const editdescriptionElem=document.getElementById('editdescription')
-            editdiscountElem.addEventListener('blur', function () {
-               const  editdiscountAmount = this.value
-                if (!editdiscountAmount || editdiscountAmount.trim() == " " || editdiscountAmount < 0) {
-                    document.getElementById('errorEdit').innerHTML="Enter Valid amount"
-                      document.getElementById('updatebtn').disabled=true
+            const editdescriptionElem = document.getElementById('editdescription')
+            const editminimumAmountElem = document.getElementById('editminimumAmount')
 
-                }else{
-                    document.getElementById('errorEdit').innerHTML=""
-                    document.getElementById('updatebtn').disabled=false  
+            editdiscountElem.addEventListener('blur', function () {
+                const editdiscountAmount = this.value
+                if (!editdiscountAmount || editdiscountAmount.trim() == " " || editdiscountAmount < 0) {
+                    document.getElementById('errorEditDiscount').innerHTML = "Enter Valid amount"
+                    document.getElementById('updatebtn').disabled = true
+
+                } else {
+                    document.getElementById('errorEditDiscount').innerHTML = ""
+                    document.getElementById('updatebtn').disabled = false
                 }
             })
-            editdescriptionElem.addEventListener('blur',function(){
-              const editdescriptionElem= this.value
-              if(!editdescriptionElem||editdescriptionElem.trim()==""){
-                   document.getElementById("err").innerHTML="Enter Description"
-                   document.getElementById('updatebtn').disabled=true
-          
-              }else{
-                document.getElementById("err").innerHTML=" "
-                document.getElementById('updatebtn').disabled=false
 
-              }
+            editdescriptionElem.addEventListener('blur', function () {
+                const editdescriptionElem = this.value
+
+                if (!editdescriptionElem || editdescriptionElem.trim() == "") {
+                    document.getElementById("err").innerHTML = "Enter Description"
+                    document.getElementById('updatebtn').disabled = true
+
+                } else {
+                    document.getElementById("err").innerHTML = " "
+                    document.getElementById('updatebtn').disabled = false
+
+                }
+            })
+
+            editminimumAmountElem.addEventListener('blur', function () {
+                editminimumAmount = this.value
+                const editdiscount = document.getElementById('editdiscountAmount').value
+
+                console.log(editdiscount);
+                console.log(editminimumAmount);
+
+                if (!editminimumAmount || editminimumAmount.trim() == "" || editminimumAmount < 0) {
+                    document.getElementById('errorEditMinimum').innerHTML = "Please Enter Valid Amount"
+                    document.getElementById('errorEditMinimum').style.color = 'red'
+                    document.getElementById('updatebtn').disabled = true
+
+
+
+                } else if (Number(editminimumAmount) <= Number(editdiscount)) {
+                    document.getElementById('errorEditMinimum').innerHTML = "Amount must be greater than discount"
+                    document.getElementById('errorEditMinimum').style.color = 'red'
+                    document.getElementById('updatebtn').disabled = true
+
+                }
+                else {
+                    document.getElementById('errorEditMinimum').innerHTML = ""
+                    document.getElementById('updatebtn').disabled = false
+
+                }
+
+
             })
 
 
-           
+
+
+
+            //<-----------------Edit coupon------------>
             editBtn.forEach(button => {
                 button.addEventListener('click', function (e) {
                     e.preventDefault()
@@ -255,10 +444,14 @@
                     axios.post('/admin/editCoupon', { couponCode })
                         .then(res => {
                             const couponDetails = res.data.couponDetails
+
                             if (res.data.couponDetails) {
                                 document.getElementById('editcouponCode').value = couponDetails.couponCode
                                 document.getElementById('editdiscountAmount').value = couponDetails.dicountAmount
                                 document.getElementById('editdescription').innerHTML = couponDetails.description
+                                document.getElementById('editminimumAmount').value = couponDetails.minimumAmount
+
+
 
                                 const expireDate = new Date(couponDetails.expireDate);
                                 const formattedDate = expireDate.toISOString().split('T')[0];
@@ -277,6 +470,22 @@
                 })
 
             })
+            document.getElementById('updatebtn').addEventListener('click', function () {
+
+                const couponCode = document.getElementById('editcouponCode').value
+                const discountAmount = document.getElementById('discountAmount').value
+                const description = document.getElementById('description').value
+                const minimumAmount = document.getElementById('minimumAmount').value
+                const expiryDate = document.getElementById('expiryDate').value
+
+
+
+            })
+
+
+
+
+
 
             const deletebtn = document.querySelectorAll('.deletebtn')
             deletebtn.forEach(button => {

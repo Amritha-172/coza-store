@@ -122,6 +122,11 @@
 
             axios.post('/resetPassword', { password })
                 .then(res => {
+
+                    if(res.data.passwordMatch){
+                        passwordErr.innerHTML="Your new password cannot be the same as your old password"
+                        comError.style.color = 'red'
+                    }
                     if (res.data.success) {
 
                         Swal.fire({

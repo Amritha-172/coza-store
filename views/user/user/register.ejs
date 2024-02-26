@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,8 +20,13 @@
             height: 100vh;
         }
 
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary-subtle fixed-top">
@@ -29,12 +35,13 @@
             <a class="navbar-brand" href="#">
                 <img src="/images/icons/logo-01.png" alt="CozaStore Logo">
             </a>
-    
+
             <!-- Toggle Button for Mobile View -->
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
@@ -55,161 +62,171 @@
         </div>
     </nav>
 
-<div class="container registration-container">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="text-white">Register for CozaStore</h4>
-        </div>
-        <div class="card-body">
-            <form action="/signup" method="post">
-                <div class="form-group">
-                  
-
-                    <% if (messages.length>0) { %>
-                        <p class="text-danger  ps-5"><%= messages %></p>
-
-                    <% } %>
-                  
-                    <label for="username">Username:</label>
-                    <p id="errorname"></p>
-                    <input type="text" class="form-control" id="name" pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$"name="name" placeholder="Enter your username" required>
-                </div>
-                <div class="form-group">
-                    <p id="errorEmail" ></p>
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Phone:</label>
-                    <p id="errorphone"></p>
-                    <input type="number" class="form-control" name="mobile" id="mobile" placeholder="Enter your Phone number" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <p id="passwordErr"></p>
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
-                 
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password:</label>
-                    <p id="comError"></p>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                </div>
-
-             
+    <div class="container registration-container">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="text-white">Register for CozaStore</h4>
+            </div>
+            <div class="card-body">
+                <form action="/signup" method="post">
+                    <div class="form-group">
 
 
-                <div class="d-flex justify-content-center ">
-                    
-                       <button type="submit" id="signbtn" class="btn btn-primary " >Signup</button>
-                </div>
-            </form>
-            <div class="login-link">
-                <form action="" method="post">
+                        <% if (messages.length>0) { %>
+                            <p class="text-danger  ps-5">
+                                <%= messages %>
+                            </p>
 
-                    Already have an account? <a href="login">Login here</a>
+                            <% } %>
+
+                                <label for="username">Username:</label>
+                                <p id="errorname"></p>
+                                <input type="text" class="form-control" id="name"
+                                    pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="name"
+                                    placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <p id="errorEmail"></p>
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Phone:</label>
+                        <p id="errorphone"></p>
+                        <input type="number" class="form-control" name="mobile" id="mobile"
+                            pattern=/^(?:(?:\+91|0)?[6-9]\d{9})$/; placeholder="Enter your Phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <p id="passwordErr"></p>
+                        <input type="password" class="form-control" name="password" id="password"
+                            placeholder="Enter your password" required>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <p id="comError"></p>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                            placeholder="Confirm your password" required>
+                    </div>
+
+
+
+
+                    <div class="d-flex justify-content-center ">
+
+                        <button type="submit" id="signbtn" class="btn btn-primary ">Signup</button>
+                    </div>
                 </form>
+                <div class="login-link">
+                    <form action="" method="post">
+
+                        Already have an account? <a href="login">Login here</a>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    
+    <script>
 
 
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded',function(){
-        const emailelem=document.getElementById('email')
-        const errorEmail=document.getElementById('errorEmail')
-        const name=document.getElementById('name')
-        const errorname=document.getElementById('errorname')
-        const registerBtn=document.getElementById('signbtn')
-       
-        document.getElementById('password').addEventListener('blur',function(){
-             const pass=this.value
-             const passwordErr= document.getElementById('passwordErr')
-             if(pass.length === 0){
 
-            passwordErr.innerHTML = 'Password is required'
-            passwordErr.style.color='red'
-            registerBtn.disabled=true 
-        }else if(pass.length < 8) {
-            passwordErr.innerHTML = 'Password min length is 8'
-            passwordErr.style.color='red'
-            registerBtn.disabled=true 
-        }else if(!pass||pass.trim()==""){
-            passwordErr.innerHTML = "Phone number is required"
-            passwordErr.style.color='red'
-        }else{
-            passwordErr.innerHTML=" "
-            registerBtn.disabled=false
-        }
+    </script>
+    <script>
 
-        })
-        document.getElementById('confirmPassword').addEventListener("input",function(){
-                const confirmPass=this.value
-                const password=document.getElementById('password').value
-                const comError=document.getElementById('comError')
-                if(confirmPass!==password){
-                    comError.innerHTML="Password and confirm password is not match"
-                    comError.style.color='red'
-                }else{
-                    comError.innerHTML=" "
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailelem = document.getElementById('email')
+            const errorEmail = document.getElementById('errorEmail')
+            const name = document.getElementById('name')
+            const errorname = document.getElementById('errorname')
+            const registerBtn = document.getElementById('signbtn')
+
+            document.getElementById('password').addEventListener('blur', function () {
+                const pass = this.value
+                const passwordErr = document.getElementById('passwordErr')
+                if (pass.length === 0) {
+
+                    passwordErr.innerHTML = 'Password is required'
+                    passwordErr.style.color = 'red'
+                    registerBtn.disabled = true
+                } else if (pass.length < 8) {
+                    passwordErr.innerHTML = 'Password min length is 8'
+                    passwordErr.style.color = 'red'
+                    registerBtn.disabled = true
+                } else if (!pass || pass.trim() == "") {
+                    passwordErr.innerHTML = "Phone number is required"
+                    passwordErr.style.color = 'red'
+                } else {
+                    passwordErr.innerHTML = " "
+                    registerBtn.disabled = false
                 }
 
-        })
+            })
+            document.getElementById('confirmPassword').addEventListener("input", function () {
+                const confirmPass = this.value
+                const password = document.getElementById('password').value
+                const comError = document.getElementById('comError')
+                if (confirmPass !== password) {
+                    comError.innerHTML = "Password and confirm password is not match"
+                    comError.style.color = 'red'
+                } else {
+                    comError.innerHTML = " "
+                }
 
-        
-        emailelem.addEventListener('blur',function(e){
-            e.preventDefault()
-            const email=document.getElementById('email').value
-            axios.post('/checkEmail',{email})
-            .then(res=>{
-                 if(res.data.success){
-                    errorEmail.innerHTML="Email already existed"
-                    errorEmail.style.color='red'
-                 }else{
-                    errorEmail.innerHTML=" "
-                 }
             })
 
-        })
-            name.addEventListener('blur',function(){
-                const username=name.value
-                if(!username ||username.trim()==''){
-                    errorname.innerHTML='User name required'
-                    errorname.style.color="red"
-            
-            }else{
-                errorname.innerHTML=''
-            }
+
+            emailelem.addEventListener('blur', function (e) {
+                e.preventDefault()
+                const email = document.getElementById('email').value
+                axios.post('/checkEmail', { email })
+                    .then(res => {
+                        if (res.data.success) {
+                            errorEmail.innerHTML = "Email already existed"
+                            errorEmail.style.color = 'red'
+                        } else {
+                            errorEmail.innerHTML = " "
+                        }
+                    })
+
             })
-       document.getElementById('mobile').addEventListener('blur',function(){ 
-           const mobilenumber= this.value
-          
-           const errorphone=document.getElementById('errorphone')
-            if(mobilenumber.length!==10){
-                errorphone.innerHTML='Please Enter a valid Number'
-                errorphone.style.color='red'
-                registerBtn.disabled=true 
-             }else{
-                errorphone.innerHTML=''
-            registerBtn.disabled=false
+            name.addEventListener('blur', function () {
+                const username = name.value
+                if (!username || username.trim() == '') {
+                    errorname.innerHTML = 'User name required'
+                    errorname.style.color = "red"
 
-           }
+                } else {
+                    errorname.innerHTML = ''
+                }
+            })
+            document.getElementById('mobile').addEventListener('blur', function () {
+                const mobilenumber = this.value.trim()
+                const regexPattern = /^[6-9]\d{9}$/;
+                const errorphone = document.getElementById('errorphone')
+
+                if (! /^[6-9]\d{9}$/.test(mobilenumber)) {
+                    errorphone.innerHTML = 'Please enter a valid 10-digit mobile number';
+                    errorphone.style.color = 'red';
+                    registerBtn.disabled = true;
+                } else {
+                    errorphone.innerHTML = '';
+                    registerBtn.disabled = false;
+                }
+            })
+
+
         })
-      
+    </script>
 
-    })
-</script>
-
-<!-- Bootstrap JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

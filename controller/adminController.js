@@ -1,7 +1,7 @@
 const User = require("../models/userModel")
 const category = require('../models/categoryModel')
 const product = require('../models/productModel')
-const Order=require('../models/orderModel')
+const Order = require('../models/orderModel')
 
 
 const userList = async (req, res) => {
@@ -10,7 +10,8 @@ const userList = async (req, res) => {
         const locals = {
             userlist: userlist
         }
-        // console.log(Array.isArray(userlist));
+
+
 
         res.render('userList', locals)
 
@@ -31,6 +32,7 @@ const blockUser = async (req, res) => {
         res.json({ message: "Something went wrong again  try again" })
     }
 }
+
 const unblockUser = async (req, res) => {
     try {
         let id = req.query.id
@@ -41,6 +43,7 @@ const unblockUser = async (req, res) => {
 
     }
 }
+
 const categories = async (req, res) => {
     try {
         let categories = await category.find({}).sort({ _id: -1 })
@@ -49,11 +52,12 @@ const categories = async (req, res) => {
         console.log("error in categoris:", error);
     }
 }
+
 const loadAddCategory = async (req, res) => {
     try {
         const messages = req.flash('message')
         let categories = await category.find({}).sort({ _id: -1 })
-   
+
         res.render("addCategory", { category: categories, messages })
     } catch (error) {
         console.log("error in categoris:", error);
@@ -75,6 +79,7 @@ const findCategory = async (req, res) => {
         console.log("error in findCategory:", error);
     }
 }
+
 const findCatId = async (req, res) => {
     try {
         const catId = req.query._id
@@ -88,6 +93,7 @@ const findCatId = async (req, res) => {
         console.log('error in findcatid:', error);
     }
 }
+
 const addCategory = async (req, res) => {
     try {
         const { catName, description } = req.body
@@ -101,7 +107,7 @@ const addCategory = async (req, res) => {
             catName: catName,
             description: description
         })
-        
+
         const save = await newCategory.save()
         if (save) {
             res.redirect('/admin/category')
@@ -115,28 +121,30 @@ const addCategory = async (req, res) => {
 
 const loadEditCategory = async (req, res) => {
     try {
-        const messages=req.flash('message')
+        const messages = req.flash('message')
         const id = req.query.id
 
         let categories = await category.findOne({ _id: id })
-             
-        res.render("editCategory", {category: categories,messages})
+
+        res.render("editCategory", { category: categories, messages })
     } catch (error) {
         console.log("error in categoris:", error);
     }
 }
-const checkCategory=async(req,res)=>{
+
+const checkCategory = async (req, res) => {
     try {
-        const catName=req.body.name
-        const id=req.body.id
+        const catName = req.body.name
+        const id = req.body.id
         const regexPattern = new RegExp(`^${catName}$`, 'i')
-        const alreadyExist = await category.find({_id:{$ne:id},catName: regexPattern, })
-        console.log("already existed item",alreadyExist);
+        const alreadyExist = await category.find({ _id: { $ne: id }, catName: regexPattern, })
+
+
         if (alreadyExist.length > 0) {
             req.flash('message', "already exist")
-            return res.status(200).json({success:true})
-        }else{
-            res.json({success:false})
+            return res.status(200).json({ success: true })
+        } else {
+            res.json({ success: false })
         }
     } catch (error) {
         console.log('error in check category');
@@ -146,15 +154,15 @@ const checkCategory=async(req,res)=>{
 const editCategory = async (req, res) => {
     try {
         const { catName, description, id } = req.body
-        console.log("req.body",req.body);
-        
-        
-            const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
-            console.log(editcat);
-            if (editcat) {
-                res.redirect('category')
-            }
-        
+
+
+
+        const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
+
+        if (editcat) {
+            res.redirect('category')
+        }
+
 
 
     } catch (error) {
@@ -196,7 +204,7 @@ const unblockCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
     try {
         const id = req.query.id
-        console.log('find category:', id);
+
         const deleteCat = await category.deleteOne({ _id: id },)
         if (deleteCat) {
             res.redirect('/admin/category')
@@ -208,58 +216,61 @@ const deleteCategory = async (req, res) => {
     }
 }
 
-const oderDetails=async(req,res)=>{
+const oderDetails = async (req, res) => {
     try {
-      const orders= await Order.find({}).populate('userId').populate("deliveryAddress").populate('oderedItem')
-      const formattedOrders=orders.map(order=>{
-        const date= new Date(order.createdAt)
-        const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+        const orders = await Order.find({}).populate('userId').populate("deliveryAddress").populate('oderedItem')
+        const formattedOrders = orders.map(order => {
+            const date = new Date(order.createdAt)
+            const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
             return {
                 ...order.toObject(),
                 formattedCreatedAt: formattedDate,
             }
-      })
-      console.log("formatted",formattedOrders);
-      
-        res.render('orderDetails',{orderDetails:formattedOrders } )
+        })
+
+
+        res.render('orderDetails', { orderDetails: formattedOrders })
     } catch (error) {
-        console.log("error in oderDetails",error);
-    }
-}
-   
-const singleProduct= async(req,res)=>{
-    try {
-        const orderId=req.query.orderId
-        const orderDetails=await Order.findOne({_id:orderId}).populate('userId').populate('oderedItem.productId').populate('deliveryAddress')
-        console.log(orderDetails);
-        res.render('singleorderDetails',{orderDetails})
-    } catch (error) {
-        console.log('error in single product',error);
+        console.log("error in oderDetails", error);
     }
 }
 
-const updateSts=async(req,res)=>{
+const singleProduct = async (req, res) => {
+    try {
+        const orderId = req.query.orderId.replace(/\s+/g,''); 
+
+
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('userId').populate('oderedItem.productId').populate('deliveryAddress')
+
+        res.render('singleorderDetails', { orderDetails })
+    } catch (error) {
+        console.log('error in single product', error);
+    }
+}
+
+const updateSts = async (req, res) => {
     try {
         console.log(req.body);
-        const{selectedOrderStatus, orderId}=req.body
-        console.log(orderId);
-        const orderStatus= await Order.updateOne({_id:orderId},{$set:{orderStatus:selectedOrderStatus}})
-        console.log('order status',orderStatus);
+        const { selectedOrderStatus, orderId, productId } = req.body
 
-   res.status(200).json({success:true})
-        
+        const orderStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': selectedOrderStatus } }, { arrayFilters: [{ "item.productId": productId }] })
+        console.log('order status', orderStatus);
+
+        res.status(200).json({ success: true })
+
     } catch (error) {
-         console.log('error in update status'); 
+        res.status(302).json({ success: false })
+        console.log('error in update status');
     }
 }
 
 
-const offer=async(req,res)=>{
+const offer = async (req, res) => {
     try {
         res.render('offerPage')
-        
+
     } catch (error) {
-        console.log("error offer",error);
+        console.log("error offer", error);
     }
 }
 module.exports = {
@@ -280,7 +291,7 @@ module.exports = {
     singleProduct,
     updateSts,
     checkCategory,
-    
+
     offer
 
 }

@@ -13,10 +13,10 @@ const OTPschema  = new mongoose.Schema({
     },
     createdAt:{
         type:Date ,
-        expires: 350,
+        expires:'30s',
         default:Date.now,
     },
 })
-// OTPschema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
+    OTPschema.index({ createdAt: 1 }, { expireAfterSeconds:30 });
 
 module.exports = mongoose.model("otps",OTPschema);

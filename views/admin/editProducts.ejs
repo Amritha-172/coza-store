@@ -5,235 +5,363 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Product - Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/adminEdit.css">
+    <link rel="stylesheet" href="/css/admindashboard.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"
+        integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
-    <style>
-       
-       .image-upload-container {
-        position: relative; /* Set relative positioning context for the close icon */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        width: 120px;
-        height: 160px;
-        margin: 0 10px;
-    }
-
-    .close-icon {
-        position: absolute;
-        top: -20px; 
-        right: -5px; 
-        cursor: pointer;
-        font-size: 20px; /* Adjust size as needed */
-        background-color: white; /* Optional, for better visibility */
-        border-radius: 50%; /* Optional, for a rounded background */
-    }
-
-   
-
-    .image-upload-container label {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 110px;
-        height: 110px;
-        margin-bottom: 10px; 
-    }
-
-    .image-upload-container img {
-        max-width: 100%;
-        max-height: 100%;
-    }
-
-    .image-upload-container button {
-        width: 100%; 
-        margin-top: 5px; 
-        background-color:rgb(186, 174, 219);
-      
-    }
-</style>
 
 
 
     </style>
-    <header class="coza-header">
-        <div class="container">
-            <div class="logo">Coza Store</div>
-            <!-- Add more header elements or navigation links as needed -->
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="/admin/logout">Sign out</a>
+            </div>
         </div>
     </header>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="logo">Admin Dashboard</div>
-            <br> <br>
-            <ul class="">
-                <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="/admin/userlist" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
-                <li><a href="/admin/productlist" class="active "><i class="fas fa-shopping-cart"></i> Products</a></li>
-                <li><a href="/admin/oderDetails" class="active "><i class="fas fa-file-alt"></i> Orders</a></li>
-                <li><a href="/admin/category " class="active"><i class="fas fa-list"></i> Categories</a></li>
-                <li><a href="/admin/Coupon" class="active"><i class="fa-solid fa-money-bill"></i> Coupon</a></li>
-                <li><a href="/admin/offer" class="active"><i class="fa-solid fa-tag"></i> offer</a></li>
-                <li><a href="/admin/banner" class="active"><i class="fa-regular fa-note-sticky"></i>Banner</a></li>
-                <li><a href="/admin/logout" class="active"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</a></li>
-            </ul>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="topbar">
-                <div class="menu-toggle">&#9776; Menu</div>
-                <div class="user-profile">
-                    <!-- <img src="images/user-avatar.jpg" alt="User Avatar"> -->
-                    <span>Admin User</span>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+
+                    <div class="position-sticky sidebar-sticky">
+                        <ul class="nav flex-column">
+
+                            <div class="logo ms-5 ">Admin Dashboard</div>
+                            <br> <br>
+                            <ul class="">
+                                <li class="nav-item">
+                                    <a href="/admin/dashboard" class="nav-link active d-flex align-items-center">
+                                        <i class="fas fa-home me-2"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/userlist" class="nav-link active d-flex align-items-center">
+                                        <i class="fa-solid fa-users me-2"></i> Users
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/productlist" class="nav-link active d-flex align-items-center">
+                                        <i class="fas fa-shopping-cart me-2"></i> Products
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/oderDetails" class="nav-link active d-flex align-items-center">
+                                        <i class="fas fa-file-alt me-2"></i> Orders
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/category" class="nav-link active d-flex align-items-center">
+                                        <i class="fas fa-list me-2"></i> Categories
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
+                                        <i class="fa-solid fa-money-bill me-2"></i> Coupon
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/offer" class="nav-link active d-flex align-items-center">
+                                        <i class="fa-solid fa-tag me-2"></i> offer
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/banner" class="nav-link active d-flex align-items-center">
+                                        <i class="fa-regular fa-note-sticky me-2"></i> Banner
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/admin/logout" class="nav-link active d-flex align-items-center">
+                                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                                    </a>
+                                </li>
+
+
+                            </ul>
+
+
+                        </ul>
+                    </div>
+
                 </div>
-            </div>
+            </nav>
 
-            <div class="content">
-                <h1>EDIT PRODUCT</h1>
-                <% if(messages.length>0){%>
-                    <p style="color: red;"><%=messages%></p>
-                    <%}%>
-                <!-- Inside your form for editing product details -->
-                <form class="" >
-                    <div class="add">
-                        <div class="mb-3">
-            
-                            <%if(messages.length>0){%>
-                                <div style="color: red;">
-                                    <%=messages[0]%>
+
+            <main class="main-content col-8 ms-5">
+                <div class="content">
+                    <h1>EDIT PRODUCT</h1>
+                    <% if(messages.length>0){%>
+                        <p style="color: red;">
+                            <%=messages%>
+                        </p>
+                        <%}%>
+                            <!-- Inside your form for editing product details -->
+                            <form class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <%if(messages.length>0){%>
+                                        <div style="color: red;">
+                                            <%=messages[0]%>
+                                        </div>
+                                        <%}%>
+                                            <label for="productName" class="form-label">Product Name</label>
+                                            <input type="text" class="form-control " id="productName"
+                                                pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName"
+                                                value="<%=product.productName%>" required>
                                 </div>
-                                <%}%>
-                                    <label for="productName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" id="productName"
-                                        pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName"
-                                        value="<%=product.productName%>" required>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Category:</label>
-                            <select name="category" id="category" class="form-select">
-                                <option ><--select category --></option>
-                                <% category.forEach((category)=>{ %>
-                                    <option  value="<%= category._id %>"><%= category.catName %></option>
-                                <% }) %>
-                            </select>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="category" class="form-label">Category:</label>
+                                    <select name="category" id="category" class="form-select">
+                                        <option><--select category --></option>
+                                        <% category.forEach((category)=>{ %>
+                                            <option value="<%= category._id %>">
+                                                <%= category.catName %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
 
-                        <div class="mb-3">
-                            <p id="error"></p>
-                            <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" value="<%=product.price%>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">description</label>
+                                <div class="col-md-6">
+                                    <p id="error"></p>
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="price" name="price"
+                                        value="<%=product.price%>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <p></p>
+                                    <label for="description" class="form-label">description</label>
 
-                            <input type="text" class="form-control" id="description" name="description"
-                                value="<%=product.description%>" required>
+                                    <input type="text" class="form-control" id="description" name="description"
+                                        value="<%=product.description%>" required>
 
-                        </div>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity"
-                                value="<%=product.quantity%>" required>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity"
+                                        value="<%=product.quantity%>" required>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="size" class="form-label">Size</label>
-                            <input type="text" class="form-control" id="size" name="size" value="<%=product.size%>"
-                                required>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="size" class="form-label">Size</label>
+                                    <input type="text" class="form-control" id="size" name="size"
+                                        value="<%=product.size%>" required>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color" name="color" value="<%=product.color%>"
-                                required>
-                        </div>
+                                <div class="col-md-6">
+                                    <label for="color" class="form-label">Color</label>
+                                    <input type="text" class="form-control" id="color" name="color"
+                                        value="<%=product.color%>" required>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="offer" class="form-label">offer</label>
-                            <input type="text" class="form-control" id="offer" name="offer" value="<%=product.offer%>"
-                                required>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center" style="width: 700px;">
-                        <div class="d-flex justify-content-evenly">
-                            <div class="image-upload-container">
-                                <div class="close-icon" onclick="deleteImage('image1', 'preview1');">&times;</div>
-                                <label for="image1" class="form-label">
-                                    <img id="preview1" src="/multerimages/<%=product.image[0]%>" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image1" name="cropImages" style="display: none;" onchange="updateImage('image1', 'preview1')" >
-                                <button type="button" onclick="document.getElementById('image1').click();">Upload Image</button>
-                            </div>
-                    
-                            <div class="image-upload-container">
-                                <div class="close-icon" onclick="deleteImage('image2', 'preview2');">&times;</div>
-                                <label for="image2" class="form-label">
-                                    <img id="preview2" src="/multerimages/<%=product.image[1]%>" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image2" name="cropImages" style="display: none;" onchange="updateImage('image2', 'preview2')" >
-                                <button type="button" onclick="document.getElementById('image2').click();">Upload Image</button>
-                            </div>
-                    
-                            <div class="image-upload-container">
-                                <div class="close-icon" onclick="deleteImage('image3', 'preview3');">&times;</div>
-                                <label for="image3" class="form-label">
-                                    <img id="preview3" src="/multerimages/<%=product.image[2]%>" alt="">
-                                </label>
-                                <input type="file" class="form-control" id="image3" name="cropImages" style="display: none;" onchange="updateImage('image3', 'preview3')" >
-                                <button type="button"  onclick="document.getElementById('image3').click();">Upload Image</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex  justify-content-center ">
-                        <input type="hidden" name="id"  id="id" value="<%=product._id%>">
-                        <button type="button" class="btn btn-dark  mt-4 " id="upload" style="width: 150px; height: 50px; ">Update
-                            Product</button>
-                    </div>
+                                <div class="col-md-6">
+                                    <label for="offer" class="form-label">offer</label>
+                                    <input type="text" class="form-control" id="offer" name="offer"
+                                        value="<%=product.offer%>" required>
+                                </div>
 
-                </form>
+                                <div class="d-flex justify-content-center" style="width: 700px;">
+                                    <div class="d-flex justify-content-evenly">
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image1', 'preview1');">&times;
+                                            </div>
+                                            <label for="image1" class="form-label">
+                                                <img id="preview1" src="/multerimages/<%=product.image[0]%>" alt="">
+                                            </label>
+                                            <input type="file" class="form-control" id="image1" name="cropImages"
+                                                style="display: none;" onchange="updateImage('image1', 'preview1')">
+                                            <button type="button"
+                                                onclick="document.getElementById('image1').click();">Upload
+                                                Image</button>
+                                        </div>
 
-            </div>
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image2', 'preview2');">&times;
+                                            </div>
+                                            <label for="image2" class="form-label">
+                                                <img id="preview2" src="/multerimages/<%=product.image[1]%>" alt="">
+                                            </label>
+                                            <input type="file" class="form-control" id="image2" name="cropImages"
+                                                style="display: none;" onchange="updateImage('image2', 'preview2')">
+                                            <button type="button"
+                                                onclick="document.getElementById('image2').click();">Upload
+                                                Image</button>
+                                        </div>
+
+                                        <div class="image-upload-container">
+                                            <div class="close-icon" onclick="deleteImage('image3', 'preview3');">&times;
+                                            </div>
+                                            <label for="image3" class="form-label">
+                                                <img id="preview3" src="/multerimages/<%=product.image[2]%>" alt="">
+                                            </label>
+                                            <input type="file" class="form-control" id="image3" name="cropImages"
+                                                style="display: none;" onchange="updateImage('image3', 'preview3')">
+                                            <button type="button"
+                                                onclick="document.getElementById('image3').click();">Upload
+                                                Image</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal  for cropping image  -->
+                                <div class="modal fade" id="imageCropModal" tabindex="-1"
+                                    aria-labelledby="imageCropModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="imageCropModalLabel">Crop Image</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img id="imageToCrop" src="" alt="Crop this image"
+                                                    style="max-width: 100%;">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    id="cropImageBtn">Crop</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="d-flex  justify-content-center ">
+                                    <input type="hidden" name="id" id="id" value="<%=product._id%>">
+                                    <button type="button" class="btn btn-dark  mt-4 " id="upload"
+                                        style="width: 150px; height: 50px; ">Update
+                                        Product</button>
+                                </div>
+
+                            </form>
+                </div>
+        </div>
         </main>
     </div>
+    </div>
     <script>
-  
 
 
 
-    function deleteImage(inputId, previewId) {
-        const id=document.getElementById('id').value
-        var preview = document.getElementById(previewId).getAttribute('src')
-        const segments = preview.split('/');
-            const filename = segments[segments.length - 1]
-         axios.post('/admin/deleteImage',{preview,filename,id})
+        let currentInputId, currentPreviewId, cropper;
+        let croppedImages = {};
+        var oldimageUrl = []
+        let originalFileNames = {};
+        document.addEventListener("DOMContentLoaded", function () {
 
-    .then(res=>{
-        if(res.data.success){
-        document.getElementById(inputId).value = '';
-        document.getElementById(previewId).src = 'https://bit.ly/3ubuq5o';
+            document.getElementById('image1').addEventListener('change', function () { prepareImageForCropping('image1', 'preview1'); });
+            document.getElementById('image2').addEventListener('change', function () { prepareImageForCropping('image2', 'preview2'); });
+            document.getElementById('image3').addEventListener('change', function () { prepareImageForCropping('image3', 'preview3'); });
+
+
+            document.getElementById('cropImageBtn').addEventListener('click', function () {
+                performCropping();
+            });
+
+
+            $('#imageCropModal').on('shown.bs.modal', function () {
+                let image = document.getElementById('imageToCrop');
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: "move",
+                    minContainerWidth: 450,
+                    minContainerHeight: 500,
+                    minCropBoxWidth: 400,
+                    minCropBoxHeight: 400,
+                    minCanvasHeight: 500,
+                    minCanvasWidth: 500,
+
+                });
+            });
+
+
+            $('#imageCropModal').on('hidden.bs.modal', function () {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            });
+        });
+
+        function prepareImageForCropping(inputId, previewId) {
+            currentInputId = inputId;
+            currentPreviewId = previewId;
+            const input = document.getElementById(inputId);
+            const file = input.files[0];
+            originalFileNames[inputId] = file.name;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imageToCrop').src = e.target.result;
+                $('#imageCropModal').modal('show');
+            };
+            reader.readAsDataURL(input.files[0]);
         }
-    }).catch(err=>{
-        console.log('Error');
-    })
-        
-    }
-           var oldimageUrl=[]
+
+        function performCropping() {
+            if (!cropper) {
+                console.error("Cropper is not initialized.");
+                return;
+            }
+            cropper.getCroppedCanvas().toBlob((blob) => {
+
+                const preview = document.getElementById(currentPreviewId);
+                preview.src = URL.createObjectURL(blob);
+
+                croppedImages[currentInputId] = blob;
+
+
+                $('#imageCropModal').modal('hide');
+            }, 'image/png')
+
+
+        }
+        //image cropping above//
+
+
+        function deleteImage(inputId, previewId) {
+            const id = document.getElementById('id').value
+            var preview = document.getElementById(previewId).getAttribute('src')
+            const segments = preview.split('/');
+            const filename = segments[segments.length - 1]
+            axios.post('/admin/deleteImage', { preview, filename, id })
+
+                .then(res => {
+                    if (res.data.success) {
+                        document.getElementById(inputId).value = '';
+                        document.getElementById(previewId).src = 'https://bit.ly/3ubuq5o';
+                    }
+                }).catch(err => {
+                    console.log('Error');
+                })
+
+        }
+
+
+
 
         function updateImage(inputId, previewId) {
 
@@ -243,10 +371,11 @@
             const segments = oldurl.split('/');
             const filename = segments[segments.length - 1];
             console.log(filename);
-              oldimageUrl.push(filename)
-           
 
-          
+            oldimageUrl.push(filename)
+
+
+
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
@@ -255,14 +384,15 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-   
+
+
         document.addEventListener('DOMContentLoaded', function () {
             const uploadbtn = document.getElementById('upload')
 
             uploadbtn.addEventListener('click', function (e) {
                 e.preventDefault()
                 console.log(oldimageUrl);
-                const id=document.getElementById('id').value
+                const id = document.getElementById('id').value
                 const productName = document.getElementById('productName').value
                 const category = document.getElementById('category').value
                 const price = document.getElementById('price').value
@@ -274,55 +404,58 @@
                 const image1 = document.getElementById('image1').files[0]
                 const image2 = document.getElementById('image2').files[0]
                 const image3 = document.getElementById('image3').files[0]
-                  console.log(image1);
+                console.log(image1);
 
-                const  formData=new FormData()
-                formData.append('productName',productName)
-                formData.append('category',category)
-                formData.append('price',price)
-                formData.append('description',description)
-                formData.append('quantity',quantity)
-                formData.append('size',size)
-                formData.append('color',color)
-                formData.append('offer',offer)
-                formData.append('cropImages',image1)
-                formData.append('cropImages',image2)
-                formData.append('cropImages',image3)
-                formData.append('oldimageUrl',JSON.stringify(oldimageUrl))
-                formData.append('id',id)
-                
+                const formData = new FormData()
+                formData.append('productName', productName)
+                formData.append('category', category)
+                formData.append('price', price)
+                formData.append('description', description)
+                formData.append('quantity', quantity)
+                formData.append('size', size)
+                formData.append('color', color)
+                formData.append('offer', offer)
+                formData.append('oldimageUrl', JSON.stringify(oldimageUrl))
+                formData.append('id', id)
+                console.log('id', id);
 
-              axios.post('/admin/editproduct',formData,{
-                headers:{
-                    'Content-type':"multipart/form-data"
-                }
-              })
-              .then(res=>{
-                  console.log(res);
-                if(res.data.success){
-                    window.location.href='/admin/productlist'
-                }
-                
-              }).catch(err=>{
-                console.log('error in editproduct submission');
-              })
-              
+                Object.keys(croppedImages).forEach(key => {
+                    const originalFileName = originalFileNames[key];
+                    formData.append('cropImages', croppedImages[key], originalFileName);
+                });
+
+
+                axios.post('/admin/editproduct', formData, {
+                    headers: {
+                        'Content-type': "multipart/form-data"
+                    }
+                })
+                    .then(res => {
+                        console.log(res);
+                        if (res.data.success) {
+                            window.location.href = '/admin/productlist'
+                        }
+
+                    }).catch(err => {
+                        console.log('error in editproduct submission');
+                    })
+
             })
 
-      
-           document.getElementById('price').addEventListener('blur',function(e){
-            e.preventDefault()
-              const price=  document.getElementById('price').value
-              if(price<1){
-                const error=document.getElementById('error')
-                   error.innerHTML="Please Eneter Valid number"
-                   error.style.color='red'
 
-              }else{
-                error.innerHTML=" "
-              }
+            document.getElementById('price').addEventListener('blur', function (e) {
+                e.preventDefault()
+                const price = document.getElementById('price').value
+                if (price < 1) {
+                    const error = document.getElementById('error')
+                    error.innerHTML = "Please Eneter Valid number"
+                    error.style.color = 'red'
 
-           })
+                } else {
+                    error.innerHTML = " "
+                }
+
+            })
 
 
 
@@ -330,11 +463,16 @@
         })
 
     </script>
+    <script>
+
+    </script>
 
     <script src="js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 </body>
 

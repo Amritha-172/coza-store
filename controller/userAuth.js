@@ -3,6 +3,7 @@ const util = require('../utilities/sendEmail')
 const OTP = require('../models/otpModel')
 const products = require('../models/productModel')
 const bcrypt = require('bcrypt')
+const category=require('../models/categoryModel')
 
 const securePassword = async (password) => {
     try {
@@ -31,10 +32,17 @@ const verifySignup = async (req, res) => {
         if (userCheck) {
             req.flash('message', "User Already Exist")
             return res.redirect('user/user/register')
-        } else if (password != confirmPassword) {
-
-            res.render('user/user/register', { messages: "Password and confirm password is not match" })
-        } else {
+        }
+        if (! /^[6-9]\d{9}$/.test(mobile)){
+            req.flash('message', "Password length must be 8")
+            return res.render('user/user/register')
+        }
+        if (password !== confirmPassword) {
+            req.flash('message', "Password and confirm password is not match" )
+           return res.render('user/user/register')
+        } 
+       
+        
             const spassword = await securePassword(password)
 
             const insertUser = new user({
@@ -44,6 +52,7 @@ const verifySignup = async (req, res) => {
                 mobile: mobile
             })
             const userData = await insertUser.save()
+     
             console.log(userData);
             const userId = userData._id
             req.session.user_sign = userId
@@ -53,12 +62,13 @@ const verifySignup = async (req, res) => {
           Here is the verification code.Please enter otp and verify Email`)
 
             res.render("user/SignupOtp", { message: "enter Otp", user: req.session.user_email })
-        }
+        
     } catch (error) {
-        res.reder('error')
+        res.render('error')
         console.log("error in verify signuop:", error);
     }
 }
+
 const userLogin = async (req, res) => {
     try {
         const messages = req.flash('message')
@@ -72,7 +82,7 @@ const userLogin = async (req, res) => {
 const verifyLogin = async (req, res) => {
     try {
 
-        const {email,password}=req.body
+        const { email, password } = req.body
         const userData = await user.findOne({ email: email });
         console.log(userData);
         if (!userData) {
@@ -125,29 +135,31 @@ const verifyOtp = async (req, res) => {
         const input = `${noOne}${noTwo}${noThree}${noFour}`
         console.log(input);
         console.log(userID);
-    
+
 
         if (!userID) {
             console.log("no userid");
+            return res.json({ message: 'No userId' })
         }
-        const findOtp = await OTP.find({ userid: userID }).sort({_id:-1}).limit(1)
-               console.log(findOtp);
+
+        const findOtp = await OTP.find({ userid: userID }).sort({ createdAt: -1 }).limit(1)
+        console.log(findOtp);
+
         if (findOtp.length > 0) {
-             
-           
             const verifyOtp = await bcrypt.compare(input, findOtp[0].otp)
 
-              console.log('verifyotp',verifyOtp);
+            console.log('verifyotp', verifyOtp);
             if (verifyOtp) {
                 await user.updateOne({ _id: userID }, { $set: { is_verified: true } }).catch((err) => {
                     console.log(err);
                 })
 
-                req.session.user_id = userID
-                res.redirect('/home')
+                res.json({success:true})
             } else {
-                req.session.user_id
-                res.render('user/signupOtp', { messages: "OTP is incorrect" })
+
+                req.session.user_id=userID
+                res.json({ message: 'Incorrect OTP' })
+
             }
         }
     } catch (error) {
@@ -157,18 +169,18 @@ const verifyOtp = async (req, res) => {
 
 }
 
-const resendOtp=async(req,res)=>{
+const resendOtp = async (req, res) => {
     try {
-        const userId= req.session.user_sign
-        const email=req.session.user_email  
-        console.log("userId",userId);
+        const userId = req.session.user_sign
+        const email = req.session.user_email
+        console.log("userId", userId);
         await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
         Here is the verification code.Please enter otp and verify Email`)
-        res.status(200).json({success:true})
-         
+        res.status(200).json({ success: true })
+
     } catch (error) {
-        console.log('Error in resend otp ',error);
-        res.status(404).json({success:false})
+        console.log('Error in resend otp ', error);
+        res.status(404).json({ success: false })
     }
 }
 
@@ -177,31 +189,32 @@ const resendOtp=async(req,res)=>{
 
 //---------forgot otp--------------//
 
-const forgotPass=async(req,res)=>{
+const forgotPass = async (req, res) => {
     try {
-        const messages=req.flash('message')
-        res.render('user/user/forgetPassword',{messages})
+        const messages = req.flash('message')
+        res.render('user/user/forgetPassword', { messages })
     } catch (error) {
-        console.log('error in forgetpass',error);
+        console.log('error in forgetpass', error);
     }
 }
-const forgotOtp=async(req,res)=>{
+
+const forgotOtp = async (req, res) => {
     try {
-        const email=req.body.email
-   
-        const existemail= await user.findOne({email:email,is_verified:true})
-       
+        const email = req.body.email
+
+        const existemail = await user.findOne({ email: email, is_verified: true })
+
         console.log(existemail);
-        if(!existemail){
-            req.flash('message',"Email does not exist")
-           res.redirect('/forgot')
-        }else{
-            req.session.email_id=email
-            req.session.userid=existemail._id
+        if (!existemail) {
+            req.flash('message', "Email does not exist")
+            res.redirect('/forgot')
+        } else {
+            req.session.email_id = email
+            req.session.userid = existemail._id
             await util.mailsender(email, existemail._id, `It seems you logging at CoZA store and trying to verify your Email.
             Here is the verification code.Please enter otp and verify Email`)
-             res.render('user/user/forgotOtp',{email})
-                
+            res.render('user/user/forgotOtp', { email })
+
 
         }
 
@@ -209,75 +222,86 @@ const forgotOtp=async(req,res)=>{
         console.log('error in forgot');
     }
 }
- const forgotResend=async(req,res)=>{
+
+const forgotResend = async (req, res) => {
     try {
-          
-       const email= req.body.email
- 
-       const existemail= await user.findOne({email:email})
-      
-       if(existemail){
-       await util.mailsender(email, existemail._id, `It seems you logging at CoZA store and trying to verify your Email.
+
+        const email = req.body.email
+
+        const existemail = await user.findOne({ email: email })
+
+        if (existemail) {
+            await util.mailsender(email, existemail._id, `It seems you logging at CoZA store and trying to verify your Email.
             Here is the verification code.Please enter otp and verify Email`)
-                 res.status(200).json({success:true})
-       }
+            res.status(200).json({ success: true })
+        }
 
     } catch (error) {
-        console.log('error in forgotResend',error);
+        console.log('error in forgotResend', error);
     }
- }
- 
-const forgotVerifyOtp=async(req,res)=>{
-   try {
-       const userId=req.session.userid
-       const otp=req.body.otp
-       console.log("otp ",otp);
-       console.log("userId",userId);
-       const findOtp= await OTP.findOne({userid:userId})
-       console.log(findOtp);
-        if(findOtp){
+}
+
+const forgotVerifyOtp = async (req, res) => {
+    try {
+        const userId = req.session.userid
+        const otp = req.body.otp
+       
+        console.log("otp ", otp);
+        console.log("userId", userId);
+        const findOtp = await OTP.findOne({ userid: userId }).sort({createdAt:-1}).limit(1)
+        console.log(findOtp);
+        if (findOtp) {
             const verifyOtp = await bcrypt.compare(otp, findOtp.otp)
             console.log(verifyOtp);
-             if(verifyOtp){
-                 console.log("verify otp");
-                res.json({success:true})
-             }else{
-                res.json({success:false})
-             }
+            if (verifyOtp) {
+                console.log("verify otp");
+                res.json({ success: true })
+            } else {
+                res.json({ success: false })
+            }
 
         }
 
-   } catch (error) {
-    console.log('error in  forgot password otp',error);
-   }
+    } catch (error) {
+        console.log('error in  forgot password otp', error);
+    }
 }
 
 
-const loadresetPass=async(req,res)=>{
+const loadresetPass = async (req, res) => {
     try {
         res.render('user/user/forgotPasschange')
-        
+
 
     } catch (error) {
         console.log("error in resetpassword");
     }
 }
 
- const resetPass= async(req,res)=>{
+const resetPass = async (req, res) => {
     try {
-        const password= await securePassword(req.body.password)
-        const userId=req.session.userid
-        const update=await user.updateOne({_id:userId},{$set:{password:password}})
+        const {password}=req.body
+        const userId = req.session.userid
+        const oldpassword= await user.findOne({_id:userId})
+        console.log("oldpassword",oldpassword);
+        const oldpasswordMatch=  await bcrypt.compare(password, oldpassword.password)
+        console.log("oldpasswordMatch",oldpasswordMatch);
+        if(oldpasswordMatch){
+           return res.json({passwordMatch:true})
+        }
+      
+        const spassword = await securePassword(password)
+        const update = await user.updateOne({ _id: userId }, { $set: { password: spassword } })
         console.log(update);
-        if(update){
-           res.status(200).json({success:true})
-        }else{
-            res.json({success:false})
+        if (update) {
+            res.status(200).json({ success: true })
+        } else {
+            res.json({ success: false })
         }
 
-        
+
     } catch (error) {
-        console.log('error in resetpassword',error);
+        console.log('error in resetpassword', error);
     }
 }
 
@@ -294,25 +318,28 @@ const Homepage = async (req, res) => {
     try {
 
         let userData = req.session.user_id;
-        let userdata = await user.findOne({ _id: userData ,is_blocked:false})
+        let userdata = await user.findOne({ _id: userData, is_blocked: false })
+        let categoryData= await category.find({})
        
-        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false })
+        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({_id:-1})
 
         if (userdata) {
 
             res.render('user/user/home', {
                 userName: userData.name,
                 product: productData,
-                userdata:userdata
+                userdata: userdata,
+                categoryData
             })
         } else {
-          
+
             res.render('user/user/home', {
-                
+
                 userName: null,
                 product: productData,
                 userdata: null,
-               
+                categoryData
+
             })
         }
     } catch (error) {
@@ -323,26 +350,28 @@ const Homepage = async (req, res) => {
 
 const shop = async (req, res) => {
     try {
-        res.render('user/shop')
+           const product=await products.find({is_blocked: false, is_categoryBlocked: false }).populate('categoryId').sort({_id:-1})
+
+         res.render('user/shop',{product})
     } catch (error) {
         console.log('error in shop', error);
     }
 }
 
-const checkEmail=async(req,res)=>{
-  try {
-     const {email}=req.body
-     const check=await user.findOne({email:email,is_verified:true})
-     console.log(check);
-     if(check){
-        res.status(200).json({success:true})
-     }else{
-        res.json({success:false})
-     }
-    
-  } catch (error) {
-    console.log('error in check email',error);
-  }
+const checkEmail = async (req, res) => {
+    try {
+        const { email } = req.body
+        const check = await user.findOne({ email: email, is_verified: true })
+        console.log(check);
+        if (check) {
+            res.status(200).json({ success: true })
+        } else {
+            res.json({ success: false })
+        }
+
+    } catch (error) {
+        console.log('error in check email', error);
+    }
 }
 
 module.exports = {

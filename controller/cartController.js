@@ -132,6 +132,7 @@ const editPrice=async(req,res)=>{
     res.status(300).json('error')
   }
 }
+
 const removeProduct=async(req,res)=>{
   try {
     const {productId}=req.body
@@ -144,6 +145,7 @@ const removeProduct=async(req,res)=>{
      console.log('error in remove product',error);
   }
 }
+
 const checkStock=async(req,res)=>{
   try {
     const{productId,quantity}=req.body

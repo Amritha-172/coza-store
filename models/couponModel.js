@@ -12,6 +12,11 @@ const couponShema = new mongoose.Schema({
         required: true,
         min: 0,
     },
+    minimumAmount:{
+        type: Number,
+        required: true,
+        min: 0,
+    },
     description: {
         type: String,
         required: true

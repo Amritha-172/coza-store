@@ -1,10 +1,11 @@
 const address = require('../models/addressModal');
 const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
-const { deleteMany } = require('../models/otpModel');
+
 const product = require('../models/productModel')
 const payment = require('../models/paymentModel')
 const wallet = require('../models/walletModel');
+
 
 
 const useraddAddress = async (req, res) => {
@@ -41,6 +42,7 @@ const useraddAddress = async (req, res) => {
         console.log('error in add address', error);
     }
 }
+
 const addAddress = async (req, res) => {
     try {
 
@@ -91,6 +93,7 @@ const addAddress = async (req, res) => {
         console.log('error in add address', error);
     }
 }
+
 const checkname = async (req, res) => {
     try {
         const { name } = req.body
@@ -106,12 +109,12 @@ const checkname = async (req, res) => {
 }
 
 
-
 const placeorder = async (req, res) => {
     try {
         const { transactionId } = req.query
         console.log("razorpay", transactionId);
         const { Amount, selectedAddress, selectedPaymentMethod } = req.body
+
         const userId = req.session.user_id
         const cartItems = await Cart.find({ userId: userId })
         console.log("cart items", cartItems);
@@ -139,12 +142,13 @@ const placeorder = async (req, res) => {
         })
         const save = await order.save()
 
-        const del = await Cart.deleteMany({ userId: userId })
+        await Cart.deleteMany({ userId: userId })
+
         if (selectedPaymentMethod == "COD") {
             const Payment = new payment({
                 userId: userId,
                 orderId: order._id,
-                amount: Amount ,
+                amount: Amount,
                 status: 'pending',
                 paymentMethod: selectedPaymentMethod
 
@@ -180,6 +184,7 @@ const placeorder = async (req, res) => {
         console.log('error in place order page', error);
     }
 }
+
 const ordersuccess = async (req, res) => {
     try {
 
@@ -202,11 +207,11 @@ const ordersuccess = async (req, res) => {
         console.log('error in order details page');
     }
 }
+
 const orderpage = async (req, res) => {
     try {
         const userId = req.session.user_id
-
-        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId')
+        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId').sort({_id:-1})
 
         res.render('user/user/orderpage', { orderDetails })
 
@@ -218,11 +223,11 @@ const orderpage = async (req, res) => {
 
 const singleorder = async (req, res) => {
     try {
-        const orderId = req.query.orderId
+        const orderId = req.query.orderId.trim();
         const productId = req.query.productId
-        console.log(orderId);
-        console.log("productId", productId);
-        const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate({ path: 'oderedItem.productId' })
+
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate('oderedItem.productId')
+
 
         const products = orderDetails.oderedItem
 
@@ -232,69 +237,134 @@ const singleorder = async (req, res) => {
         res.render('user/user/singleOrder', { orderDetails, productDetails: matchedItem })
 
     } catch (error) {
-        console.log("error in singleorder");
+        console.log("error in singleorder", error);
     }
 }
+
+
 const cancelOrder = async (req, res) => {
     try {
         const userId = req.session.user_id
+
         const { orderId, productId } = req.body
 
         console.log(orderId, productId);
-        const order = await Order.findOne({ _id: orderId }).populate({ path: 'oderedItem.productId' })
-        const products = order.oderedItem
-        const matchedItem = await products.find(item => item.productId._id.toString() === productId)
-        console.log('matched count', matchedItem);
 
-        const qnty = matchedItem.quantity
-        const amount = matchedItem.productId.price
+        const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': "cancelled" } }, { arrayFilters: [{ "item._id": productId }] })
 
-        const cancel = await Order.updateOne({ _id: orderId, 'oderedItem.productId': productId }, { $set: { 'oderedItem.$.productStatus': "cancelled" } })
-
-        if (order.paymentMethod !== "COD") {
-            const totalAmount = qnty * amount
-            const paymentDetails = await payment.findOne({ orderId: orderId });
-            const isExistWallet = await wallet.findOne({ userId: userId })
-
-            if (!isExistWallet) {
-
-                const newWallet = new wallet({
-                    userId: userId,
-                    balance: totalAmount,
-                    tratransaction: [{
-                        amount: totalAmount,
-                        transactionsMethod: "Refund",
-                    }]
-
-                })
-
-                await newWallet.save()
-            } else {
-
-                await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: {   transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
-
-            }
+        const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
+        const matchedItem = await order.oderedItem.filter(item => item._id = productId)
+        console.log('matchedItem', matchedItem);
 
 
-        }else{
-            const totalAmount = qnty * amount
-            const isExistWallet = await wallet.findOne({ userId: userId })
+        const qnty = matchedItem[0].quantity
+        console.log('qnty', qnty);
+        const amount = matchedItem[0].productId.price
+        console.log('amount', amount);
 
+        const productid = matchedItem[0].productId._id
+        console.log("productid", productid);
+
+        const totalAmount = qnty * amount
+
+        const isExistWallet = await wallet.findOne({ userId: userId })
+
+        if (!isExistWallet) {
+
+            const newWallet = new wallet({
+                userId: userId,
+                balance: totalAmount,
+                tratransaction: [{
+                    amount: totalAmount,
+                    transactionsMethod: "Refund",
+                }]
+
+            })
+
+            await newWallet.save()
+        } else {
+
+            await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
 
         }
 
-        if (cancel) {
-            await product.updateOne({ _id: productId }, { $inc: { quantity: qnty } })
+        if (productStatus) {
 
+            await product.updateOne({ _id: productid }, { $inc: { quantity: qnty } })
             res.status(200).json({ success: true, })
+
         } else {
             res.status(302).json({ success: false })
         }
+
+
+
+
+
+
     } catch (error) {
         console.log('error in cancel order', error);
     }
 }
 
+
+const placeorderWallet = async (req, res) => {
+    try {
+        const { Amount, selectedAddress, selectedPaymentMethod } = req.body
+        const userId = req.session.user_id
+        const cartItems = await Cart.find({ userId: userId })
+
+        const orderedItem = await cartItems.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity
+        }))
+          const walletDetails=await wallet.findOne({userId:userId})
+          if(walletDetails.balance < Amount){
+           return  res.json({message:"please check your wallet"})
+          }
+          const walletFund=await wallet.updateOne({userId:userId},{$inc:{balance:-Amount},$push: { transaction: { amount: Amount, transactionsMethod: "Credit" } }})
+          console.log('walletFund',walletFund);
+
+
+
+        for (let item of orderedItem) {
+            const { productId, quantity } = item
+
+            const products = await product.updateOne({ _id: productId }, { $inc: { quantity: -quantity } });
+
+        }
+        const order = new Order({
+            userId: userId,
+            cartId: cartItems.map(item => item._id),
+            oderedItem: orderedItem,
+            orderAmount: Amount,
+            deliveryAddress: selectedAddress,
+            paymentMethod: selectedPaymentMethod,
+            orderStatus: 'pending'
+        })
+        const save = await order.save()
+
+        await Cart.deleteMany({ userId: userId })
+        const Payment = new payment({
+            userId: userId,
+            orderId: order._id,
+            amount: Amount,
+            status: 'pending',
+            paymentMethod: selectedPaymentMethod
+
+        })
+        await Payment.save()
+       
+        res.status(200).json({ success: true, orderId: order._id })
+
+
+    } catch (error) {
+        
+        console.log('error in place order wallet', error);
+        res.status(302).json({success:false})
+
+    }
+}
 module.exports = {
     addAddress,
     checkname,
@@ -303,7 +373,8 @@ module.exports = {
     orderpage,
     singleorder,
     useraddAddress,
-    cancelOrder
+    cancelOrder,
+    placeorderWallet
 }
 
 
