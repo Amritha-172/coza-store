@@ -3,6 +3,7 @@ const Cart=require('../models/cartModel')
 const Product=require('../models/productModel')
 const {ObjectId}=require('mongodb')
 const Address=require('../models/addressModal')
+const Coupon = require('../models/couponModel');
 
 const addToCart = async (req, res) => {
     try {
@@ -94,19 +95,22 @@ const shoppingcart = async (req, res) => {
 
 const checkout=async(req,res)=>{
   try {
-     const {totalpice}=req.body
-   
-     console.log("total price",totalpice);
+     const {totalprice}=req.body
     const userId=req.session.user_id
+    const couponData=req.session.coupon
     const addressData=await Address.find({userId:userId})
-    const total= await Cart.find({userId:userId})
-    let newTotal=0
-    total.forEach(element => {
-      newTotal=element.price+newTotal
-    });
-    console.log(addressData);
+   const currentdate=new Date()
+    const couponDetails =await Coupon.find({minimumAmount:{$lte:totalprice}})
+    const validCoupon = couponDetails.filter(coupon =>new Date(coupon.expireDate)>=currentdate)
+
+  if(!couponData){
+ 
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:""})
+  }else{
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData})
+
+  }
        
-      res.render('user/checkOut',{addressData,newTotal})
   } catch (error) {
       console.log("error in checkout page",error);
   }

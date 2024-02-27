@@ -9,7 +9,7 @@ body {
   }
   
   .sidebar {
-    width: 250px;
+    width: 200px !important;
     background-color: #7553b3;
     color: #fff;
     padding-top: 20px;

@@ -257,7 +257,8 @@
                                 </p>
                         </div>
                     </div>
-
+                
+                             <input type="hidden" name=""  id="paymentMethod" value="<%=orderDetails.paymentMethod%>">
 
                     <!-- Order Details and Status Column -->
                     <div class="col-12 info-section shadow mt-5" style="background-color: white;">
@@ -462,13 +463,14 @@
                     confirmButtonText: 'Yes, cancel it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-
+                         
+                        const paymentMethod=document.getElementById('paymentMethod').value
                         const productId = document.getElementById('productId').value
 
                         const orderId = document.getElementById('orderId').value.trim();
 
 
-                        axios.patch('/cancelorder', { orderId, productId })
+                        axios.patch('/cancelorder', { orderId, productId ,paymentMethod})
                             .then(res => {
                                 if (res.data.success) {
 

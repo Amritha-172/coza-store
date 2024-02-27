@@ -43,12 +43,12 @@
     <div class="container-fluid">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="position-sticky pt-3">
+                <div class="position-sticky ">
 
                     <div class="position-sticky sidebar-sticky">
                         <ul class="nav flex-column">
                             <aside class="sidebar col-12">
-                                <div class="logo ms-5 ">Admin Dashboard</div>
+                            
                                 <br> <br>
                                 <ul class="">
                                     <li class="nav-item">
@@ -77,7 +77,7 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
+                                        <a href="/admin/Coupon" class="nav-link active d-flex align-items-center border">
                                             <i class="fa-solid fa-money-bill me-2"></i> Coupon
                                         </a>
                                     </li>
@@ -91,11 +91,7 @@
                                             <i class="fa-regular fa-note-sticky me-2"></i> Banner
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="/admin/logout" class="nav-link active d-flex align-items-center">
-                                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
-                                        </a>
-                                    </li>
+                                    
 
 
                                 </ul>
@@ -209,10 +205,10 @@
             <main class="main-content col-6" style="display: none; margin-left: 150px;" id="edit">
                 <div class="content">
                     <h1>Edit Coupon</h1>
-                    <!-- This form would be filled with data for the coupon being edited -->
+                     <p id="editError"></p>
                     <form action="/admin/updatecoupon" method="POST">
                         <input type="hidden" name="couponId" value="COUPON_ID" />
-                        <!-- Replace COUPON_ID with actual coupon ID -->
+                       
                         <div class="mb-3">
                             <label for="editcouponCode" class="form-label">Coupon Code</label>
                             <input type="text" class="form-control" id="editcouponCode" name="couponCode" value="" required style="background-color: #f0f0f0;" readonly>
@@ -470,13 +466,29 @@
                 })
 
             })
-            document.getElementById('updatebtn').addEventListener('click', function () {
-
+            document.getElementById('updatebtn').addEventListener('click', function (e) {
+                e.preventDefault()
                 const couponCode = document.getElementById('editcouponCode').value
-                const discountAmount = document.getElementById('discountAmount').value
-                const description = document.getElementById('description').value
-                const minimumAmount = document.getElementById('minimumAmount').value
-                const expiryDate = document.getElementById('expiryDate').value
+                const discountAmount = document.getElementById('editdiscountAmount').value
+                const description = document.getElementById('editdescription').value
+                const minimumAmount = document.getElementById('editminimumAmount').value
+                const expiryDate = document.getElementById('editexpiryDate').value
+
+                console.log(couponCode,discountAmount,description,minimumAmount,expiryDate);
+
+                axios.post('/admin/updatecoupon', { couponCode, discountAmount, description, minimumAmount, expiryDate })
+                    .then(res => {
+                        if (!res.data.success) {
+                            console.log(res.data);
+                            document.getElementById('editError').innerHTML = res.data.message
+                            document.getElementById('editError').style.color = 'red'
+
+                        } else {
+                            document.getElementById('editError').innerHTML = " "
+                            window.location.href = '/admin/Coupon'
+
+                        }
+                    })
 
 
 

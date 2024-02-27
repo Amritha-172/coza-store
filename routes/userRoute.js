@@ -58,8 +58,8 @@ userRoute.post('/passwordChange',auth.isLogin,auth.isBlocked,userController.upda
 
 userRoute.get('/wallet',auth.isLogin,auth.isBlocked,userController.wallet)
 
-userRoute.get('/coupon',auth.isLogin,auth.isBlocked,couponController.usercoupon)
-userRoute.post('/coupoCheck',auth.isLogin,auth.isBlocked,couponController.checkCoupon)
+userRoute.post('/coupon',auth.isLogin,auth.isBlocked,couponController.usercoupon)
+userRoute.post('/couponCheck',auth.isLogin,auth.isBlocked,couponController.checkCoupon)
 
 userRoute.get('/wishlist',auth.isLogin,auth.isBlocked,userController.wishlist)
 userRoute.post('/wishlist',auth.isLogin,auth.isBlocked,userController.addWishlist)

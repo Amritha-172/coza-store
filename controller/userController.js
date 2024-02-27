@@ -256,7 +256,7 @@ const addAddress=async(req,res)=>{
 const wallet=async(req,res)=>{
     try {
         const userId=req.session.user_id
-        const WalletDetails=await Wallet.findOne({userId:userId}).populate('transaction')
+        const WalletDetails=await Wallet.findOne({userId:userId})
         
         if(WalletDetails){
 

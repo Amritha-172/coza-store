@@ -114,6 +114,11 @@ const placeorder = async (req, res) => {
         const { transactionId } = req.query
         console.log("razorpay", transactionId);
         const { Amount, selectedAddress, selectedPaymentMethod } = req.body
+            console.log('selectedAddress',selectedAddress);
+        if(!selectedAddress){
+
+            res.json({success:false,message:"Please select an Address"})
+        }
 
         const userId = req.session.user_id
         const cartItems = await Cart.find({ userId: userId })
@@ -246,7 +251,7 @@ const cancelOrder = async (req, res) => {
     try {
         const userId = req.session.user_id
 
-        const { orderId, productId } = req.body
+        const { orderId, productId,paymentMethod } = req.body
 
         console.log(orderId, productId);
 
@@ -268,7 +273,10 @@ const cancelOrder = async (req, res) => {
         const totalAmount = qnty * amount
 
         const isExistWallet = await wallet.findOne({ userId: userId })
+   
+           if(paymentMethod !=="COD"){
 
+          
         if (!isExistWallet) {
 
             const newWallet = new wallet({
@@ -287,6 +295,7 @@ const cancelOrder = async (req, res) => {
             await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
 
         }
+    }
 
         if (productStatus) {
 

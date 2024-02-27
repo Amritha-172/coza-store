@@ -74,11 +74,20 @@ const updateCoupon = async (req, res) => {
     try {
 
         const { discountAmount, expiryDate, description, couponCode,minimumAmount } = req.body
- 
+        console.log("req.body",req.body);
+       
+        if(!discountAmount||discountAmount.trim()==""||discountAmount<1){
 
-        const couponUpdate = await Coupon.updateOne({ couponCode: couponCode }, { $set: { dicountAmount: discountAmount, expiryDate: expiryDate, description: description ,minimumAmount:minimumAmount} })
+            return res.json({success:false,message:"Please Enter valid number"})
+                
+          }
+          if(Number(minimumAmount) < Number(discountAmount)){
+             return res.json({success:false,message:"Discount Amount is greater than Minimum amount"})
+          }
+ 
+        const couponUpdate = await Coupon.updateOne({ couponCode: couponCode }, { $set: { dicountAmount: discountAmount, expireDate: expiryDate, description: description ,minimumAmount:minimumAmount} })
         if (couponUpdate) {
-            res.redirect('/admin/Coupon')
+            res.status(200).json({success:true})
         }
 
 
@@ -90,28 +99,18 @@ const updateCoupon = async (req, res) => {
 const usercoupon = async (req, res) => {
 
     try {
-        const coupons = await Coupon.find({})
-        const formattedCoupon = coupons.map(item => {
-            let status = ""
-            const currentdate =  new Date();
-            const fDate=  new Date(item.expireDate);
-            formattedDate=moment(item.expireDate).format('YYYY-MM-DD')
+       const {coupon}=req.body
+      const couponDetails=await Coupon.findOne({couponCode:coupon})
+      console.log('couponDetails',couponDetails);
 
+      req.session.coupon=couponDetails
+      
+      if(couponDetails){
+        res.status(200).json({success:true,couponDetails})
+      }else{
+        res.json({success:false})
+      }
 
-            if (currentdate < fDate) {
-                status = "Valid"
-            } else {
-                status = 'Expired'
-            }
-
-            return {
-                ...item.toObject(),
-                formattedDate,
-                status
-            }
-        })
-
-        res.render('user/user/coupon', { coupons: formattedCoupon })
 
     } catch (error) {
         console.log('error in coupon', error);
@@ -137,28 +136,16 @@ const deleteCoupon = async (req, res) => {
 
 const checkCoupon = async (req, res) => {
     try {
-        const { couponCode } = req.body;
-        const coupon = await Coupon.findOne({ couponCode: couponCode });
-
-        if (!coupon) {
-            return res.status(404).json({ success: false, message: 'Coupon not found' });
-        }
-
-        console.log('coupon', coupon);
-
-        const currentDate = new Date();
-        const expirationDate = new Date(coupon.expireDate);
-
-        console.log('currentDate', currentDate);
-        console.log('expirationDate', expirationDate);
-
-        if (currentDate <= expirationDate) {
-            
-
-            res.status(200).json({ success: true ,coupon});
-        } else {
-            res.status(200).json({ success: false, message: 'Coupon has expired' });
-        }
+        const { Amount } = req.body;
+      
+           const couponDetails =await Coupon.find({minimumAmount:{$lte:Amount}})
+     
+            if(!couponDetails){
+                res.json({success:false})
+            }else{
+                res.status(200).json({success:true,couponDetails})
+            }
+        
     } catch (error) {
         console.error('error in checkCoupon', error);
         res.status(500).json({ success: false, message: 'An error occurred while checking the coupon' });

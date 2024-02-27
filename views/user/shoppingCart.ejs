@@ -241,7 +241,7 @@
 	</header>
 
 	<!-- Cart -->
-	<div class="wrap-header-cart js-panel-cart">
+	<!-- <div class="wrap-header-cart js-panel-cart">
 		<div class="s-full js-hide-cart"></div>
 
 		<div class="header-cart flex-col-l p-l-65 p-r-25">
@@ -325,7 +325,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
 
 	<!-- breadcrumb -->
@@ -425,74 +425,58 @@
 							<h4 class="mtext-109 cl2 p-b-30">
 								PRICE DETAILS
 							</h4>
-
-							<div class="flex-w flex-t bor12 p-b-13">
-								<div class="size-300">
+							
+							<div class="flex-w flex-t bor12 p-b-13 justify-content-between">
+								<div>
 									<span class="stext-110 cl2">
-										Price( <%=cartItems.length%> items)
+										Price( <%= cartItems.length %> items):
 									</span>
 								</div>
 								<% let totalPrice=0; %>
-									<% for(let i=0; i < cartItems.length; i++) { %>
-
-										<% totalPrice +=cartItems[i].price; %>
-											<% } %>
-
-												<div class="size-200">
-													<span class="mtext-110 cl2 p-5" id="Amount">
-														₹ <%= totalPrice %>
-													</span>
-												</div>
-
-							</div>
-							<div class="flex-w flex-t bor12 p-b-13 ">
-								<div class="size-300">
-									<span class="stext-110 cl2">
-										Discount
-									</span>
-								</div>
-								<div class="size-200 pl-5 ">
-									<span class="mtext-110 cl2 p-5">
-
+								<% for(let i=0; i < cartItems.length; i++) { %>
+									<% totalPrice += cartItems[i].price; %>
+								<% } %>
+								<div>
+									<span class="mtext-110 cl2" id="Amount" name="">
+										₹ <%= totalPrice %>
 									</span>
 								</div>
 							</div>
-							<div class="flex-w flex-t bor12 p-b-13 ">
-								<div class="size-300">
+							     
+							<div class="flex-w flex-t bor12 p-b-13 justify-content-between">
+								<div>
 									<span class="stext-110 cl2">
-										Delivery charge
+										Delivery charge :
 									</span>
 								</div>
-								<div class="size-200 pl-5 ">
+								<div>
 									<span class="mtext-110 cl2">
-
+										free
 									</span>
 								</div>
 							</div>
-
-							<div class="flex-w flex-t p-t-27 p-b-33">
-								<div class="size-208">
+							
+							<div class="flex-w flex-t p-t-27 p-b-33 justify-content-between">
+								<div>
 									<span class="mtext-101 cl2">
 										Total:
 									</span>
 								</div>
-
-								<div class="size-209 p-t-1">
-									<span class="mtext-110 cl2" id="Total">
-										₹ <%=totalPrice%>
+								<div>
+									<span class="mtext-110 cl2" id="Total" >
+										₹ <%= totalPrice  %>
 									</span>
 								</div>
 							</div>
-
-							<input type="hidden" id="totalamount" name="totalpice" value="<%=totalPrice%>">
+							
+							<input type="hidden" id="totalamount" name="totalprice" value="<%= totalPrice %>">
 							<button type="submit" id="proceedPay"
-								class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-								value="<%=totalPrice%>">
+								class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
 								Proceed to Checkout
 							</button>
-
 						</div>
 					</div>
+					
 				</div>
 			</div>
 		</form>

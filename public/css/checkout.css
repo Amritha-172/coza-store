@@ -289,4 +289,22 @@
     
     
     
-    
+ 
+.coupon-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.coupon-description {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.coupon-code {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
