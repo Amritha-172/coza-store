@@ -574,15 +574,18 @@
                                             <%}%>
                                                 <tr class="fw-bold ">
                                                     <th>
+                                                       
                                                         <h4>Order Total:</h4>
                                                     </th>
                                                     <% if(couponData){%>
-
-
-                                                        <td class="text-end" id="orderTotal">₹<%=totalprice
+                                                        
+                                                     
+                                                        <td class="text-end" id="orderTotal" data-total-amount="<%=totalprice
+                                                        -couponData.dicountAmount %>">₹<%=totalprice
                                                                 -couponData.dicountAmount %>
                                                                 <%} else{%>
-                                                        <td class="text-end" id="orderTotal">₹<%=totalprice %>
+                                                        <td class="text-end" id="orderTotal" data-total-amount="<%=totalprice %>
+                                                           ">₹<%=totalprice %>
                                                                 <%}%>
                                                         </td>
                                                 </tr>
@@ -626,7 +629,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <!-- modal for show coupons- -->
 
@@ -908,6 +910,7 @@
                     e.preventDefault()
                     const newTotal = document.getElementById('newTotal').value
 
+
                     const selectedAddressElem = document.querySelector('input[name="shippingAddress"]:checked')
                     console.log('selectedAddress', selectedAddressElem);
                     if (!selectedAddressElem) {
@@ -1037,9 +1040,30 @@
 
 
             document.addEventListener('DOMContentLoaded', function () {
+                const totalElem=document.getElementById('orderTotal')
+                let totalAmount=Number (totalElem.getAttribute('data-total-amount'))
+                checkAmount(totalAmount)
 
-               
-                 
+
+               function checkAmount(totalAmount){ 
+                   if(totalAmount>=1000){
+                      document.getElementById("pay-methodoption3").disabled=true
+                      document.getElementById("pay-methodoption3").checked = false;
+                   }else{
+                    document.getElementById("pay-methodoption3").disabled=false
+                   }
+
+               }
+
+
+
+                const coupon = document.getElementById('coupon').value
+                console.log("coupon", coupon);
+                if (coupon) {
+                    document.getElementById('remove').classList.remove('d-none')
+                    document.getElementById('apply').classList.add('d-none')
+                }
+
 
 
                 const addAddress = document.getElementById('addAddress')
@@ -1113,10 +1137,9 @@
                 }
 
                 document.getElementById('applyCoupon').addEventListener('click', function () {
-
-
+                    
                     const coupon = document.getElementById('coupon').value
-
+               
                     axios.post('/coupon', { coupon })
                         .then(res => {
                             if (res.data.success) {
@@ -1126,13 +1149,42 @@
                                 document.getElementById("discount").innerHTML = `₹ ${couponDetails.dicountAmount}`
                                 document.getElementById('orderTotal').innerHTML = `₹ ${subtotal - couponDetails.dicountAmount}`
                                 document.getElementById('apply').classList.add('d-none')
-                                console.log(document.getElementById('remove'));
-                                document.getElementById('remove').classList.remove('d-none')
+                               document.getElementById('remove').classList.remove('d-none')
+                               totalAmount=subtotal-couponDetails.dicountAmount
+                               checkAmount(totalAmount)
 
                             }
                         }).catch(err => {
                             console.log('error in axios coupon', err);
                         })
+
+                })
+
+                document.getElementById('remove').addEventListener('click', function () {
+
+                    const coupon = document.getElementById('coupon')
+                    axios.post('/removeCoupon', { coupon: coupon.value })
+                        .then(res => {
+                            if (res.data.success) {
+                                const subtotalElem = document.getElementById('subtotal')
+                                const subtotal = subtotalElem.getAttribute("subtotalElem")
+                                coupon.value = ""
+                                document.getElementById("discount").innerHTML = "₹"
+                                document.getElementById('orderTotal').innerHTML = `₹ ${subtotal}`
+                                document.getElementById('remove').classList.add('d-none')
+                                document.getElementById('apply').classList.remove('d-none')
+                                totalAmount=subtotal
+                                checkAmount(totalAmount)
+                               
+                            }
+                        }).catch(err => {
+                            console.log('error in remove coupon axios', err);
+                        })
+
+
+
+
+
 
                 })
 

@@ -8,9 +8,9 @@ const Coupon = require('../models/couponModel');
 const addToCart = async (req, res) => {
     try {
       
-      let { productId, quantity } = req.body;
+      let { productId } = req.body;
        
-         quantity=Number(quantity)
+       
       const userId = req.session.user_id; 
    
 
@@ -19,14 +19,13 @@ const addToCart = async (req, res) => {
         return res.status(404).send('Product not found');
       }
   
-      const price = product.price * quantity;
-  
+      const price = product.price   
       
       let cartItem = await Cart.findOne({ userId: userId, productId: productId });
   
       if (cartItem) {
         
-        cartItem.quantity += quantity;
+      
         cartItem.price += price;
       } else {
        
@@ -34,7 +33,7 @@ const addToCart = async (req, res) => {
         cartItem = new Cart({
           userId: userId,
           productId: productId,
-          quantity: quantity,
+       
           price: price
         });
       }

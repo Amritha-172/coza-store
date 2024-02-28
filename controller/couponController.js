@@ -152,6 +152,31 @@ const checkCoupon = async (req, res) => {
     }
 };
 
+const removeCoupon=async (req,res)=>{
+    try {
+        
+   req.session.coupon=null
+   res.status(200).json({success:true})
+
+    } catch (error) {
+        console.log('error in remove coupon',error);
+    }
+}
+
+const amount=async(req,res)=>{
+    try {
+        const {totalAmount}=req.body
+
+        if(totalAmount>=1000){
+            res.json({success:true})
+        }else{
+            res.json({success:false})  
+        }
+
+    } catch (error) {
+        console.log('error',error);
+    }
+}
 
 module.exports = {
     addCoupon,
@@ -160,5 +185,7 @@ module.exports = {
     updateCoupon
     , usercoupon,
     deleteCoupon,
-    checkCoupon
+    checkCoupon,
+    removeCoupon,
+    amount
 }

@@ -1039,9 +1039,9 @@
 				} else {
 
 
-					const quantity = document.querySelector('#quantity').value;
+				
 
-					axios.post(`/addcart`, { productId: id, quantity })
+					axios.post(`/addcart`, { productId: id })
 						.then(res => {
 							Swal.fire({
 								title: 'Success!',

@@ -60,6 +60,8 @@ userRoute.get('/wallet',auth.isLogin,auth.isBlocked,userController.wallet)
 
 userRoute.post('/coupon',auth.isLogin,auth.isBlocked,couponController.usercoupon)
 userRoute.post('/couponCheck',auth.isLogin,auth.isBlocked,couponController.checkCoupon)
+userRoute.post('/removeCoupon',auth.isLogin,auth.isBlocked,couponController.removeCoupon)
+userRoute.post('/amount',auth.isLogin,auth.isBlocked,couponController.amount)
 
 userRoute.get('/wishlist',auth.isLogin,auth.isBlocked,userController.wishlist)
 userRoute.post('/wishlist',auth.isLogin,auth.isBlocked,userController.addWishlist)
