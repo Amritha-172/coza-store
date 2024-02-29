@@ -115,24 +115,22 @@
                             </li>
 
                             <li>
-                                <a href="/shop">Shop</a>
+                                <a href="/shops">Shop</a>
                             </li>
 
                             <li>
-                                <a href="/aboutUs">About</a>
+                                <a href="/about">About</a>
                             </li>
 
                             <li>
-                                <a href="/contactUS">Contact</a>
+                                <a href="/contact">Contact</a>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Icon header -->
                     <div class="wrap-icon-header flex-w flex-r-m">
-                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                            <i class="zmdi zmdi-search"></i>
-                        </div>
+                        
 
                         <a href="/shoppingcart">
                             <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-cart">
@@ -199,16 +197,16 @@
                 </li>
 
                 <li>
-                    <a href="/shop">Shop</a>
+                    <a href="/shops">Shop</a>
                 </li>
 
 
                 <li>
-                    <a href="/aboutUs">About</a>
+                    <a href="/about">About</a>
                 </li>
 
                 <li>
-                    <a href="/contactUs">Contact</a>
+                    <a href="/contact">Contact</a>
                 </li>
             </ul>
         </div>
@@ -257,8 +255,8 @@
                                 </p>
                         </div>
                     </div>
-                
-                             <input type="hidden" name=""  id="paymentMethod" value="<%=orderDetails.paymentMethod%>">
+
+                    <input type="hidden" name="" id="paymentMethod" value="<%=orderDetails.paymentMethod%>">
 
                     <!-- Order Details and Status Column -->
                     <div class="col-12 info-section shadow mt-5" style="background-color: white;">
@@ -288,6 +286,7 @@
                                         class="fa-solid fa-xmark"></i> Cancel</a>
                                 <a href="" id="return"
                                     class="text-decoration-none  d-none btn border border-primary">Return</a>
+                                <h5 id="returned"></h5>
                             </div>
 
                         </div>
@@ -323,7 +322,7 @@
 
 
                                 </div>
-
+                                <input type="hidden" id="Reason" value="<%=productDetails.returReason%>">
 
                                 <div class="status-item delivered d-flex ">
                                     <span class="status-icon"><i class="fas fa-box-open"></i></span>
@@ -350,6 +349,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="returnReasonModalLabel">Return Reason</h5>
+                    <p id="errorMessage"></p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -357,7 +357,7 @@
                         <div class="mb-3">
                             <label for="returnReason" class="form-label">Why are you returning this item?</label>
                             <select class="form-select" id="returnReason">
-                                <option selected>Choose...</option>
+                                <option value="" selected>Choose...</option>
                                 <option value="damaged">Item was damaged</option>
                                 <option value="incorrect">Incorrect item was sent</option>
                                 <option value="other">Other</option>
@@ -386,6 +386,14 @@
 
 
         document.addEventListener('DOMContentLoaded', function () {
+
+            const reason = document.getElementById('Reason').value
+            console.log("reason",reason);
+            if (reason) {
+              const returnElem= document.getElementById('return').classList.add('d-none')
+                
+                document.getElementById('returned').innerHTML = "Item  has been returned"
+            }
 
             const status = document.getElementById('Status').value
 
@@ -422,7 +430,12 @@
                         });
                         document.getElementById("cancelled").classList.add('d-none')
                         document.getElementById('cancel').classList.add('d-none')
-                        document.getElementById('return').classList.remove('d-none')
+                        if(reason){
+                            const returnElem= document.getElementById('return').classList.add('d-none')
+                        }else{
+
+                            document.getElementById('return').classList.remove('d-none')
+                        }
 
                         break;
 
@@ -463,14 +476,14 @@
                     confirmButtonText: 'Yes, cancel it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                         
-                        const paymentMethod=document.getElementById('paymentMethod').value
+
+                        const paymentMethod = document.getElementById('paymentMethod').value
                         const productId = document.getElementById('productId').value
 
                         const orderId = document.getElementById('orderId').value.trim();
 
 
-                        axios.patch('/cancelorder', { orderId, productId ,paymentMethod})
+                        axios.patch('/cancelorder', { orderId, productId, paymentMethod })
                             .then(res => {
                                 if (res.data.success) {
 
@@ -513,12 +526,12 @@
             const otherReasonContainer = document.getElementById('otherReasonContainer');
 
             returnBtn.addEventListener('click', function (e) {
-                e.preventDefault(); 
+                e.preventDefault();
                 returnModal.show();
             });
 
             returnReasonSelect.addEventListener('change', function () {
-              
+
                 if (this.value === 'other') {
                     otherReasonContainer.classList.remove('d-none');
                 } else {
@@ -526,15 +539,39 @@
                 }
             });
 
-            
+
             document.getElementById('confirmReturn').addEventListener('click', function () {
-                
+
                 const selectedReason = returnReasonSelect.value;
                 const otherReason = document.getElementById('otherReason').value;
                 console.log('Selected reason:', selectedReason, 'Other reason:', otherReason);
+                const productId = document.getElementById('productId').value
+                const orderId = document.getElementById('orderId').value.trim();
 
-            
-                returnModal.hide();
+                axios.post('/return', { selectedReason, productId, orderId })
+                    .then(res => {
+                        if (!res.data.success) {
+                            document.getElementById('errorMessage').innerHTML = "Please Select a reason"
+                            document.getElementById('errorMessage').style.color = 'red'
+                        } else {
+                            returnModal.hide();
+                            Swal.fire({
+                                position: "top",
+                                icon: "success",
+                                title: "Item retured successfully",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            document.getElementById('return').classList.add('d-none')
+                            document.getElementById('returned').innerHTML = "Item  has been returned"
+
+                        }
+                    }).catch(err => {
+                        console.log('error', err);
+                    })
+
+
+
             });
 
 

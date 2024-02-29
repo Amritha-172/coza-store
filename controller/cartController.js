@@ -70,6 +70,7 @@ const itemExist=async(req,res)=>{
 const shoppingcart = async (req, res) => {
   try {
     const userId = req.session.user_id; 
+    const userData= await user.findOne({_id:userId})
     let Usercart = await Cart.find({ userId: userId });
 
     // Fetch product details for each cart item
@@ -83,7 +84,7 @@ const shoppingcart = async (req, res) => {
       })
     );
    
-    res.render('user/shoppingCart', { cartItems: cartItemsWithProductDetails });
+    res.render('user/shoppingCart', { cartItems: cartItemsWithProductDetails ,userData});
   } catch (error) {
     console.log('error in shopping cart:', error);
     // res.status(500).send('Error retrieving shopping cart');
@@ -98,15 +99,16 @@ const checkout=async(req,res)=>{
     const userId=req.session.user_id
     const couponData=req.session.coupon
     const addressData=await Address.find({userId:userId})
+    const userData= await user.findOne({_id:userId})
    const currentdate=new Date()
     const couponDetails =await Coupon.find({minimumAmount:{$lte:totalprice}})
     const validCoupon = couponDetails.filter(coupon =>new Date(coupon.expireDate)>=currentdate)
 
   if(!couponData){
  
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:""})
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:"",userData})
   }else{
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData})
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData,userData})
 
   }
        

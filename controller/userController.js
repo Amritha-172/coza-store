@@ -87,18 +87,15 @@ const updateProfile = async (req, res) => {
 
 const singleProduct = async (req, res,) => {
     try {
-
+         
         const productId = req.query.productId
-
-    
-        
         const productData = await product.findOne({ _id: productId })
         
         const categoryData=await product.find({categoryId:productData.categoryId,_id:{$ne:productId}})
-        const userData = await User.findOne({ email: req.session.user_email })
-
+        const userData = await User.findOne({_id: req.session.user_id })
+        console.log("userData",userData);
         if (productData) {
-            res.render('user/singleProduct', { product: productData, userData ,categoryData})
+            res.render('user/singleProduct', { product: productData, userData ,categoryData,userData})
         } else {
             res.render('error')
         }
@@ -181,12 +178,13 @@ const updatePass=async(req,res)=>{
 
 const address=async(req,res)=>{
     try {
+        const messages=req.flash('message')
          const userId=req.session.user_id
         
           const addressDetail=await Address.find({userId:userId}).populate('userId') 
           console.log("address detail",addressDetail);
 
-        res.render('user/user/address',{addressDetail})
+        res.render('user/user/address',{addressDetail,messages})
     } catch (error) {
         console.log("error in address");
     }
@@ -332,8 +330,8 @@ const addWishlist=async(req,res)=>{
          const userId=req.session.user_id
          const wishlist=await User.updateOne({_id:userId},{$push:{wishlist:productId }})
          console.log(wishlist);
-        
-
+         res.status(200).json({success:true})  
+      
     } catch (error) {
         console.log('error in add wishlist');
     }
@@ -371,6 +369,24 @@ const checkWishlist=async(req,res)=>{
     }
 }
 
+const about=async(req,res)=>{
+    try {
+        res.render('user/about')
+        
+    } catch (error) {
+        console.log('error inn about page',error);
+    }
+}
+
+const contact=async(req,res)=>{
+    try {
+        res.render('user/contact')
+    } catch (error) {
+        console.log('error in contact page');
+    }
+}
+
+
 module.exports = {
     singleProduct,
     loadshop,
@@ -390,7 +406,9 @@ module.exports = {
     addWishlist,
     removeWishlist,
     checkWishlist,
-    addWallet
+    addWallet,
+    about,
+    contact
 }
 
 

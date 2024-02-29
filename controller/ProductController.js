@@ -7,7 +7,7 @@ const { find } = require('../models/cartModel')
 
 const loadProduct = async (req, res) => {
     try {
-        const products = await product.find({}).populate('categoryId').sort({_id:-1})
+        const products = await product.find({}).populate('categoryId').sort({ _id: -1 })
 
 
         res.render("products", { products })
@@ -108,7 +108,7 @@ const loadeditProduct = async (req, res) => {
     try {
 
         const { id } = req.query
-        const products = await product.findOne({ _id: id }).sort({_id:-1})
+        const products = await product.findOne({ _id: id }).sort({ _id: -1 })
         const categories = await category.find({})
 
 
@@ -176,13 +176,141 @@ const deleteProduct = async (req, res) => {
 const findbyCategory = async (req, res) => {
     try {
         const { categoryId } = req.query
-        const productData = await product.find({categoryId:categoryId })
+        const productData = await product.find({ categoryId: categoryId })
         res.render('user/products', { productData })
 
     } catch (error) {
         console.log();
     }
 }
+
+
+  const highLow= async(req,res)=>{
+    try {
+
+        const products=await product.find().sort({price:-1})
+        const categories= await category.find()
+        res.render('user/shop',{product:products,categories})
+        
+    } catch (error) {
+        console.log('error',error);
+    }
+  }
+
+  const lowHigh= async(req,res)=>{
+    try {
+        const products=await product.find().sort({price:1})
+        const categories= await category.find()
+        res.render('user/shop',{product:products,categories})
+        
+    } catch (error) {
+        console.log('error',error);
+    }
+  }
+
+
+  const aToZ = async(req,res)=>{
+    try {
+        const products = await product.aggregate([
+            {
+                $addFields: {
+                    lowerCaseName: { $toLower: "$productName" } 
+                }
+            },
+            {
+                $sort: {
+                    lowerCaseName: 1 
+                }
+            },
+            {
+                $project: {
+                    lowerCaseName: 0 
+                }
+            }
+        ]);
+        const categories= await category.find()
+
+        res.render('user/shop',{product:products,categories})
+        
+    } catch (error) {
+        console.log('error in a to z',error);
+    }
+
+  }
+
+
+
+  const zToa=async(req,res)=>{
+    try {
+        const products = await product.aggregate([
+            {
+                $addFields: {
+                    lowerCaseName: { $toLower: "$productName" } 
+                }
+            },
+            {
+                $sort: {
+                    lowerCaseName: -1 
+                }
+            },
+            {
+                $project: {
+                    lowerCaseName: 0 
+                }
+            }
+        ]);
+        const categories= await category.find()
+
+        res.render('user/shop',{product:products,categories})
+
+        
+    } catch (error) {
+        console.log('error in z to a');
+    }
+  }
+
+
+  const catSort=async(req,res)=>{
+    try {
+        const {id}=req.query
+
+        const products= await product.find({categoryId:id})
+        const categories= await category.find()
+        
+        res.render('user/shop',{product:products,categories})
+        
+    } catch (error) {
+        console.log('error in wome',error);
+    }
+
+  }
+
+const Search=async(req,res)=>{
+    try {
+        const {words}=req.body
+        console.log('words',words);
+        const products =await product.find({productName:{$regex: words, $options: 'i' }})
+        let productData = [];
+        if(products.length===0){
+            const categories=await category.findOne({catName:{$regex: words, $options: 'i' }})
+            if(categories){
+                productData =await product.find({categoryId:categories._id})
+            }
+
+        }else{
+            productData=products
+        }
+
+        res.json({productData })
+         
+        
+    } catch (error) {
+        console.log('error in search',error);
+    }
+}
+
+
+
 
 
 module.exports = {
@@ -194,5 +322,12 @@ module.exports = {
     loadeditProduct,
     editProduct,
     deleteProduct,
-    findbyCategory
+    findbyCategory,
+    highLow,
+    lowHigh,
+    aToZ,
+    zToa,
+    catSort,
+    Search
+
 }

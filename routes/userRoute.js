@@ -68,9 +68,9 @@ userRoute.post('/wishlist',auth.isLogin,auth.isBlocked,userController.addWishlis
 userRoute.post('/checkwishlist',auth.isLogin,auth.isBlocked,userController.checkWishlist)
 userRoute.post('/removeWhishlist',auth.isLogin,auth.isBlocked,userController.removeWishlist)
 
-userRoute.get('/userAddress',auth.isLogin,auth.isBlocked,userController.address)
-userRoute.post('/AddressSave',auth.isLogin,auth.isBlocked,orderController.addAddress)
-userRoute.post('/userAddressSave',auth.isLogin,auth.isBlocked,orderController.useraddAddress)
+
+
+
 
 userRoute.post('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
 userRoute.post('/checkname',auth.isLogin,auth.isBlocked,orderController.checkname)
@@ -83,6 +83,11 @@ userRoute.get('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
 userRoute.get('/ordersuccess',auth.isLogin,auth.isBlocked,orderController.ordersuccess)
 userRoute.get('/orderpage',auth.isLogin,auth.isBlocked,orderController.orderpage)
 userRoute.get('/singleorder',auth.isLogin,orderController.singleorder)
+userRoute.post('/AddressSave',auth.isLogin,auth.isBlocked,orderController.addAddress)
+
+
+userRoute.get('/userAddress',auth.isLogin,auth.isBlocked,userController.address)
+userRoute.post('/userAddressSave',auth.isLogin,auth.isBlocked,orderController.useraddAddress)
 userRoute.get('/addAddress',auth.isLogin,auth.isBlocked,userController.addAddress)
 userRoute.get('/editAddress',auth.isLogin,auth.isBlocked,userController.loadeditAddress)
 userRoute.post('/editAddress',auth.isLogin,auth.isBlocked,userController.editAddress)
@@ -91,6 +96,7 @@ userRoute.get('/deleteAddress',auth.isLogin,auth.isBlocked,userController.delete
 
 userRoute.get('/productsCat',auth.isLogin,auth.isBlocked,productControlller.findbyCategory)
 userRoute.patch('/cancelorder',auth.isLogin,auth.isBlocked,orderController.cancelOrder)
+userRoute.post("/return",auth.isLogin,auth.isBlocked,orderController.retrunOrder)
 
 userRoute.post('/addfunds',auth.isLogin,paymentController.addFunds)
 userRoute.post('/fundVerification',auth.isLogin,paymentController.fundVerification)
@@ -98,7 +104,15 @@ userRoute.post('/addWallet',auth.isLogin,auth.isBlocked,userController.addWallet
 
 userRoute.post('/placeorderWallet',auth.isLogin,auth.isBlocked,orderController.placeorderWallet)
 
+userRoute.get('/about',auth.isLogin,auth.isBlocked,userController.about)
+userRoute.get('/contact',auth.isLogin,auth.isBlocked,userController.contact)
 
+userRoute.get('/highLow',auth.isLogin,auth.isBlocked,productControlller.highLow)
+userRoute.get('/lowHigh',auth.isLogin,auth.isBlocked,productControlller.lowHigh)
+userRoute.get('/A-Z',auth.isLogin,auth.isBlocked,productControlller.aToZ)
+userRoute.get('/Z-A',auth.isLogin,auth.isBlocked,productControlller.zToa)
+userRoute.get("/catSort",auth.isLogin,auth.isBlocked,productControlller.catSort)
+userRoute.post("/Search",auth.isLogin,auth.isBlocked,productControlller.Search)
 
 
 

@@ -351,8 +351,8 @@ const Homepage = async (req, res) => {
 const shop = async (req, res) => {
     try {
            const product=await products.find({is_blocked: false, is_categoryBlocked: false }).populate('categoryId').sort({_id:-1})
-
-         res.render('user/shop',{product})
+  const categories= await category.find()
+         res.render('user/shop',{product,categories})
     } catch (error) {
         console.log('error in shop', error);
     }

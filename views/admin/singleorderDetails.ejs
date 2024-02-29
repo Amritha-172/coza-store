@@ -58,7 +58,7 @@
     <div class="container-fluid">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="position-sticky pt-3">
+                <div class="position-sticky">
 
                     <div class="position-sticky sidebar-sticky">
                         <ul class="nav flex-column">
@@ -150,7 +150,7 @@
 
 
 
-
+                                                    <input type="hidden" name="" id="status" value="  <%=item.productStatus%>">
                                                     <input type="hidden" name="" id="productId<%=i%>"
                                                         value="<%=item.productId._id%>">
                                                     <input type="hidden" name="" id="orderId<%=i%>"
@@ -200,6 +200,7 @@
                         </div>
                         <div class="modal-body">
                             <select class="form-select" id="modalOrderStatus">
+                               
                                 <option value="pending">Pending</option>
                                 <option value="processing">Processing</option>
                                 <option value="shipped">Shipped</option>
@@ -222,6 +223,21 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+
+            const status=document.getElementById('status').value
+            console.log("status",status);
+            const selectElem=document.getElementById('modalOrderStatus')
+            const options=selectElem.options
+
+            for(var i=0;i< options.length;i++){
+                if(options[i].value === status){
+                    selectElem.selectedIndex =i;
+                    break;
+
+                }
+            }
+            console.log(document.getElementById('modalOrderStatus').value );
+
             var statusChangeModal = new bootstrap.Modal(document.getElementById('statusChangeModal'), {
                 keyboard: false
             });
@@ -234,7 +250,7 @@
             });
             document.querySelectorAll('.changeStatusBtn').forEach(item => {
                 item.addEventListener('click', function () {
-                    console.log("welcome change status");
+                
                     const index = this.getAttribute('data-index');
                     const productId = document.getElementById(`productId${index}`).value;
                     const orderId = document.getElementById(`orderId${index}`).value;

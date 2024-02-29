@@ -27,6 +27,9 @@ const orderSchema = new mongoose.Schema({
             type: String,
             default:"pending",
             required: true
+        },
+        returReason:{
+            type:String, 
         }
     }],
     orderAmount: {

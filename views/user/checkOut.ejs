@@ -41,6 +41,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
@@ -72,8 +74,8 @@
                             Help & FAQs
                         </a>
 
-                        <a href="#" class="flex-c-m trans-04 p-lr-25">
-                            My Account
+                        <a href="/profile" class="flex-c-m trans-04 p-lr-25">
+                            <%=userData.name%>
                         </a>
 
                         <a href="#" class="flex-c-m trans-04 p-lr-25">
@@ -104,23 +106,17 @@
                             </li>
 
                             <li>
-                                <a href="product.html">Shop</a>
+                                <a href="/shops">Shop</a>
                             </li>
 
-                            <li class="label1" data-label1="hot">
-                                <a href="shoping-cart.html">Features</a>
+
+
+                            <li>
+                                <a href="/about">About</a>
                             </li>
 
                             <li>
-                                <a href="blog.html">Blog</a>
-                            </li>
-
-                            <li>
-                                <a href="about.html">About</a>
-                            </li>
-
-                            <li>
-                                <a href="contact.html">Contact</a>
+                                <a href="/contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -343,11 +339,11 @@
                                             <div class="tab-content">
                                                 <div class="tab-pane fade show active" id="tab-account" role="tabpanel"
                                                     aria-labelledby="tab-account-link">
-                                                    <form action="/AddressSave" method="post"
+                                                    <form 
                                                         class="p-5 shadow rounded bg-white">
                                                         <h2 class="mb-5 text-center">Manage Address</h2>
                                                         <div class="row g-3">
-                                                            <!-- Existing fields for name, email, age, gender, phone -->
+                                                            <p id="errorMessage" style="color: red;"></p>
 
                                                             <!-- Additional fields for address details -->
                                                             <div class="col-md-6">
@@ -386,7 +382,7 @@
                                                                     <label for="Street Address"
                                                                         class="form-label">Address (Area
                                                                         and Street)</label>
-                                                                    <textarea class="form-control" id="Street address"
+                                                                    <textarea class="form-control" id="streetAddress"
                                                                         name="streetAddress" placeholder="" rows="3"
                                                                         required></textarea>
                                                                 </div>
@@ -467,7 +463,8 @@
 
                                                         </div>
                                                         <div class="text-center mt-5">
-                                                            <button type="submit" class="btn btn-primary px-4">Save
+                                                            <button type="button" id="saveButton"
+                                                                class="btn btn-primary px-4">Save
                                                             </button>
 
                                                         </div>
@@ -574,12 +571,12 @@
                                             <%}%>
                                                 <tr class="fw-bold ">
                                                     <th>
-                                                       
+
                                                         <h4>Order Total:</h4>
                                                     </th>
                                                     <% if(couponData){%>
-                                                        
-                                                     
+
+
                                                         <td class="text-end" id="orderTotal" data-total-amount="<%=totalprice
                                                         -couponData.dicountAmount %>">₹<%=totalprice
                                                                 -couponData.dicountAmount %>
@@ -898,6 +895,57 @@
                     }
                 })
 
+
+              const save=  document.getElementById('saveButton')
+              console.log('save',save);
+              save.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const name = document.getElementById('username').value
+                    console.log('name',name);
+                    const mobile = document.getElementById('mobile').value
+                      console.log('mobile',mobile);
+                    const pincode = document.getElementById('postalCode').value
+                    console.log('pincode',pincode);
+                    const locality = document.getElementById('locality').value
+                    console.log('locality',locality);
+                    const streetAddress=document.getElementById('streetAddress').value
+                    console.log('streetAddress',streetAddress);
+                    const city=document.getElementById('city').value
+                    console.log('city',city);
+                    const state=document.getElementById('state').value
+                    console.log('state',state);
+                    const landmark=document.getElementById('landmark').value
+                    console.log('landmark',landmark);
+                   const alterPhone=document.getElementById('alterPhone').value
+                   console.log('alterPhone',alterPhone);
+                   const addressType=document.getElementById('addressType').value
+                   console.log('addressType',addressType);
+
+
+                   axios.post('/AddressSave',{name,mobile,mobile,pincode,locality,streetAddress,city,state,landmark,alterPhone,alterPhone,addressType})
+                   .then(res=>{
+                    if(!res.data.success){
+                       document.getElementById('errorMessage').innerHTML=res.data.message
+
+                    }else{
+
+
+                        window.location.href='/checkout'
+
+                    }
+                   }).catch(err=>{
+                    console.log('error');
+                   })
+
+                })
+
+
+
+
+
+
+
+
             })
 
 
@@ -1040,20 +1088,20 @@
 
 
             document.addEventListener('DOMContentLoaded', function () {
-                const totalElem=document.getElementById('orderTotal')
-                let totalAmount=Number (totalElem.getAttribute('data-total-amount'))
+                const totalElem = document.getElementById('orderTotal')
+                let totalAmount = Number(totalElem.getAttribute('data-total-amount'))
                 checkAmount(totalAmount)
 
 
-               function checkAmount(totalAmount){ 
-                   if(totalAmount>=1000){
-                      document.getElementById("pay-methodoption3").disabled=true
-                      document.getElementById("pay-methodoption3").checked = false;
-                   }else{
-                    document.getElementById("pay-methodoption3").disabled=false
-                   }
+                function checkAmount(totalAmount) {
+                    if (totalAmount >= 1000) {
+                        document.getElementById("pay-methodoption3").disabled = true
+                        document.getElementById("pay-methodoption3").checked = false;
+                    } else {
+                        document.getElementById("pay-methodoption3").disabled = false
+                    }
 
-               }
+                }
 
 
 
@@ -1137,9 +1185,9 @@
                 }
 
                 document.getElementById('applyCoupon').addEventListener('click', function () {
-                    
+
                     const coupon = document.getElementById('coupon').value
-               
+
                     axios.post('/coupon', { coupon })
                         .then(res => {
                             if (res.data.success) {
@@ -1149,9 +1197,9 @@
                                 document.getElementById("discount").innerHTML = `₹ ${couponDetails.dicountAmount}`
                                 document.getElementById('orderTotal').innerHTML = `₹ ${subtotal - couponDetails.dicountAmount}`
                                 document.getElementById('apply').classList.add('d-none')
-                               document.getElementById('remove').classList.remove('d-none')
-                               totalAmount=subtotal-couponDetails.dicountAmount
-                               checkAmount(totalAmount)
+                                document.getElementById('remove').classList.remove('d-none')
+                                totalAmount = subtotal - couponDetails.dicountAmount
+                                checkAmount(totalAmount)
 
                             }
                         }).catch(err => {
@@ -1173,9 +1221,9 @@
                                 document.getElementById('orderTotal').innerHTML = `₹ ${subtotal}`
                                 document.getElementById('remove').classList.add('d-none')
                                 document.getElementById('apply').classList.remove('d-none')
-                                totalAmount=subtotal
+                                totalAmount = subtotal
                                 checkAmount(totalAmount)
-                               
+
                             }
                         }).catch(err => {
                             console.log('error in remove coupon axios', err);

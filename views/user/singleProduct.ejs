@@ -63,9 +63,9 @@
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							Help & FAQs
 						</a>
-
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							My Account
+                        
+						<a href="/profile" class="flex-c-m trans-04 p-lr-25">
+							<%=userData.name%>
 						</a>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
@@ -96,23 +96,17 @@
 							</li>
 
 							<li>
-								<a href="product.html">Shop</a>
+								<a href="/shops">Shop</a>
 							</li>
 
-							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Features</a>
+					
+
+							<li>
+								<a href="/about">About</a>
 							</li>
 
 							<li>
-								<a href="blog.html">Blog</a>
-							</li>
-
-							<li>
-								<a href="about.html">About</a>
-							</li>
-
-							<li>
-								<a href="contact.html">Contact</a>
+								<a href="/contact">Contact</a>
 							</li>
 						</ul>
 					</div>
@@ -301,7 +295,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-md-6 col-lg-5 p-b-30">
 					<div class="p-r-50 p-t-5 p-lr-0-lg">
 						<h4 class="mtext-105 cl2 js-name-detail p-b-14" id="productName"
@@ -602,8 +595,9 @@
 
 
 	<!-- Related Products -->
-	<section class="sec-relate-product bg0 p-t-45 p-b-105">
+	<section class="sec-relate-product bg0  p-t-45 p-b-105">
 		<div class="container">
+			
 			<div class="p-b-45">
 				<h3 class="ltext-106 cl5 txt-center">
 					Related Products
@@ -613,9 +607,9 @@
 			<!-- Slide2 -->
 	
 			
-	
-			<div class="wrap-slick2">
-				<div class="slick2">
+
+			<div class="wrap-slick2 ">
+				<div class="slick2 ">
 					<% categoryData.forEach(item=>{%>
 					<div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
 						<!-- Block2 -->
@@ -662,6 +656,7 @@
 				</div>
 			</div>
 		</div>
+	
 	</section>
 
 

@@ -14,6 +14,38 @@ const useraddAddress = async (req, res) => {
         const userId = req.session.user_id;
         console.log(req.body);
         const { addressType, alternativePhone, landmark, mobile, state, city, streetAddress, locality, pincode, name } = req.body
+         if(!addressType||addressType.trim()==""){
+            req.flash('message','Please Select Address type')
+          return res.redirect('/addAddress')
+
+         }
+         if(!mobile||mobile.length !==10){
+            req.flash('message','Please Enter Mobile Number')
+            return res.redirect('/addAddress')
+         }
+         if(!state||state.trim()==''){
+            req.flash('message','Please select state')
+            return res.redirect('/addAddress')
+         }
+         if(!city||city.trim()==""){
+            req.flash('message','Please select city')
+            return res.redirect('/addAddress')
+         }
+         if(!streetAddress||streetAddress.trim()==""){
+
+            req.flash('message','Please select streetAddress')
+            return res.redirect('/addAddress')
+         }
+          if(!locality||locality.trim()==""){
+            req.flash('message','Please select locallity')
+            return res.redirect('/addAddress')
+          }
+           if(!pincode||pincode.length !==6){
+            req.flash('message','Please select pincode')
+            return res.redirect('/addAddress')
+           }
+      
+
 
         const newAddress = new address({
             userId: userId,
@@ -47,23 +79,37 @@ const addAddress = async (req, res) => {
     try {
 
         const userId = req.session.user_id;
-        console.log(req.body);
+        console.log("req.body",req.body);
         const { addressType, alternativePhone, landmark, mobile, state, city, streetAddress, locality, pincode, name } = req.body
 
-        //    if(!name||name.trim()==" "){
-        //       req.flash('message',"user Name is required")
-        //       return res.redirect('/user/addAddress')
-        //    }
+           if(!name||name.trim()==""){  
+              return res.json({success:false,message:"user Name is required"})
+           }
 
-        //    if(mobile.lenght!==10){
-        //     req.flash('message',"Please Enter Valid Number")
-        //     return res.redirect('/user/addAddress')
-        //    }
+           if(mobile.length!==10){
+           
+            return res.json({success:false,message:"Please Enter Valid Number"})
+           }
 
-        //    if(pincode!==6){
-        //     req.flash('message',"Please Enter Valid Pincode")
-        //     return res.redirect('/user/addAddress')
-        //    }
+           if(pincode.length!==6){
+           
+            return res.json({success:false,message:"Please Enter Valid Pincode"})
+           }
+           if(!city||city.trim()==""){
+            return res.json({success:false,message:"Please Enter  city name"})
+           }
+            if(!streetAddress||streetAddress.trim()==""){
+                 return res.json({success:false,message:"Please Enter  Street Address"})
+            }
+             if(!locality||locality.trim()==""){
+                return res.json({success:false,message:"Please Enter  locality"})
+             }
+             if(!addressType||addressType.trim()==""){
+                return res.json({success:false,message:"Please Select Address type  "})
+             }
+
+
+
 
 
         const newAddress = new address({
@@ -83,12 +129,9 @@ const addAddress = async (req, res) => {
         const save = await newAddress.save()
         console.log(save);
         if (save) {
-            res.redirect('/checkout')
+           res.status(200).json({success:true,message:''})
 
-        } else {
-            res.status(400).json({ success: false })
-        }
-
+        } 
     } catch (error) {
         console.log('error in add address', error);
     }
@@ -114,10 +157,10 @@ const placeorder = async (req, res) => {
         const { transactionId } = req.query
         console.log("razorpay", transactionId);
         const { Amount, selectedAddress, selectedPaymentMethod } = req.body
-            console.log('selectedAddress',selectedAddress);
-        if(!selectedAddress){
+        console.log('selectedAddress', selectedAddress);
+        if (!selectedAddress) {
 
-            res.json({success:false,message:"Please select an Address"})
+            res.json({ success: false, message: "Please select an Address" })
         }
 
         const userId = req.session.user_id
@@ -216,7 +259,7 @@ const ordersuccess = async (req, res) => {
 const orderpage = async (req, res) => {
     try {
         const userId = req.session.user_id
-        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId').sort({_id:-1})
+        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId').sort({ _id: -1 })
 
         res.render('user/user/orderpage', { orderDetails })
 
@@ -251,7 +294,7 @@ const cancelOrder = async (req, res) => {
     try {
         const userId = req.session.user_id
 
-        const { orderId, productId,paymentMethod } = req.body
+        const { orderId, productId, paymentMethod } = req.body
 
         console.log(orderId, productId);
 
@@ -259,7 +302,7 @@ const cancelOrder = async (req, res) => {
 
         const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
         const matchedItem = await order.oderedItem.filter(item => item._id = productId)
-        console.log('matchedItem', matchedItem);
+
 
 
         const qnty = matchedItem[0].quantity
@@ -273,29 +316,29 @@ const cancelOrder = async (req, res) => {
         const totalAmount = qnty * amount
 
         const isExistWallet = await wallet.findOne({ userId: userId })
-   
-           if(paymentMethod !=="COD"){
 
-          
-        if (!isExistWallet) {
+        if (paymentMethod !== "COD") {
 
-            const newWallet = new wallet({
-                userId: userId,
-                balance: totalAmount,
-                tratransaction: [{
-                    amount: totalAmount,
-                    transactionsMethod: "Refund",
-                }]
 
-            })
+            if (!isExistWallet) {
 
-            await newWallet.save()
-        } else {
+                const newWallet = new wallet({
+                    userId: userId,
+                    balance: totalAmount,
+                    tratransaction: [{
+                        amount: totalAmount,
+                        transactionsMethod: "Refund",
+                    }]
 
-            await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
+                })
 
+                await newWallet.save()
+            } else {
+
+                await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
+
+            }
         }
-    }
 
         if (productStatus) {
 
@@ -327,12 +370,12 @@ const placeorderWallet = async (req, res) => {
             productId: item.productId,
             quantity: item.quantity
         }))
-          const walletDetails=await wallet.findOne({userId:userId})
-          if(walletDetails.balance < Amount){
-           return  res.json({message:"please check your wallet"})
-          }
-          const walletFund=await wallet.updateOne({userId:userId},{$inc:{balance:-Amount},$push: { transaction: { amount: Amount, transactionsMethod: "Credit" } }})
-          console.log('walletFund',walletFund);
+        const walletDetails = await wallet.findOne({ userId: userId })
+        if (walletDetails.balance < Amount) {
+            return res.json({ message: "please check your wallet" })
+        }
+        const walletFund = await wallet.updateOne({ userId: userId }, { $inc: { balance: -Amount }, $push: { transaction: { amount: Amount, transactionsMethod: "Credit" } } })
+        console.log('walletFund', walletFund);
 
 
 
@@ -363,17 +406,78 @@ const placeorderWallet = async (req, res) => {
 
         })
         await Payment.save()
-       
+
         res.status(200).json({ success: true, orderId: order._id })
 
 
     } catch (error) {
-        
+
         console.log('error in place order wallet', error);
-        res.status(302).json({success:false})
+        res.status(302).json({ success: false })
 
     }
 }
+
+const retrunOrder = async (req, res) => {
+    try {
+        console.log(req.body);
+        const userId=req.session.user_id
+        const { selectedReason, productId, orderId } = req.body
+
+        if(!selectedReason){
+            res.json({success:false})
+
+        }
+
+        const orderDetails = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].returReason': selectedReason } }, { arrayFilters: [{ "item._id": productId }] })
+
+
+        const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
+        const matchedItem = await order.oderedItem.filter(item => item._id = productId)
+
+        const qnty = matchedItem[0].quantity
+        console.log('qnty', qnty);
+        const amount = matchedItem[0].productId.price
+        console.log('amount', amount);
+
+        const productid = matchedItem[0].productId._id
+        console.log("productid", productid);
+
+        const totalAmount = qnty * amount
+
+        const isExistWallet = await wallet.findOne({ userId: userId })
+
+       
+            if (!isExistWallet) {
+
+                const newWallet = new wallet({
+                    userId: userId,
+                    balance: totalAmount,
+                    tratransaction: [{
+                        amount: totalAmount,
+                        transactionsMethod: "Refund",
+                    }]
+
+                })
+
+                await newWallet.save()
+            } else {
+
+                await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
+
+            }
+        
+
+            res.status(200).json({success:true})
+
+
+    } catch (error) {
+        console.log('error in return',error);
+    }
+}
+
+
+
 module.exports = {
     addAddress,
     checkname,
@@ -383,7 +487,8 @@ module.exports = {
     singleorder,
     useraddAddress,
     cancelOrder,
-    placeorderWallet
+    placeorderWallet,
+    retrunOrder
 }
 
 

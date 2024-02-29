@@ -135,15 +135,20 @@
                                 </td>
                                 <td>
 
-                                    <a href="/admin/editcategory?id=<%= category[i]._id%>">
+                                    <a href="/admin/editcategory?id=<%=category[i]._id%>">
                                         <button type="submit" class="btn btn-primary ">Edit</button>
                                     </a>
-                                    <a href="/admin/deletecategory?id=<%= category[i]._id %>"><button type="submit"
-                                            class="btn btn-danger" id="delete">Delete</button></a>
+                                   <% if(category[i].is_blocked){%>
+                                    <a href="/admin/unblockCategory?id=<%= category[i]._id %>"><button type="submit"
+                                            class="btn " id="unblock" style="background-color: rgb(153, 165, 233);">unBlock</button></a>
+                                      <%} else{%>
+                                        <a href="/admin/blockCategory?id=<%= category[i]._id %>"><button type="submit"
+                                            class="btn " style="background-color: rgb(153, 165, 233);" id="block">Block</button></a>
 
+                                      <%}%>
                                 </td>
                             </tr>
-                            <%}%>
+                            <%}%> 
                     </tbody>
                 </table>
             </div>
@@ -152,6 +157,9 @@
     </div>
 
     <script>
+
+
+
         
     </script>
     <script src="js/dashboard.js"></script>

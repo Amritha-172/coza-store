@@ -155,8 +155,6 @@ const editCategory = async (req, res) => {
     try {
         const { catName, description, id } = req.body
 
-
-
         const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
 
         if (editcat) {
@@ -173,11 +171,16 @@ const editCategory = async (req, res) => {
 
 const blockCategory = async (req, res) => {
     try {
-        const { catName } = req.body
-        await product.updateOne({ category: catName }, { $set: { is_categoryBlocked: true } })
-        const block = await category.findAndUpdate({ catName: catName }, { $set: { is_blocked: true } })
+        const { id } = req.query
+        console.log(req.body);
+       const productDetails=  await product.updateOne({categoryId:id}, { $set: { is_categoryBlocked: true } })
+        console.log('productDetails',productDetails);
+        const block = await category.updateOne({ _id:id}, { $set: { is_blocked: true } })
         if (block) {
-            res.json({ messagea: "Block category is successfull" })
+           res.redirect('/admin/category')
+        }else{
+            res.redirect('/admin/editcategory')
+
         }
     } catch (error) {
         console.log("error  in block category:", error);
@@ -186,17 +189,19 @@ const blockCategory = async (req, res) => {
 
 const unblockCategory = async (req, res) => {
     try {
-        const { catName } = req.body
-        await product.updateOne({ catName: catName }, { $set: { is_categoryBlocked: false } })
-        const unBlock = await category.findByIdAndUpdate({ category: catName }, { $set: { is_blocked: false } })
-        if (unBlock) {
-            res.json({ message: "Unblock successfully" })
-        } else {
-            res.json({ message: "Something Error" })
-        }
+        const { id } = req.query
+        console.log(req.body);
+       const productDetails=  await product.updateOne({categoryId:id}, { $set: { is_categoryBlocked: false } })
+        console.log('productDetails',productDetails);
+        const block = await category.updateOne({ _id:id}, { $set: { is_blocked: false } })
+        if (block) {
+           res.redirect('/admin/category')
+        }else{
+            res.redirect('/admin/editcategory')
 
+        }
     } catch (error) {
-        console.log("Error in unblocked category");
+        console.log("error  in block category:", error);
     }
 }
 

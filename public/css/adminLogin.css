@@ -3,7 +3,8 @@
 /* Base styles */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: rgb(241, 243, 246);
+  background-color: rgb(217, 223, 233);
+  background-image: url('/images/blog-03.jpg');
   display: flex;
   justify-content: center;
   align-items: center;
