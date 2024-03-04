@@ -68,7 +68,21 @@
 
 <body>
 
+<style>
+    .invoice-button {
+    background-color: #717fe0;; /* Blue */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.invoice-button:hover {
+    background-color: #5050d2;
+}
 
+</style>
 
 
 
@@ -262,6 +276,16 @@
                     <div class="col-12 info-section shadow mt-5" style="background-color: white;">
                         <!-- Order Details -->
                         <div class="row">
+                            <% if(productDetails.productStatus == "delivered"||productDetails.productStatus == "returned"){%>
+
+                      
+                            <div class="d-flex justify-content-end ">
+                             
+                            <a href="/invoice?orderId=<%=orderDetails._id%>&productId=<%=productDetails.productId._id%>"><button type="button" class="invoice-button me-5 mt-3">
+                                <i class="fas fa-file-invoice-dollar"></i> Invoice
+                            </button></a>
+                        </div>
+                        <%}%>
                             <div class="col-6 mt-3 ms-2 ">
                                 <div class="d-flex align-items-center">
                                     <img src="/multerimages/<%=productDetails.productId.image[0]%>" alt="Product Image"
@@ -272,11 +296,12 @@
                                             <%=productDetails.productId.productName%>
                                         </h6>
                                         <small class="text-muted">Size: M, Color: Red</small>
-                                        <div><span>seller:MOKSHI</span></div>
-                                        <div><span>Price: ₹<%=productDetails.productId.price%> </span></div>
+                                        <div><span>Quantity:₹<%=productDetails.quantity%></span></div>
+                                        <div><span>Price: ₹<%=productDetails.totalProductAmount%> </span></div>
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-11 mt-3 d-flex justify-content-end align-items-start">
                                 <input type="hidden" name="" id="productId" value="<%=productDetails._id%>">
                                 <input type="hidden" name="" id="Status" value="<%=productDetails.productStatus%>">
@@ -451,6 +476,24 @@
                         document.getElementById('cancel').classList.add('d-none')
                         document.getElementById('return').classList.add('d-none')
                         break;
+
+                        case 'returned':
+                        document.querySelectorAll('.status-item').forEach(function (element) {
+                            element.classList.add('active');
+                        });
+                        document.getElementById("cancelled").classList.add('d-none')
+                        document.getElementById('cancel').classList.add('d-none')
+                        if(reason){
+                            const returnElem= document.getElementById('return').classList.add('d-none')
+                        }else{
+
+                            document.getElementById('return').classList.remove('d-none')
+                        }
+
+                        break;
+
+
+
                     default:
                         console.log('Unknown status');
                 }
@@ -563,6 +606,7 @@
                                 timer: 1500
                             });
                             document.getElementById('return').classList.add('d-none')
+                            document.getElementById('cancel').classList.add('d-none')
                             document.getElementById('returned').innerHTML = "Item  has been returned"
 
                         }

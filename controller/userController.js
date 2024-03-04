@@ -7,6 +7,7 @@ const Cart = require('../models/cartModel');
 const Wallet=require('../models/walletModel');
 const moment = require('moment')
 const Category=require('../models/categoryModel')
+const offers=require('../models/offerModel')
 
 const securePassword = async (password) => {
     try {
@@ -87,24 +88,50 @@ const updateProfile = async (req, res) => {
 
 const singleProduct = async (req, res,) => {
     try {
-         
-        const productId = req.query.productId
-        const productData = await product.findOne({ _id: productId })
+
+        const productId = req.query.productId;
+        const productData = await product.findOne({ _id: productId });
+        const categoryData = await product.find({ categoryId: productData.categoryId, _id: { $ne: productId } });
+        const userData = await User.findOne({ _id: req.session.user_id });
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
         
-        const categoryData=await product.find({categoryId:productData.categoryId,_id:{$ne:productId}})
-        const userData = await User.findOne({_id: req.session.user_id })
-        console.log("userData",userData);
-        if (productData) {
-            res.render('user/singleProduct', { product: productData, userData ,categoryData,userData})
+        let productDiscountedPrice = productData.price;
+        let categoryDiscountedPrice = productData.price;
+        let discountedPrice;
+        let appliedOffer = null;
+        
+        offerData.forEach(offer => {
+            if (offer.offerType === 'product' && offer.productId.includes(productData._id.toString())) {
+                productDiscountedPrice = productData.price - (productData.price * offer.discount / 100);
+            }
+            if (offer.offerType === 'category' && offer.categoryId.includes(productData.categoryId.toString())) {
+                categoryDiscountedPrice = productData.price - (productData.price * offer.discount / 100);
+            }
+        });
+        
+        if (productDiscountedPrice <= categoryDiscountedPrice) {
+            appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(productData._id.toString()));
+            discountedPrice = Math.round(productDiscountedPrice);
         } else {
-            res.render('error')
+            appliedOffer = offerData.find(offer => offer.offerType === 'category' && offer.categoryId.includes(productData.categoryId.toString()));
+            discountedPrice = Math.round(categoryDiscountedPrice);
         }
+        
+        res.render('user/singleProduct', {
+            product: { ...productData.toObject(), originalPrice: productData.price, discountedPrice, appliedOffer: appliedOffer ? { offerName: appliedOffer.offerName, discount: appliedOffer.discount } : null},
+            userdata: userData,
+            categoryData,
+          
+        });
     } catch (error) {
         console.log("error in Single product:", error);
-        res.render('error')
+        res.render('error');
     }
+    
 }
-
 
 const changePass = async (req, res) => {
     try {

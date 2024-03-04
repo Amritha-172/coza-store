@@ -13,204 +13,508 @@
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
-
     <style>
 
     </style>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="/admin/logout">Sign out</a>
+            </div>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a href="/admin/dashboard" class="nav-link active"><i
+                                    class="fas fa-home me-2"></i> Dashboard</a></li>
+                        <li class="nav-item"><a href="/admin/userlist" class="nav-link"><i
+                                    class="fa-solid fa-users me-2"></i> Users</a></li>
+                        <li class="nav-item"><a href="/admin/productlist" class="nav-link"><i
+                                    class="fas fa-shopping-cart me-2"></i> Products</a></li>
+                        <li class="nav-item"><a href="/admin/oderDetails" class="nav-link"><i
+                                    class="fas fa-file-alt me-2"></i> Orders</a></li>
+                        <li class="nav-item"><a href="/admin/category" class="nav-link"><i class="fas fa-list me-2"></i>
+                                Categories</a></li>
+                        <li class="nav-item"><a href="/admin/Coupon" class="nav-link"><i
+                                    class="fa-solid fa-money-bill me-2"></i> Coupon</a></li>
+                        <li class="nav-item">
+                            <a href="/admin/offer" class="nav-link active d-flex align-items-center border">
+                                <i class="fa-solid fa-tag me-2"></i> offer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
-    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-nav">
-        <div class="nav-item text-nowrap">
-            <a class="nav-link px-3" href="/admin/logout">Sign out</a>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 bg-white ">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"></h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button id="addOffer" class="btn btn-sm btn-outline-secondary">Add New Offer</button>
+                    </div>
+                </div>
+
+                <!-- Offer List -->
+                <div class="table-responsive  " id="offerList">
+                    <h2>Offer List</h2>
+
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Offer Name</th>
+                                <th>Discount</th>
+                                <th>Valid From</th>
+                                <th>Valid To</th>
+                                <th>Offer Type</th>
+
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <%if(offers){%>
+                            <tbody>
+                                <% for(i=0;i< offers.length;i++){%>
+
+
+                                    <tr>
+                                        <td>
+                                            <%=i+1%>
+                                        </td>
+                                        <td>
+                                            <%=offers[i].offerName%>
+                                        </td>
+                                        <td>
+                                            <%=offers[i].discount%>%
+                                        </td>
+                                        <% var dateStr=offers[i].startDate%>
+                                            <% var dateObj=new Date(dateStr); %>
+                                                <% var formattedDate=dateObj.getDate() + ' ' +
+                                                    dateObj.toLocaleString('default', { month: 'long' }) + ' ' +
+                                                    dateObj.getFullYear(); %>
+
+                                                    <td>
+                                                        <%= formattedDate %>
+                                                    </td>
+
+                                                    <% var dateStr=offers[i].endDate%>
+                                                        <% var dateObj=new Date(dateStr); %>
+                                                            <% var formattedDate=dateObj.getDate() + ' ' +
+                                                                dateObj.toLocaleString('default', { month: 'long' })
+                                                                + ' ' + dateObj.getFullYear(); %>
+
+                                                                <td>
+                                                                    <%= formattedDate %>
+                                                                </td>
+
+                                                                <td>
+                                                                    <%=offers[i].offerType%>
+                                                                </td>
+
+                                                                <td>
+                                                                   <a href="/admin/editOffer?id=<%=offers[i]._id%>"><button class="btn btn-primary btn-sm"
+                                                                      >Edit</button></a> 
+                                                                    <button class="btn btn-danger btn-sm delete"
+                                                                        value="<%=offers[i]._id%>">Delete</button>
+                                                                </td>
+                                    </tr>
+                                    <%}%>
+                                        <!-- Add more rows as needed -->
+                            </tbody>
+                            <%}%>
+                    </table>
+                </div>
+
+
+
+
+
+
+                <!-- Add Offer Form -->
+                <div id="addOfferForm" style="display: none;">
+
+
+                    <h2>Add New Offer</h2>
+                    <p id="errorAddoffer" style="color: red;"></p>
+                    <form>
+                        <!-- Offer Name -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="offerName" class="form-label">Offer Name</label>
+                                <input type="text" class="form-control" id="offerName" name="offerName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="discountRate" class="form-label">Discount Rate (%)</label>
+                                <input type="number" class="form-control" id="discountRate" name="discountRate" min="0"
+                                    max="100" required>
+                            </div>
+                        </div>
+
+                        <!-- Discount Rate and Start Date -->
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" required>
+                            </div>
+                        </div>
+
+                        <!-- End Date and Offer Type -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="offerType" class="form-label">Offer Type</label>
+                                <select class="form-select" id="offerType" name="offerType" required>
+                                    <option>Choose</option>
+                                    <option value="category">Category</option>
+                                    <option value="product">Product</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="selectedProductNames">Selected Product Names:</label>
+                                <select class="form-select" id="selectedProductNames">
+
+                                </select>
+                            </div>
+
+
+
+                            <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="productModalLabel">Select a Product</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalProductList">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary"
+                                                id="selectProductBtn">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Category Selection Modal -->
+                            <div class="modal fade" id="categoryModal" tabindex="-1"
+                                aria-labelledby="categoryModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="categoryModalLabel">Select Categories</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalCategoryList">
+                                            <!-- Categories will be dynamically inserted here -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary"
+                                                id="selectCategoryBtn">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- Submit Button -->
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button type="button" id="saveBtn" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+
+
+
+
+
+
+                
+            </main>
         </div>
     </div>
-</header>
-<div class="container-fluid">
-    <div class="row">
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="position-sticky ">
-              
-                    <div class="position-sticky sidebar-sticky">
-                        <ul class="nav flex-column">
-                          <aside class="sidebar col-12">
-                          
-                            <br> <br>
-                            <ul class="">
-                              <li class="nav-item">
-                                <a href="/admin/dashboard" class="nav-link active d-flex align-items-center">
-                                    <i class="fas fa-home me-2"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                              <a href="/admin/userlist" class="nav-link active d-flex align-items-center">
-                                  <i class="fa-solid fa-users me-2"></i> Users
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/productlist" class="nav-link active d-flex align-items-center">
-                                  <i class="fas fa-shopping-cart me-2"></i> Products
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/oderDetails" class="nav-link active d-flex align-items-center">
-                                  <i class="fas fa-file-alt me-2"></i> Orders
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/category" class="nav-link active d-flex align-items-center">
-                                  <i class="fas fa-list me-2"></i> Categories
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/Coupon" class="nav-link active d-flex align-items-center">
-                                  <i class="fa-solid fa-money-bill me-2"></i> Coupon
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/offer" class="nav-link active d-flex align-items-center border ">
-                                  <i class="fa-solid fa-tag me-2"></i> offer
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="/admin/banner" class="nav-link active d-flex align-items-center">
-                                  <i class="fa-regular fa-note-sticky me-2"></i> Banner
-                              </a>
-                          </li>
-                          
-                          
-                          
-                                </ul>
-                        </aside>
-                
-                        </ul>
-                    </div>
-               
-            </div>
-        </nav>
 
-        <!-- Main Content -->
-        <main class="main-content" id="offer">
-            <div class="content">
-                <h1>Offer List</h1>
-                <p>List of Offers:</p>
-                <button id="addOffer" class="btn btn-dark d-flex mb-3">Add New Offer</button>
-
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Offer Name</th>
-                            <th>Discount</th>
-                            <th>Valid From</th>
-                            <th>Valid To</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Dynamic rows will be inserted here -->
-                        <tr>
-                            <td>1</td>
-                            <td>Summer Sale</td>
-                            <td>20%</td>
-                            <td>2024-06-01</td>
-                            <td>2024-06-30</td>
-                            <td>
-                                <button id="editbtn" class="btn btn-primary btn-sm editOffer" data-offer-id="1">Edit</button>
-                                <button class="btn btn-danger btn-sm deleteOffer" data-offer-id="1">Delete</button>
-                            </td>
-                        </tr>
-                        <!-- More rows as needed -->
-                    </tbody>
-                </table>
-            </div>
-        </main>
-        <main class="main-content" id="Add" style="display: none;">
-            <div class="content">
-                <h1>Add New Offer</h1>
-                <div class="container mt-5">
-                    <form action="/admin/createoffer" method="POST">
-                        <div class="mb-3">
-                            <label for="offerName" class="form-label">Offer Name</label>
-                            <input type="text" class="form-control" id="offerName" name="offerName" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="discountRate" class="form-label">Discount Rate (%)</label>
-                            <input type="number" class="form-control" id="discountRate" name="discountRate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </main>
-
-        <main class="main-content" style="display: none;" id="edit">
-            <div class="content">
-                <h1>Edit Offer</h1>
-                <div class="container mt-5">
-                    <form action="/admin/updateoffer" method="POST">
-                        <input type="hidden" name="offerId" value="OFFER_ID"> <!-- Hidden field for the offer's ID -->
-                        <div class="mb-3">
-                            <label for="offerName" class="form-label">Offer Name</label>
-                            <input type="text" class="form-control" id="offerName" name="offerName" value="EXISTING_OFFER_NAME" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="discountRate" class="form-label">Discount Rate (%)</label>
-                            <input type="number" class="form-control" id="discountRate" name="discountRate" value="EXISTING_DISCOUNT_RATE" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" value="EXISTING_START_DATE" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate" value="EXISTING_END_DATE" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update Offer</button>
-                    </form>
-                </div>
-            </div>
-        </main>
-    </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById("addOffer").addEventListener('click',function(e){
-               e.preventDefault()
-               document.getElementById('offer').style.display='none'
-               document.getElementById('Add').style.display='block'
-
-            })
-            document.getElementById("editbtn").addEventListener('click',function(e){
-                e.preventDefault()
-                document.getElementById('offer').style.display='none'
-                 document.getElementById('edit').style.display='block'
-            })
+        document.getElementById('addOffer').addEventListener('click', function () {
+            document.getElementById('offerList').style.display = 'none';
+   
+            document.getElementById('addOfferForm').style.display = 'block';
         });
+        
+
+
     </script>
-    <script src="js/dashboard.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
 
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
+            document.getElementById('offerType').addEventListener('change', function () {
+                const offerType = this.value;
+
+                if (offerType) {
+                    // Fetch product data and display modal
+                    axios.post('/admin/offerType', { offerType })
+                        .then(res => {
+                            if (res.data.productData) {
+                                const products = res.data.productData;
+                                const modalProductList = document.getElementById('modalProductList');
+                                modalProductList.innerHTML = ''; // Clear previous content
+
+                                products.forEach(product => {
+                                    const imageUrl = `/multerimages/${product.image[0]}`;
+                                    const productItem = document.createElement('div');
+                                    productItem.className = 'product-item d-flex align-items-center justify-content-between p-2';
+                                    productItem.innerHTML = `
+                                                    <div class="form-check">
+                                                      <input class="form-check-input product-checkbox" type="checkbox" name="productSelect" id="product-${product._id}" value="${product._id}">
+                                                            <label class="form-check-label" for="product-${product._id}">
+                                                                     ${product.productName} - Price: ${product.price}
+                                                                          </label>
+                                                                                    </div>
+                                                                             <img src="${imageUrl}" alt="${product.productName}" style="width: 50px; height: 50px;">
+                                                                                           `;
+                                    modalProductList.appendChild(productItem);
+                                });
+
+
+                                $('#productModal').modal('show');
+
+
+                            } else {
+                                const category = res.data.categoryDetails
+
+                                const modalCategoryList = document.getElementById('modalCategoryList');
+                                modalCategoryList.innerHTML = '';
+
+                                category.forEach(category => {
+                                    const categoryElement = document.createElement('div');
+                                    categoryElement.className = 'form-check';
+                                    categoryElement.innerHTML = `
+                                             <input class="form-check-input category-checkbox" type="checkbox" id="category-${category._id}" name="category" value="${category._id}">
+                                         <label class="form-check-label" for="category-${category._id}">${category.catName}</label>
+                                                 `;
+                                    modalCategoryList.appendChild(categoryElement);
+                                });
+                                new bootstrap.Modal(document.getElementById('categoryModal')).show();
+
+                            }
+
+                        }).catch(err => {
+                            console.error('Error:', err);
+                        });
+                }
+            });
+
+            document.getElementById('selectProductBtn').addEventListener('click', function () {
+                var modalElement = document.getElementById('productModal');
+                var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+            });
+            document.getElementById('selectCategoryBtn').addEventListener('click', function () {
+                var modalElement = document.getElementById('categoryModal');
+                var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+            });
+
+
+
+
+            document.addEventListener('change', function (e) {
+                if (e.target.matches('.product-checkbox')) {
+
+                    const selectedProducts = document.querySelectorAll('input[name="productSelect"]:checked');
+                    const selectedProductNameSelect = document.getElementById('selectedProductNames')
+
+                    if (selectedProductNameSelect) {
+
+                        selectedProductNameSelect.innerHTML = '';
+
+
+                        selectedProducts.forEach(input => {
+                            const productDetail = input.nextElementSibling.textContent.trim().split('-').map(part => part.trim());
+                            const productName = productDetail[0];
+                            const productId = input.value;
+                            console.log("productId", productId);
+                            const option = document.createElement('option');
+                            option.value = productId;
+                            option.text = productName;
+                            option.selected = true;
+                            selectedProductNameSelect.appendChild(option);
+                        });
+                    }
+                }
+            });
+
+
+
+
+
+
+
+            document.addEventListener('change', function (e) {
+                if (e.target.matches('.category-checkbox')) {
+
+                    const selectedProducts = document.querySelectorAll('input[name="category"]:checked');
+                    console.log('selectedProducts', selectedProducts);
+                    const selectedProductNameSelect = document.getElementById('selectedProductNames');
+                    if (selectedProductNameSelect) {
+
+                        selectedProductNameSelect.innerHTML = '';
+                        selectedProducts.forEach(input => {
+                            const categoryDetail = input.nextElementSibling.textContent
+                            console.log("categoryDetail", categoryDetail);
+                            const catName = categoryDetail
+                            const catId = input.value;
+                            console.log("catId", catId);
+
+                            const option = document.createElement('option');
+                            option.value = catId;
+                            option.text = catName;
+                            option.selected = true;
+                            selectedProductNameSelect.appendChild(option);
+                        });
+                    }
+                }
+            });
+
+
+
+            document.getElementById('saveBtn').addEventListener('click', function (e) {
+                e.preventDefault()
+
+                const offerName = document.getElementById('offerName').value
+                const discountRate = document.getElementById('discountRate').value
+                const startDate = document.getElementById('startDate').value
+                const endDate = document.getElementById('endDate').value
+                const offerType = document.getElementById('offerType').value
+                const selectedElem = document.getElementById('selectedProductNames')
+                const selectedValues = Array.from(selectedElem.options)
+                    .map(option => option.value);
+
+                console.log("selectedProductNames", selectedValues);
+
+
+                axios.post('/admin/addOffer', { offerName, discountRate, startDate, endDate, offerType, selectedValues })
+                    .then(res => {
+                        if (res.data.success) {
+                            window.location.href = "/admin/offer"
+
+                        } else {
+                            document.getElementById('errorAddoffer').innerHTML = res.data.message
+                            setTimeout(() => {
+                                document.getElementById('errorAddoffer').innerHTML = ""
+                            }, 2000)
+                        }
+                    }).catch(err => {
+                        console.log('error', err);
+                    })
+
+
+
+
+
+            })
+            const deleteBtn = document.querySelectorAll('.delete')
+            deleteBtn.forEach(btn => {
+
+                btn.addEventListener('click', function () {
+                    const id = this.value  
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                            cancelButton: "btn btn-danger"
+                        },
+                        buttonsStyling: false
+                    });
+                    swalWithBootstrapButtons.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post('/admin/deleteOffer', {id})
+                            .then(res=>{
+                                if(res.data.success){
+                                swalWithBootstrapButtons.fire({
+                                    title: "Deleted!",
+                                    text: "Your file has been deleted.",
+                                    icon: "success"
+                                }).then(result=>{
+                                    window.location.href="/admin/offer"
+
+                                })
+                            }
+
+                            }).catch(err=>{
+                                swalWithBootstrapButtons.fire({
+                                title: "Cancelled",
+                                text: "Your imaginary file is safe :)",
+                                icon: "error"
+                            });
+                            })
+
+
+                        } else if (
+                          
+                            result.dismiss === Swal.DismissReason.cancel
+                        ) {
+                           
+                        }
+                    });
+
+                })
+
+            })
+
+
+        })
+
+
+    </script>
 </body>
 
 </html>

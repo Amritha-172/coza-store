@@ -173,7 +173,7 @@ const blockCategory = async (req, res) => {
     try {
         const { id } = req.query
         console.log(req.body);
-       const productDetails=  await product.updateOne({categoryId:id}, { $set: { is_categoryBlocked: true } })
+       const productDetails=  await product.updateMany({categoryId:id}, { $set: { is_categoryBlocked: true } })
         console.log('productDetails',productDetails);
         const block = await category.updateOne({ _id:id}, { $set: { is_blocked: true } })
         if (block) {
@@ -191,7 +191,7 @@ const unblockCategory = async (req, res) => {
     try {
         const { id } = req.query
         console.log(req.body);
-       const productDetails=  await product.updateOne({categoryId:id}, { $set: { is_categoryBlocked: false } })
+       const productDetails=  await product.updateMany({categoryId:id}, { $set: { is_categoryBlocked: false } })
         console.log('productDetails',productDetails);
         const block = await category.updateOne({ _id:id}, { $set: { is_blocked: false } })
         if (block) {
@@ -270,14 +270,7 @@ const updateSts = async (req, res) => {
 }
 
 
-const offer = async (req, res) => {
-    try {
-        res.render('offerPage')
 
-    } catch (error) {
-        console.log("error offer", error);
-    }
-}
 module.exports = {
     userList,
     blockUser,
@@ -297,6 +290,6 @@ module.exports = {
     updateSts,
     checkCategory,
 
-    offer
+ 
 
 }

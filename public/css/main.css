@@ -1916,7 +1916,7 @@ input.num-product::-webkit-inner-spin-button {
 .table-shopping-cart {
   border-collapse: collapse;
   width: 100%;
-  min-width: 680px;
+  min-width: 643px;
 }
 
 .table-shopping-cart tr {
@@ -3459,3 +3459,32 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
+body{
+  background-color:rgb(241, 243, 246);
+}
+    .order-success {
+        padding: 20px;
+        max-width: 500px;
+        margin: auto;
+    }
+    .order-details {
+        width: 800px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .block2-pic {
+      position: relative;
+  }
+  
+  .offer-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: green;
+      color: white;
+      padding: 5px 10px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 5px;
+  }

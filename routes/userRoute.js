@@ -81,10 +81,11 @@ userRoute.post('/verifiaction',auth.isLogin,paymentController.verifypayment)
 
 userRoute.get('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)
 userRoute.get('/ordersuccess',auth.isLogin,auth.isBlocked,orderController.ordersuccess)
-userRoute.get('/orderpage',auth.isLogin,auth.isBlocked,orderController.orderpage)
-userRoute.get('/singleorder',auth.isLogin,orderController.singleorder)
 userRoute.post('/AddressSave',auth.isLogin,auth.isBlocked,orderController.addAddress)
 
+userRoute.get('/orderpage',auth.isLogin,auth.isBlocked,orderController.orderpage)
+userRoute.get('/singleorder',auth.isLogin,auth.isBlocked,orderController.singleorder)
+userRoute.get('/invoice',auth.isLogin,auth.isBlocked,orderController.invoicePage)
 
 userRoute.get('/userAddress',auth.isLogin,auth.isBlocked,userController.address)
 userRoute.post('/userAddressSave',auth.isLogin,auth.isBlocked,orderController.useraddAddress)

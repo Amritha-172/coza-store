@@ -9,7 +9,7 @@ body {
 }
 
 .sidebar {
-  width: 200px !important;
+ 
   background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
 
@@ -31,7 +31,7 @@ body {
 
 .sidebar li {
   padding: 15px;
-  /* text-align: center; */
+
 }
 
 .sidebar a {
@@ -215,4 +215,61 @@ main{
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
+}
+
+
+
+
+.header {
+  display: flex;
+  justify-content: space-around; 
+  padding: 20px 0;
+  background-color: #f0f0f0;
+  flex-wrap: wrap; 
+}
+
+
+.card {
+  flex: 1; 
+  flex-basis: calc(25% - 20px);
+  display: flex;
+  align-items: center; 
+ 
+  background-color: #9686da !important; 
+  padding: 15px;
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  transition: all 0.3s ease-in-out;
+  margin: 10px; 
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.card div:first-child {
+  margin-right: 15px; 
+}
+
+.card svg {
+  width: 30px; 
+  height: 30px;
+  fill: none;
+  stroke: #f9fafc;
+}
+
+.card span {
+  display: block; 
+}
+
+.card span:first-child {
+  font-size: 1.25rem; 
+  color: #feffff; 
+  font-weight: bold; 
+}
+
+.card span:last-child {
+  font-size: 0.9rem; /* Smaller font size for labels */
+  color: #ffffff; /* Lighter grey color */
 }

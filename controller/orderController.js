@@ -1,7 +1,7 @@
 const address = require('../models/addressModal');
 const Order = require('../models/orderModel');
 const Cart = require('../models/cartModel');
-
+const user=require('../models/userModel')
 const product = require('../models/productModel')
 const payment = require('../models/paymentModel')
 const wallet = require('../models/walletModel');
@@ -168,7 +168,9 @@ const placeorder = async (req, res) => {
         console.log("cart items", cartItems);
         const orderedItem = await cartItems.map(item => ({
             productId: item.productId,
-            quantity: item.quantity
+            quantity: item.quantity,
+            totalProductAmount:item.price
+
         }))
 
         for (let item of orderedItem) {
@@ -235,7 +237,8 @@ const placeorder = async (req, res) => {
 
 const ordersuccess = async (req, res) => {
     try {
-
+         const userId=req.session.user_id
+         const userdata=await user.findOne({_id:userId})
         const { orderId } = req.query
         const orderDetail = await Order.findOne({ _id: orderId }).populate('userId').populate('deliveryAddress')
         console.log("order details", orderDetail);
@@ -250,7 +253,7 @@ const ordersuccess = async (req, res) => {
 
         console.log(formattedCreatedAt);
 
-        res.render('user/orderSuccess', { orderDetail, formattedCreatedAt })
+        res.render('user/orderSuccess', { orderDetail, formattedCreatedAt,userdata})
     } catch (error) {
         console.log('error in order details page');
     }
@@ -301,31 +304,25 @@ const cancelOrder = async (req, res) => {
         const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': "cancelled" } }, { arrayFilters: [{ "item._id": productId }] })
 
         const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
-        const matchedItem = await order.oderedItem.filter(item => item._id = productId)
+        const matchedItem = await order.oderedItem.filter(item => item._id == productId)
 
+     
 
+       
+        
 
-        const qnty = matchedItem[0].quantity
-        console.log('qnty', qnty);
-        const amount = matchedItem[0].productId.price
-        console.log('amount', amount);
-
-        const productid = matchedItem[0].productId._id
-        console.log("productid", productid);
-
-        const totalAmount = qnty * amount
-
+        const totalAmount = matchedItem[0].totalProductAmount
+           
         const isExistWallet = await wallet.findOne({ userId: userId })
 
         if (paymentMethod !== "COD") {
-
 
             if (!isExistWallet) {
 
                 const newWallet = new wallet({
                     userId: userId,
                     balance: totalAmount,
-                    tratransaction: [{
+                    transaction: [{
                         amount: totalAmount,
                         transactionsMethod: "Refund",
                     }]
@@ -342,7 +339,7 @@ const cancelOrder = async (req, res) => {
 
         if (productStatus) {
 
-            await product.updateOne({ _id: productid }, { $inc: { quantity: qnty } })
+            await product.updateOne({ _id: productId }, { $inc: { quantity:  matchedItem[0].quantity } })
             res.status(200).json({ success: true, })
 
         } else {
@@ -368,9 +365,15 @@ const placeorderWallet = async (req, res) => {
 
         const orderedItem = await cartItems.map(item => ({
             productId: item.productId,
-            quantity: item.quantity
+            quantity: item.quantity,
+            totalProductAmount:item.price
         }))
         const walletDetails = await wallet.findOne({ userId: userId })
+
+        if (!walletDetails) {
+            return res.json({ message: "please check your wallet" })
+        }
+
         if (walletDetails.balance < Amount) {
             return res.json({ message: "please check your wallet" })
         }
@@ -428,22 +431,16 @@ const retrunOrder = async (req, res) => {
             res.json({success:false})
 
         }
-
-        const orderDetails = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].returReason': selectedReason } }, { arrayFilters: [{ "item._id": productId }] })
+ 
+           const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': "returned",'oderedItem.$[item].returReason': selectedReason  } }, { arrayFilters: [{ "item._id": productId }] })
 
 
         const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
-        const matchedItem = await order.oderedItem.filter(item => item._id = productId)
+        const matchedItem = await order.oderedItem.filter(item => item._id == productId)
+   
 
-        const qnty = matchedItem[0].quantity
-        console.log('qnty', qnty);
-        const amount = matchedItem[0].productId.price
-        console.log('amount', amount);
 
-        const productid = matchedItem[0].productId._id
-        console.log("productid", productid);
-
-        const totalAmount = qnty * amount
+        const totalAmount = matchedItem[0].totalProductAmount
 
         const isExistWallet = await wallet.findOne({ userId: userId })
 
@@ -453,7 +450,7 @@ const retrunOrder = async (req, res) => {
                 const newWallet = new wallet({
                     userId: userId,
                     balance: totalAmount,
-                    tratransaction: [{
+                    transaction: [{
                         amount: totalAmount,
                         transactionsMethod: "Refund",
                     }]
@@ -466,6 +463,10 @@ const retrunOrder = async (req, res) => {
                 await wallet.updateOne({ userId: userId }, { $inc: { balance: totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Refund" } } })
 
             }
+            if(productStatus){
+
+                await product.updateOne({ _id: productId }, { $inc: { quantity:  matchedItem[0].quantity } })
+            }
         
 
             res.status(200).json({success:true})
@@ -473,6 +474,24 @@ const retrunOrder = async (req, res) => {
 
     } catch (error) {
         console.log('error in return',error);
+    }
+}
+
+const invoicePage=async(req,res)=>{
+    try {
+
+        const{orderId,productId}=req.query
+        console.log("productId",productId);
+         const orderDetails=await Order.findOne({_id:orderId.trim()}).populate('deliveryAddress').populate('oderedItem.productId')
+         console.log("orderDetails",orderDetails);
+         const products = orderDetails.oderedItem
+
+        const procductData = await products.find(item => item.productId._id.toString() === productId)
+        console.log('procductData',procductData);
+        res.render('user/user/orderInvoice',{procductData,orderDetails})
+        
+    } catch (error) {
+        
     }
 }
 
@@ -488,7 +507,8 @@ module.exports = {
     useraddAddress,
     cancelOrder,
     placeorderWallet,
-    retrunOrder
+    retrunOrder,
+    invoicePage
 }
 
 

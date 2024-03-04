@@ -2,7 +2,8 @@ const product = require('../models/productModel')
 const category = require('../models/categoryModel')
 const fs = require('fs').promises
 const path = require('path')
-const { find } = require('../models/cartModel')
+const user = require('../models/userModel')
+const offers = require('../models/offerModel')
 
 
 const loadProduct = async (req, res) => {
@@ -52,7 +53,7 @@ const addProduct = async (req, res) => {
                 color: details.color,
                 size: details.size,
                 categoryId: details.category,
-                offer: details.offer,
+
                 description: details.description,
 
             })
@@ -123,7 +124,7 @@ const editProduct = async (req, res) => {
     try {
 
 
-        const { productName, category, price, description, quantity, offer, id, size, color, oldimageUrl } = req.body
+        const { productName, category, price, description, quantity, id, size, color, oldimageUrl } = req.body
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
         const filename = req.files.map(item => {
@@ -142,7 +143,7 @@ const editProduct = async (req, res) => {
         array.push(...filename)
         console.log("array", array);
 
-        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, offer: offer, size: size, color: color, image: array } })
+        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, size: size, color: color, image: array } })
         console.log('edit', edit);
         if (edit) {
 
@@ -185,127 +186,364 @@ const findbyCategory = async (req, res) => {
 }
 
 
-  const highLow= async(req,res)=>{
+const highLow = async (req, res) => {
     try {
+        const userId = req.session.user_id;
+        const userdata = await user.findOne({ _id: userId });
+  
+        let products = await product.find().sort({ price: -1 }).populate('categoryId');
+        const categories = await category.find();
 
-        const products=await product.find().sort({price:-1})
-        const categories= await category.find()
-        res.render('user/shop',{product:products,categories})
-        
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        const applyOffer = (product) => {
+            let discountedPrice = product.price;
+            let appliedOffer = null;
+
+            offerData.forEach(offer => {
+                const productMatchesOffer = offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString());
+                const categoryMatchesOffer = offer.offerType === 'category' && product.categoryId && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString());
+
+                if (productMatchesOffer || categoryMatchesOffer) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+            return { discountedPrice, appliedOffer };
+        };
+
+        products = products.map(product => {
+            const { discountedPrice, appliedOffer } = applyOffer(product);
+            return {
+                ...product._doc, 
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+
+        products.sort((a, b) => b.discountedPrice - a.discountedPrice);
+
+        res.render('user/shop', { product: products, categories, userdata });
     } catch (error) {
-        console.log('error',error);
+        console.log('error', error);
     }
-  }
+};
 
-  const lowHigh= async(req,res)=>{
+
+
+const lowHigh = async (req, res) => {
     try {
-        const products=await product.find().sort({price:1})
-        const categories= await category.find()
-        res.render('user/shop',{product:products,categories})
-        
+        const userId = req.session.user_id;
+        const userdata = await user.findOne({ _id: userId });
+  
+        let products = await product.find().sort({ price: 1 }).populate('categoryId');
+        const categories = await category.find();
+
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        const applyOffer = (product) => {
+            let discountedPrice = product.price;
+            let appliedOffer = null;
+
+            offerData.forEach(offer => {
+                const productMatchesOffer = offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString());
+                const categoryMatchesOffer = offer.offerType === 'category' && product.categoryId && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString());
+
+                if (productMatchesOffer || categoryMatchesOffer) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+            return { discountedPrice, appliedOffer };
+        };
+
+        products = products.map(product => {
+            const { discountedPrice, appliedOffer } = applyOffer(product);
+            return {
+                ...product._doc, 
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+
+        products.sort((a, b) => a.discountedPrice -b.discountedPrice );
+
+        res.render('user/shop', { product: products, categories, userdata });
     } catch (error) {
-        console.log('error',error);
+        console.log('error', error);
     }
-  }
+};
 
 
-  const aToZ = async(req,res)=>{
+
+const aToZ = async (req, res) => {
     try {
-        const products = await product.aggregate([
+        const userId = req.session.user_id
+        const userdata = await user.findOne({ _id: userId })
+
+   let products = await product.aggregate([
             {
                 $addFields: {
-                    lowerCaseName: { $toLower: "$productName" } 
+                    lowerCaseName: { $toLower: "$productName" }
                 }
             },
             {
                 $sort: {
-                    lowerCaseName: 1 
+                    lowerCaseName: 1
                 }
             },
             {
                 $project: {
-                    lowerCaseName: 0 
+                    lowerCaseName: 0
                 }
             }
         ]);
-        const categories= await category.find()
+        const categories = await category.find()
 
-        res.render('user/shop',{product:products,categories})
-        
+
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        products = await product.populate(products, { path: 'categoryId' }); 
+        products = products.map(product => {
+            let discountedPrice = product.price;
+            let appliedOffer = null;
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString())) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString())) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+            return {
+                ...product,
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+
+        res.render('user/shop', { product: products, categories, userdata })
+
     } catch (error) {
-        console.log('error in a to z',error);
+        console.log('error in a to z', error);
     }
 
-  }
+}
 
 
 
-  const zToa=async(req,res)=>{
+const zToa = async (req, res) => {
     try {
-        const products = await product.aggregate([
+        const userId = req.session.user_id;
+        const userdata = await user.findOne({ _id: userId });
+
+        let products = await product.aggregate([
             {
                 $addFields: {
-                    lowerCaseName: { $toLower: "$productName" } 
+                    lowerCaseName: { $toLower: "$productName" }
                 }
             },
             {
                 $sort: {
-                    lowerCaseName: -1 
+                    lowerCaseName: -1
                 }
             },
             {
                 $project: {
-                    lowerCaseName: 0 
+                    lowerCaseName: 0
                 }
             }
         ]);
-        const categories= await category.find()
 
-        res.render('user/shop',{product:products,categories})
+    
+        const categories = await category.find();
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
 
-        
+       
+        products = await product.populate(products, { path: 'categoryId' }); 
+        products = products.map(product => {
+            let discountedPrice = product.price;
+            let appliedOffer = null;
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString())) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString())) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+            return {
+                ...product,
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+
+        res.render('user/shop', { product: products, categories, userdata });
     } catch (error) {
-        console.log('error in z to a');
+        console.log('error in z to a', error);
     }
-  }
+};
 
 
-  const catSort=async(req,res)=>{
+
+const catSort = async (req, res) => {
     try {
-        const {id}=req.query
+        const userId = req.session.user_id;
+        const { id } = req.query;
+        const userdata = await user.findOne({ _id: userId });
 
-        const products= await product.find({categoryId:id})
-        const categories= await category.find()
-        
-        res.render('user/shop',{product:products,categories})
-        
+
+        let products = await product.find({ categoryId: id });
+
+
+        const categories = await category.find();
+
+
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+
+        products = products.map(product => {
+            let discountedPrice = product.price;
+            let appliedOffer = null;
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+                    }
+                }
+            });
+
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.includes(id)) {
+                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                    if (newDiscountedPrice < discountedPrice) {
+                        discountedPrice = Math.round(newDiscountedPrice);
+                        appliedOffer = offer;
+
+                    }
+                }
+            });
+
+            return {
+                ...product.toObject(),
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+
+        res.render('user/shop', { product: products, categories, userdata });
+
     } catch (error) {
-        console.log('error in wome',error);
+        console.log('error in catSort', error);
     }
+};
 
-  }
 
-const Search=async(req,res)=>{
+const Search = async (req, res) => {
     try {
-        const {words}=req.body
-        console.log('words',words);
-        const products =await product.find({productName:{$regex: words, $options: 'i' }})
+        const { words } = req.body
+        console.log('words', words);
+        const products = await product.find({ productName: { $regex: words, $options: 'i' } })
         let productData = [];
-        if(products.length===0){
-            const categories=await category.findOne({catName:{$regex: words, $options: 'i' }})
-            if(categories){
-                productData =await product.find({categoryId:categories._id})
+        if (products.length === 0) {
+            const categories = await category.findOne({ catName: { $regex: words, $options: 'i' } })
+            if (categories) {
+                productData = await product.find({ categoryId: categories._id })
             }
 
-        }else{
-            productData=products
+        } else {
+            productData = products
         }
 
-        res.json({productData })
-         
-        
+        res.json({ productData })
+
+
     } catch (error) {
-        console.log('error in search',error);
+        console.log('error in search', error);
     }
 }
 

@@ -3,7 +3,8 @@ const util = require('../utilities/sendEmail')
 const OTP = require('../models/otpModel')
 const products = require('../models/productModel')
 const bcrypt = require('bcrypt')
-const category=require('../models/categoryModel')
+const category = require('../models/categoryModel')
+const offers = require('../models/offerModel')
 
 const securePassword = async (password) => {
     try {
@@ -33,36 +34,36 @@ const verifySignup = async (req, res) => {
             req.flash('message', "User Already Exist")
             return res.redirect('user/user/register')
         }
-        if (! /^[6-9]\d{9}$/.test(mobile)){
+        if (! /^[6-9]\d{9}$/.test(mobile)) {
             req.flash('message', "Password length must be 8")
             return res.render('user/user/register')
         }
         if (password !== confirmPassword) {
-            req.flash('message', "Password and confirm password is not match" )
-           return res.render('user/user/register')
-        } 
-       
-        
-            const spassword = await securePassword(password)
+            req.flash('message', "Password and confirm password is not match")
+            return res.render('user/user/register')
+        }
 
-            const insertUser = new user({
-                name: name,
-                email: email,
-                password: spassword,
-                mobile: mobile
-            })
-            const userData = await insertUser.save()
-     
-            console.log(userData);
-            const userId = userData._id
-            req.session.user_sign = userId
-            // req.session.user_name = userData.name
-            req.session.user_email = userData.email
-            await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
+
+        const spassword = await securePassword(password)
+
+        const insertUser = new user({
+            name: name,
+            email: email,
+            password: spassword,
+            mobile: mobile
+        })
+        const userData = await insertUser.save()
+
+        console.log(userData);
+        const userId = userData._id
+        req.session.user_sign = userId
+        // req.session.user_name = userData.name
+        req.session.user_email = userData.email
+        await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
           Here is the verification code.Please enter otp and verify Email`)
 
-            res.render("user/SignupOtp", { message: "enter Otp", user: req.session.user_email })
-        
+        res.render("user/SignupOtp", { message: "enter Otp", user: req.session.user_email })
+
     } catch (error) {
         res.render('error')
         console.log("error in verify signuop:", error);
@@ -154,10 +155,10 @@ const verifyOtp = async (req, res) => {
                     console.log(err);
                 })
 
-                res.json({success:true})
+                res.json({ success: true })
             } else {
 
-                req.session.user_id=userID
+                req.session.user_id = userID
                 res.json({ message: 'Incorrect OTP' })
 
             }
@@ -245,10 +246,10 @@ const forgotVerifyOtp = async (req, res) => {
     try {
         const userId = req.session.userid
         const otp = req.body.otp
-       
+
         console.log("otp ", otp);
         console.log("userId", userId);
-        const findOtp = await OTP.findOne({ userid: userId }).sort({createdAt:-1}).limit(1)
+        const findOtp = await OTP.findOne({ userid: userId }).sort({ createdAt: -1 }).limit(1)
         console.log(findOtp);
         if (findOtp) {
             const verifyOtp = await bcrypt.compare(otp, findOtp.otp)
@@ -280,16 +281,16 @@ const loadresetPass = async (req, res) => {
 
 const resetPass = async (req, res) => {
     try {
-        const {password}=req.body
+        const { password } = req.body
         const userId = req.session.userid
-        const oldpassword= await user.findOne({_id:userId})
-        console.log("oldpassword",oldpassword);
-        const oldpasswordMatch=  await bcrypt.compare(password, oldpassword.password)
-        console.log("oldpasswordMatch",oldpasswordMatch);
-        if(oldpasswordMatch){
-           return res.json({passwordMatch:true})
+        const oldpassword = await user.findOne({ _id: userId })
+        console.log("oldpassword", oldpassword);
+        const oldpasswordMatch = await bcrypt.compare(password, oldpassword.password)
+        console.log("oldpasswordMatch", oldpasswordMatch);
+        if (oldpasswordMatch) {
+            return res.json({ passwordMatch: true })
         }
-      
+
         const spassword = await securePassword(password)
         const update = await user.updateOne({ _id: userId }, { $set: { password: spassword } })
         console.log(update);
@@ -316,43 +317,133 @@ const userLogout = async (req, res) => {
 
 const Homepage = async (req, res) => {
     try {
-
         let userData = req.session.user_id;
-        let userdata = await user.findOne({ _id: userData, is_blocked: false })
-        let categoryData= await category.find({})
-       
-        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({_id:-1})
+        let userdata = await user.findOne({ _id: userData, is_blocked: false });
+        let categoryData = await category.find({});
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({ _id: -1 }).populate('categoryId');
+
+        productData = productData.map(product => {
+            let productDiscountedPrice = product.price;
+            let categoryDiscountedPrice = product.price;
+            let appliedOffer = null;
+
+         
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
+                    productDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+         
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
+                    categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+   
+            if (productDiscountedPrice <= categoryDiscountedPrice) {
+                appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
+                discountedPrice = Math.round(productDiscountedPrice);
+            } else {
+                appliedOffer = offerData.find(offer => offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString()));
+                discountedPrice = Math.round(categoryDiscountedPrice);
+            }
+
+            return {
+                ...product.toObject(),
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
 
         if (userdata) {
-
             res.render('user/user/home', {
-                userName: userData.name,
                 product: productData,
                 userdata: userdata,
-                categoryData
-            })
+                categoryData,
+                offerData
+            });
         } else {
-
             res.render('user/user/home', {
-
-                userName: null,
                 product: productData,
                 userdata: null,
-                categoryData
-
-            })
+                categoryData,
+                offerData
+            });
         }
     } catch (error) {
         console.log("error in home after login:", error);
     }
-}
+};
+
+
 
 
 const shop = async (req, res) => {
+
     try {
-           const product=await products.find({is_blocked: false, is_categoryBlocked: false }).populate('categoryId').sort({_id:-1})
-  const categories= await category.find()
-         res.render('user/shop',{product,categories})
+        let userData = req.session.user_id;
+        let userdata = await user.findOne({ _id: userData, is_blocked: false });
+        let categoryData = await category.find({});
+        let offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({ _id: -1 }).populate('categoryId');
+
+        productData = productData.map(product => {
+            let productDiscountedPrice = product.price;
+            let categoryDiscountedPrice = product.price;
+            let appliedOffer = null;
+
+         
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
+                    productDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+         
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
+                    categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+   
+            if (productDiscountedPrice <= categoryDiscountedPrice) {
+                appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
+                discountedPrice = Math.round(productDiscountedPrice);
+            } else {
+                appliedOffer = offerData.find(offer => offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString()));
+                discountedPrice = Math.round(categoryDiscountedPrice);
+            }
+
+            return {
+                ...product.toObject(),
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+        
+          res.render('user/shop', { product:productData, categories:categoryData, userdata })
     } catch (error) {
         console.log('error in shop', error);
     }

@@ -30,6 +30,14 @@ const orderSchema = new mongoose.Schema({
         },
         returReason:{
             type:String, 
+        },
+        totalProductAmount:{
+            type:Number,
+            required:true
+        },
+        offerApplied:{
+            type:String,
+    
         }
     }],
     orderAmount: {
@@ -41,8 +49,6 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"address",
         required: true,
-
-
     },
     orderStatus: {
         type: String,

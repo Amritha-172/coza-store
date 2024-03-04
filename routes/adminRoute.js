@@ -6,6 +6,8 @@ const adminController=require('../controller/adminController');
 const products = require('../controller/ProductController');
 const multer=require('../middleware/multerMiddleware')
 const couponController=require('../controller/couponController')
+const offerController= require('../controller/offerController')
+const salesReport=require('../controller/salesReport')
 
 admin_route.set("view engine",'ejs')
 admin_route.set("views","./views/admin")
@@ -53,7 +55,19 @@ admin_route.post('/updatecoupon',adminMiddleware.isLogin,couponController.update
 admin_route.post('/editCoupon',adminMiddleware.isLogin,couponController.editCoupon)
 admin_route.post('/deletecoupon',adminMiddleware.isLogin,couponController.deleteCoupon)
 
-admin_route.get('/offer',adminMiddleware.isLogin,adminController.offer)
+admin_route.get('/offer',adminMiddleware.isLogin,offerController.offer)
+admin_route.post('/offerType',adminMiddleware.isLogin,offerController.offerType)
+admin_route.post('/addOffer',adminMiddleware.isLogin,offerController.addOffer)
+admin_route.get('/editOffer',adminMiddleware.isLogin,offerController.loadEdit)
+admin_route.post('/offerIdSave',adminMiddleware.isLogin,offerController.offerproductIdSave)
+admin_route.post('/catIdSave',adminMiddleware.isLogin,offerController.offercatIdSave)
+admin_route.patch('/editOffer',adminMiddleware.isLogin,offerController.editOffer)
+admin_route.post('/deleteOffer',adminMiddleware.isLogin,offerController.deleteOffer)
 
+
+admin_route.get('/salesDaily',adminMiddleware.isLogin,salesReport.dailySaleReport)
+admin_route.get('/salesWeekly',adminMiddleware.isLogin,salesReport.weeklySalesReport)
+admin_route.get('/salesMonthly',adminMiddleware.isLogin,salesReport.monthlySalesReport)
+admin_route.get('/salesYearly',adminMiddleware.isLogin,salesReport.YearlySalesReport)
 
 module.exports = admin_route;

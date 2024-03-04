@@ -31,10 +31,7 @@ const productSchema= new mongoose.Schema({
         ref:"categories",
         required:true
     },
-    offer:{
-      type:String,
-        required:true
-    },
+  
     is_blocked:{
         type:Boolean,
         default:false

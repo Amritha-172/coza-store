@@ -4,6 +4,7 @@ const Product=require('../models/productModel')
 const {ObjectId}=require('mongodb')
 const Address=require('../models/addressModal')
 const Coupon = require('../models/couponModel');
+const offers=require('../models/offerModel')
 
 const addToCart = async (req, res) => {
     try {
@@ -70,27 +71,85 @@ const itemExist=async(req,res)=>{
 const shoppingcart = async (req, res) => {
   try {
     const userId = req.session.user_id; 
-    const userData= await user.findOne({_id:userId})
-    let Usercart = await Cart.find({ userId: userId });
+    const userData = await user.findOne({ _id: userId });
+    let Usercart = await Cart.find({ userId: userId }).populate({
+      path: 'productId',
+      populate: {
+        path: 'categoryId'
+      }
+    });
 
-    // Fetch product details for each cart item
-    const cartItemsWithProductDetails = await Promise.all(
-      Usercart.map(async (cartItem) => {
-        const product = await Product.findById(cartItem.productId);
-        return {
-          ...cartItem._doc,
-          productDetails: product,
-        };
-      })
-    );
+    let offerData = await offers.find({
+      startDate: { $lte: new Date() },
+      endDate: { $gte: new Date() }
+    });
+
+    let totalActualAmount = 0;
+    let totalDiscountedAmount = 0;
+
+    const cartItemsWithOffers = Usercart.map(cartItem => {
+      const product = cartItem.productId;
+      let productDiscountedPrice = product.price;
+      let categoryDiscountedPrice = product.price;
+      let appliedOffer = null;
+
+      offerData.forEach(offer => {
+        if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
+          productDiscountedPrice = product.price - (product.price * offer.discount / 100);
+        }
+      });
+
+      offerData.forEach(offer => {
+        if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
+          categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
+        }
+      });
+
+      let discountedPrice;
+      if (productDiscountedPrice <= categoryDiscountedPrice) {
+        appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
+        discountedPrice = Math.round(productDiscountedPrice);
+      } else {
+        appliedOffer = offerData.find(offer => offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString()));
+        discountedPrice = Math.round(categoryDiscountedPrice);
+      }
+
    
-    res.render('user/shoppingCart', { cartItems: cartItemsWithProductDetails ,userData});
+      totalActualAmount += product.price * cartItem.quantity;
+      totalDiscountedAmount += discountedPrice * cartItem.quantity;
+
+      return {
+        ...cartItem._doc,
+        productDetails: product,
+        discountedPrice,
+        appliedOffer: appliedOffer ? {
+          offerName: appliedOffer.offerName,
+          discount: appliedOffer.discount
+        } : null,
+        offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+      };
+    });
+
+    
+    let totalSavings = totalActualAmount - totalDiscountedAmount;
+    console.log("cartItemsWithOffers",cartItemsWithOffers);
+    console.log('totalActualAmount',totalActualAmount);
+    console.log("totalDiscountedAmount",totalDiscountedAmount);
+    console.log('totalSavings',totalSavings);
+   
+    res.render('user/shoppingCart', {
+      cartItems: cartItemsWithOffers,
+      userdata: userData,
+      totalActualAmount: totalActualAmount,
+      totalDiscountedAmount: totalDiscountedAmount,
+      totalSavings: totalSavings
+    });
   } catch (error) {
     console.log('error in shopping cart:', error);
-    // res.status(500).send('Error retrieving shopping cart');
-    res.render('error')
+    res.render('error');
   }
-}
+};
+
 
 
 const checkout=async(req,res)=>{
@@ -106,9 +165,9 @@ const checkout=async(req,res)=>{
 
   if(!couponData){
  
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:"",userData})
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:"",userdata:userData})
   }else{
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData,userData})
+    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData,userdata:userData})
 
   }
        
@@ -123,15 +182,22 @@ const editPrice=async(req,res)=>{
     const {productId,totalPrice,quantity}=req.body
 
     await Cart.updateOne({productId:productId},{$set:{price:totalPrice,quantity:quantity}})
-   
-      const total= await Cart.find({userId:userId})
 
+    let cartItems = await Cart.find({ userId: userId }).populate('productId');
       let newTotal=0
-      total.forEach(element => {
+      cartItems.forEach(element => {
         newTotal=element.price+newTotal
       });
+     
+      let ActualTotal=cartItems.reduce((total,item)=>{
+
+        let itemTotal = item.productId.price * item.quantity;
+        return total + itemTotal;
+
+      },0)
+      let savings= ActualTotal-newTotal
       
- res.status(200).json({success:true,newTotal})
+ res.status(200).json({success:true,newTotal,ActualTotal,savings})
   } catch (error) {
     console.log('error in edit price');
     res.status(300).json('error')
@@ -154,8 +220,10 @@ const removeProduct=async(req,res)=>{
 const checkStock=async(req,res)=>{
   try {
     const{productId,quantity}=req.body
-    console.log(productId);
+    console.log("req.body",req.body);
+    console.log("productId",productId);
     const product= await Product.findOne({_id:productId})
+    console.log("product",product);
     if(product && product.quantity >= quantity){
        res.json({success:false})
     }else{
