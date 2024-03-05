@@ -393,6 +393,7 @@ const Homepage = async (req, res) => {
 const shop = async (req, res) => {
 
     try {
+        
         let userData = req.session.user_id;
         let userdata = await user.findOne({ _id: userData, is_blocked: false });
         let categoryData = await category.find({});

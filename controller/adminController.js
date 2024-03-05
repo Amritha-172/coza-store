@@ -223,7 +223,7 @@ const deleteCategory = async (req, res) => {
 
 const oderDetails = async (req, res) => {
     try {
-        const orders = await Order.find({}).populate('userId').populate("deliveryAddress").populate('oderedItem')
+        const orders = await Order.find({}).populate('userId').populate("deliveryAddress").populate('oderedItem').sort({_id:-1})
         const formattedOrders = orders.map(order => {
             const date = new Date(order.createdAt)
             const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');

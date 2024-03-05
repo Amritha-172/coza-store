@@ -2,7 +2,7 @@ const orders = require('../models/orderModel');
 
 const dailySaleReport = async (req, res) => {
     try {
-        // Define the start and end of the current day
+    
         const orderDetail = await orders.find({})
         const TotalAmount = orderDetail.reduce((acc, curr) => {
             return acc + curr.orderAmount
@@ -13,7 +13,7 @@ const dailySaleReport = async (req, res) => {
         const endOfDay = new Date();
         endOfDay.setHours(23, 59, 59, 999);
 
-        // Aggregate to calculate the total amount and order count for the current day
+       
         const dailyReport = await orders.aggregate([
             {
                 $match: {
@@ -22,14 +22,14 @@ const dailySaleReport = async (req, res) => {
             },
             {
                 $group: {
-                    _id: null, // Grouping without a specific field since we want the total for the day
+                    _id: null, 
                     totalAmount: { $sum: "$orderAmount" },
                     orderCount: { $sum: 1 }
                 }
             },
             {
                 $project: {
-                    _id: 0, // Exclude the _id field
+                    _id: 0, 
                     totalAmount: 1,
                     orderCount: 1,
                     dateOfReport: { $dateToString: { format: "%Y-%m-%d", date: new Date() } } // Adding the report date
@@ -37,14 +37,13 @@ const dailySaleReport = async (req, res) => {
             }
         ]);
 
-        // Ensure reportData is always an array
         const reportData = dailyReport.map(item => ({
             totalAmount: item.totalAmount,
             orderCount: item.orderCount,
             dateOfReport: item.dateOfReport
         }));
 
-        // If no orders were found for the day, add a default entry
+      
         if (!reportData.length) {
             reportData.push({
                 totalAmount: 0,
@@ -54,7 +53,7 @@ const dailySaleReport = async (req, res) => {
         }
 console.log("reportData",reportData);
         res.render('salesReport', {
-            reportData, // Now reportData is guaranteed to be an array
+            reportData, 
             page: 'daily',
             TotalAmount
         });
@@ -63,9 +62,6 @@ console.log("reportData",reportData);
         res.status(500).send('Error generating daily sales report');
     }
 };
-
-
-
 
 
 const weeklySalesReport = async (req, res) => {

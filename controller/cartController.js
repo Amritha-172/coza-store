@@ -151,7 +151,6 @@ const shoppingcart = async (req, res) => {
 };
 
 
-
 const checkout=async(req,res)=>{
   try {
      const {totalprice}=req.body

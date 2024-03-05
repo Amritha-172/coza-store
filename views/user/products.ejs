@@ -547,13 +547,18 @@
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
+							<% if(item.appliedOffer) { %>
+								<div class="offer-label">
+									<%= item.offerText%>
+								</div>
+							<% } %>
 							<img src="/multerimages/<%=item.image[0]%>" alt="IMG-PRODUCT">
 
 							<a href="/product?productId=<%= item._id %>"
 								class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
 								Quick View
 
-							</a>a>
+							</a>
 						</div>
 
 						<div class="block2-txt flex-w flex-t p-t-14">
@@ -562,9 +567,19 @@
 									<%=item.productName%>
 								</a>
 
-								<span class="stext-105 cl3">
-									₹<%=item.price%>
-								</span>
+								<%if(item.appliedOffer){%>
+									<span class="stext-105 cl3">
+										 <span style="color:black; font-weight: bold;">₹<%=item.discountedPrice%></span>   &nbsp;<span style="text-decoration: line-through;">₹<%= item.originalPrice%> </span>
+										<span style="color: brown;"> (<%=item.appliedOffer.discount%>%)</span>
+									</span>
+								
+									
+								<%} else{%>
+									<span claitem.discountedPrice%> 
+									</span>
+								
+
+								<%}%>
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">

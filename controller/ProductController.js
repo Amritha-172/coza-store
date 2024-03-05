@@ -30,16 +30,20 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
+        console.log("req.body",req.body);
+        console.log("req.files",req.files);
         const details = req.body
 
         const files = req.files
-
+     if(files.length<2){
+      return res.json({success:false,message:'Please select 2 images'})
+     }
 
         const alreadyExist = await product.findOne({ productName: req.body.productName })
 
         if (alreadyExist) {
-            req.flash('message', "Product already existed")
-            return res.redirect('addproduct')
+           
+            return res.json({success:false,message:'Item already existed'})
         }
         else {
             const images = files.map(file => file.filename);
@@ -127,6 +131,7 @@ const editProduct = async (req, res) => {
         const { productName, category, price, description, quantity, id, size, color, oldimageUrl } = req.body
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
+
         const filename = req.files.map(item => {
             return item.filename
         })
@@ -143,7 +148,7 @@ const editProduct = async (req, res) => {
         array.push(...filename)
         console.log("array", array);
 
-        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, category: category, price: price, description: description, quantity: quantity, size: size, color: color, image: array } })
+        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, categoryId: category, price: price, description: description, quantity: quantity, size: size, color: color, image: array } })
         console.log('edit', edit);
         if (edit) {
 
@@ -176,14 +181,64 @@ const deleteProduct = async (req, res) => {
 
 const findbyCategory = async (req, res) => {
     try {
-        const { categoryId } = req.query
-        const productData = await product.find({ categoryId: categoryId })
-        res.render('user/products', { productData })
+        const { categoryId } = req.query;
+        
+     
+        const offerData = await offers.find({
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
 
+        let productData = await product.find({ categoryId: categoryId, is_blocked: false, is_categoryBlocked: false }).populate('categoryId');
+
+       
+        productData = productData.map(product => {
+            let productDiscountedPrice = product.price;
+            let categoryDiscountedPrice = product.price;
+            let appliedOffer = null;
+
+            offerData.forEach(offer => {
+                if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
+                    productDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+          
+            offerData.forEach(offer => {
+                if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
+                    categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
+                }
+            });
+
+            if (productDiscountedPrice <= categoryDiscountedPrice) {
+                appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
+                discountedPrice = Math.round(productDiscountedPrice);
+            } else {
+                appliedOffer = offerData.find(offer => offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString()));
+                discountedPrice = Math.round(categoryDiscountedPrice);
+            }
+
+           
+            return {
+                ...product.toObject(),
+                originalPrice: product.price,
+                discountedPrice,
+                appliedOffer: appliedOffer ? {
+                    offerName: appliedOffer.offerName,
+                    discount: appliedOffer.discount
+                } : null,
+                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
+            };
+        });
+     console.log("productData",productData);
+     
+        res.render('user/products', { productData });
     } catch (error) {
-        console.log();
+        console.log('Error finding products by category:', error);
+        res.status(500).send('Error finding products by category');
     }
-}
+};
+
 
 
 const highLow = async (req, res) => {

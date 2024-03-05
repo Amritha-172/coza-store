@@ -293,7 +293,7 @@ const wallet=async(req,res)=>{
                  formattedDate, 
               }
         
-          })
+          }).sort((a, b) => (a._id > b._id ? -1 : 1));
           
           const formattedWallet={
             ...WalletDetails.toObject(),
