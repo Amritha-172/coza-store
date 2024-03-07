@@ -22,6 +22,9 @@ const cartItemShema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
 
         required: true
+    },
+    offer_id:{
+        type: mongoose.Schema.Types.ObjectId,
     }
 },
     {

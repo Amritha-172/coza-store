@@ -145,7 +145,7 @@
                                     <span class="input-group-text ">From Date</span>
                                     <input type="date" id="fromDate" class="form-control">
                                 </div>
-                                <div class="input-group reportDate me-2" style="width: 250px;">
+                                <div class="input-group reportDate me-2" style="width: 280px;">
                                     <span class="input-group-text">To Date</span>
                                     <input type="date" id="toDate" class="form-control">
                                 </div>
@@ -176,7 +176,10 @@
                                                 <tr>
                                                     <th>SI No</th>
                                                     <th>Date</th>
-                                                    <th>OrderId</th>
+                                                    <th>Orders</th>
+                                                    <th>offers</th>
+                                                    <th>coupon</th>
+                                                    <th>Product Count</th>
                                                     <th>Total Revenue</th>
                                                 </tr>
                                             </thead>
@@ -188,14 +191,23 @@
                                                             <%=i+1%>
                                                         </td>
                                                         <td>
-                                                            <%=reportData[i].dateOfReport%>
+                                                            <%=reportData[i].dateFormatted%>
                                                         </td>
                                                         <td>
-                                                            <%=reportData[i].orderCount%>
+                                                            <%=reportData[i].totalOrderCount%>
                                                         </td>
                                                         <td>
-                                                            ₹<%=reportData[i].totalAmount%>
-                                                            
+                                                            <%=reportData[i].offeredProductsSold%>
+                                                        </td>
+                                                        <td>
+                                                            <%=reportData[i].couponsUsed%>
+                                                        </td>
+                                                        <td>
+                                                            <%=reportData[i].totalProducts%>
+                                                        </td>
+                                                        <td>
+                                                            ₹<%=reportData[i].totalSales%>
+
                                                         </td>
                                                     </tr>
 
@@ -211,28 +223,39 @@
                                                             <th>SI No</th>
                                                             <th>Start date</th>
                                                             <th>End date</th>
-                                                            <th>product Count</th>
+                                                            <th>Orders</th>
+                                                            <th>offers</th>
+                                                            <th>coupon</th>
+                                                            <th>Product Count</th>
                                                             <th>Total Revenue</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
 
-                                                        <%for(i=0;i< weeklyReport.length;i++){%>
+                                                        <%for(i=0;i< reportData.length;i++){%>
                                                             <tr>
                                                                 <td>
                                                                     <%=i+1%>
                                                                 </td>
                                                                 <td>
-                                                                    <%=weeklyReport[i].startOfWeek%>
+                                                                    <%=reportData[i].startOfWeek%>
                                                                 </td>
                                                                 <td>
-                                                                    <%=weeklyReport[i].endOfWeek%>
+                                                                    <%=reportData[i].endOfWeek%>
                                                                 </td>
                                                                 <td>
-                                                                    <%=weeklyReport[i].orderCount%>
+                                                                    <%=reportData[i].totalOrderCount%>
                                                                 </td>
-                                                                <td>₹<%=weeklyReport[i].totalAmount%>
+                                                                <td><%=reportData[i].offeredProductsSold%>
                                                                 </td>
+                                                                <td>
+                                                                    <%=reportData[i].couponsUsed%>
+                                                                </td>
+                                                                <td><%=reportData[i].totalProducts%>
+                                                                </td>
+                                                                <td>₹<%=reportData[i].totalSales%>
+                                                                </td>
+                                                                
                                                             </tr>
                                                             <%}%>
                                                     </tbody>
@@ -246,25 +269,37 @@
                                                                 <tr>
                                                                     <th>SI No</th>
                                                                     <th>month-year</th>
-                                                                    <th>order Count</th>
+                                                                    <th>orders</th>
+                                                                    <th>offers</th>
+                                                                    <th>coupons</th>
+                                                                    <th>Product Count</th>
                                                                     <th>Total Revenue</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                                <%for(i=0;i< report.length;i++){%>
+                                                                <%for(i=0;i< reportData.length;i++){%>
                                                                     <tr>
                                                                         <td>
                                                                             <%=i+1%>
                                                                         </td>
                                                                         <td>
-                                                                            <%=report[i]._id.monthYear%>
+                                                                            <%=reportData[i].monthYear%>
                                                                         </td>
-                                                                       
                                                                         <td>
-                                                                            <%=report[i].orderedProductCount%>
+                                                                            <%=reportData[i].totalOrderCount%>
                                                                         </td>
-                                                                        <td>₹<%=report[i].totalAmount%>
+                                                                        <td>
+                                                                            <%=reportData[i].offeredProductsSold%>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%=reportData[i].couponsUsed%>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <%=reportData[i].totalProducts%>
+                                                                        </td>
+                                                                        <td>₹<%=reportData[i].totalSales%>
                                                                         </td>
                                                                     </tr>
                                                                     <%}%>
@@ -275,37 +310,37 @@
 
 
 
-                                                            <% if(page=='yearly' ){%>
+                                                                <% if(page=='yearly' ){%>
 
-                                                                <thead class="table-dark  ">
-                                                                    <tr>
-                                                                        <th>SI No</th>
-                                                                        <th>Year</th>
-                                                                        <th>Order Count</th>
-                                                                        <th>Total Revenue</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-    
-                                                                    <%for(i=0;i< report.length;i++){%>
+                                                                    <thead class="table-dark  ">
                                                                         <tr>
-                                                                            <td>
-                                                                                <%=i+1%>
-                                                                            </td>
-                                                                            <td>
-                                                                                <%=report[i]._id.year%>
-                                                                            </td>
-                                                                           
-                                                                            <td>
-                                                                                <%=report[i].orderedProductCount%>
-                                                                            </td>
-                                                                            <td>₹<%=report[i].totalAmount%>
-                                                                            </td>
+                                                                            <th>SI No</th>
+                                                                            <th>Year</th>
+                                                                            <th>Order Count</th>
+                                                                            <th>Total Revenue</th>
                                                                         </tr>
-                                                                        <%}%>
-                                                                </tbody>
-    
-                                                                <%}%>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                        <%for(i=0;i< report.length;i++){%>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <%=i+1%>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%=report[i]._id.year%>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <%=report[i].orderedProductCount%>
+                                                                                </td>
+                                                                                <td>₹<%=report[i].totalAmount%>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <%}%>
+                                                                    </tbody>
+
+                                                                    <%}%>
                                     </table>
                                 </div>
 
@@ -331,6 +366,14 @@
                 }
             }
         });
+    </script>
+    <script>
+        document.getElementById('saleDateFilterBtn').addEventListener('click', function () {
+
+        })
+
+
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

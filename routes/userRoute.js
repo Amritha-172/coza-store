@@ -51,6 +51,10 @@ userRoute.post('/removeProduct',auth.isBlocked,cartController.removeProduct)
 
 userRoute.get('/profile',auth.isLogin,auth.isBlocked,userController.profile)
 userRoute.get('/editProfile',auth.isLogin,auth.isBlocked,userController.loadeditProfile)
+userRoute.get('/emailOtp',auth.isLogin,auth.isBlocked,userController.emailEditOtp)
+userRoute.post('/emailResentOtp',auth.isLogin,auth.isBlocked,userController.emailResendOtp)
+               
+userRoute.post('/verifyEmailOtp',auth.isLogin,auth.isBlocked,userController.verifyEmailOtp)
 userRoute.patch('/updateprofile',auth.isLogin,auth.isBlocked,userController.updateProfile)
 userRoute.get('/changePassword',auth.isLogin,auth.isBlocked,userController.changePass)
 userRoute.post('/check-password',auth.isLogin,auth.isBlocked,userController.checkpass)
@@ -77,6 +81,7 @@ userRoute.post('/checkname',auth.isLogin,auth.isBlocked,orderController.checknam
 userRoute.post('/placeorder',auth.isLogin,auth.isBlocked,orderController.placeorder)
 userRoute.post('/createOrder',auth.isLogin,paymentController.createorder)
 userRoute.post('/verifiaction',auth.isLogin,paymentController.verifypayment)
+userRoute.post('/retryPayment',auth.isLogin,auth.isBlocked,orderController.retryOrder)
 
 
 userRoute.get('/checkout',auth.isLogin,auth.isBlocked,cartController.checkout)

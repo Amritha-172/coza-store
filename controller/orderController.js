@@ -5,6 +5,9 @@ const user=require('../models/userModel')
 const product = require('../models/productModel')
 const payment = require('../models/paymentModel')
 const wallet = require('../models/walletModel');
+const offers=require('../models/offerModel')
+const Coupons = require('../models/couponModel');
+
 
 
 
@@ -154,10 +157,9 @@ const checkname = async (req, res) => {
 
 const placeorder = async (req, res) => {
     try {
-        const { transactionId } = req.query
-        console.log("razorpay", transactionId);
-        const { Amount, selectedAddress, selectedPaymentMethod } = req.body
-        console.log('selectedAddress', selectedAddress);
+       
+        const { Amount, selectedAddress, selectedPaymentMethod,status,coupon } = req.body
+       
         if (!selectedAddress) {
 
             res.json({ success: false, message: "Please select an Address" })
@@ -166,20 +168,27 @@ const placeorder = async (req, res) => {
         const userId = req.session.user_id
         const cartItems = await Cart.find({ userId: userId })
         console.log("cart items", cartItems);
+             
+        const couponData= await Coupons.findOne({couponCode:coupon})
+  
+      
+
         const orderedItem = await cartItems.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
-            totalProductAmount:item.price
+            totalProductAmount:item.price,
+            offer_id:item.offer_id
 
         }))
 
+        
+        
         for (let item of orderedItem) {
             const { productId, quantity } = item
-
+            
             const products = await product.updateOne({ _id: productId }, { $inc: { quantity: -quantity } });
-
+            
         }
-
 
         const order = new Order({
             userId: userId,
@@ -188,12 +197,21 @@ const placeorder = async (req, res) => {
             orderAmount: Amount,
             deliveryAddress: selectedAddress,
             paymentMethod: selectedPaymentMethod,
-            orderStatus: 'pending'
+            paymentStatus:status,
+            couponDiscount: couponData ? couponData.dicountAmount : 0
+
+
         })
-        const save = await order.save()
+       const save= await order.save()
 
+        
+        
         await Cart.deleteMany({ userId: userId })
-
+        
+        if(status=="pending"){
+            return res.json({success:false,orderId:order._id})
+        }
+       
         if (selectedPaymentMethod == "COD") {
             const Payment = new payment({
                 userId: userId,
@@ -211,7 +229,7 @@ const placeorder = async (req, res) => {
                 amount: Amount,
                 status: 'completed',
                 paymentMethod: selectedPaymentMethod,
-                transactionId: transactionId
+               
 
             })
             await Payment.save()
@@ -235,6 +253,20 @@ const placeorder = async (req, res) => {
     }
 }
 
+const retryOrder=async(req,res)=>{
+    try {
+        const {orderId}=req.body
+        console.log(req.body);
+        const update=await Order.updateOne({_id:orderId},{$set:{paymentStatus:'success'}})
+        if(update){
+            res.status(200).json({success:true})
+        }
+        
+    } catch (error) {
+        
+    }
+}
+
 const ordersuccess = async (req, res) => {
     try {
          const userId=req.session.user_id
@@ -252,8 +284,12 @@ const ordersuccess = async (req, res) => {
 
 
         console.log(formattedCreatedAt);
+        
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id });
 
-        res.render('user/orderSuccess', { orderDetail, formattedCreatedAt,userdata})
+        const wishlistCount = userdata.wishlist.length
+
+        res.render('user/orderSuccess', { orderDetail, formattedCreatedAt,userdata,cartCount,wishlistCount})
     } catch (error) {
         console.log('error in order details page');
     }
@@ -306,11 +342,8 @@ const cancelOrder = async (req, res) => {
         const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
         const matchedItem = await order.oderedItem.filter(item => item._id == productId)
 
-     
-
-       
-        
-
+    
+   
         const totalAmount = matchedItem[0].totalProductAmount
            
         const isExistWallet = await wallet.findOne({ userId: userId })
@@ -359,14 +392,16 @@ const cancelOrder = async (req, res) => {
 
 const placeorderWallet = async (req, res) => {
     try {
-        const { Amount, selectedAddress, selectedPaymentMethod } = req.body
+        const { Amount, selectedAddress, selectedPaymentMethod,status } = req.body
         const userId = req.session.user_id
         const cartItems = await Cart.find({ userId: userId })
 
         const orderedItem = await cartItems.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
-            totalProductAmount:item.price
+            totalProductAmount:item.price,
+            offer_id:item.offer_id
+
         }))
         const walletDetails = await wallet.findOne({ userId: userId })
 
@@ -395,7 +430,7 @@ const placeorderWallet = async (req, res) => {
             orderAmount: Amount,
             deliveryAddress: selectedAddress,
             paymentMethod: selectedPaymentMethod,
-            orderStatus: 'pending'
+            paymentStatus:status
         })
         const save = await order.save()
 
@@ -508,7 +543,8 @@ module.exports = {
     cancelOrder,
     placeorderWallet,
     retrunOrder,
-    invoicePage
+    invoicePage,
+    retryOrder
 }
 
 

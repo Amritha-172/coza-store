@@ -247,10 +247,11 @@
                                                 aria-label="Credit / Debit Card">
                                             <label for="pay-methodoption1" class="payment-option-label">
                                                 <i class="bx bx-credit-card payment-icon"></i>
-                                                Credit / Debit Card
+                                             Razorpay
                                             </label>
                                         </div>
                                         <!-- wallet Option -->
+                                        <p></p>
                                         <div class="payment-option col-lg-4 col-md-6">
                                             <input type="radio" name="pay-method" id="pay-methodoption2"
                                                 class="card-radio-input d-none" value="Wallet" aria-label="PayPal">
@@ -261,6 +262,8 @@
                                             </label>
                                         </div>
                                         <!-- Cash on Delivery Option -->
+                                        <p></p>
+                                        <p id="codError" class="d-none" style="color: red;">Cash on delivery is available for this order</p>
                                         <div class="payment-option col-lg-4 col-md-6">
                                             <input type="radio" name="pay-method" id="pay-methodoption3"
                                                 class="card-radio-input d-none" value="COD"
@@ -649,26 +652,29 @@
               save.addEventListener('click', function (e) {
                     e.preventDefault()
                     const name = document.getElementById('username').value
-                    console.log('name',name);
+               
                     const mobile = document.getElementById('mobile').value
-                      console.log('mobile',mobile);
+                 
                     const pincode = document.getElementById('postalCode').value
-                    console.log('pincode',pincode);
+                
                     const locality = document.getElementById('locality').value
-                    console.log('locality',locality);
+                 
                     const streetAddress=document.getElementById('streetAddress').value
-                    console.log('streetAddress',streetAddress);
+                  
                     const city=document.getElementById('city').value
-                    console.log('city',city);
+              
                     const state=document.getElementById('state').value
-                    console.log('state',state);
+              
                     const landmark=document.getElementById('landmark').value
-                    console.log('landmark',landmark);
+             
                    const alterPhone=document.getElementById('alterPhone').value
-                   console.log('alterPhone',alterPhone);
+              
                    const addressType=document.getElementById('addressType').value
-                   console.log('addressType',addressType);
+                
 
+                   const subtotalElem = document.getElementById('subtotal')
+                       const subtotal = subtotalElem.getAttribute("subtotalElem")
+                       console.log('subtotal',subtotal);
 
                    axios.post('/AddressSave',{name,mobile,mobile,pincode,locality,streetAddress,city,state,landmark,alterPhone,alterPhone,addressType})
                    .then(res=>{
@@ -676,9 +682,9 @@
                        document.getElementById('errorMessage').innerHTML=res.data.message
 
                     }else{
+                       
 
-
-                        window.location.href='/checkout'
+                        window.location.href='/checkout?totalprice=' + encodeURIComponent(subtotal)
 
                     }
                    }).catch(err=>{
@@ -705,7 +711,8 @@
                 placeorder.addEventListener('click', function (e) {
                     e.preventDefault()
                     const newTotal = document.getElementById('newTotal').value
-
+                    const coupon = document.getElementById('coupon').value
+                   
 
                     const selectedAddressElem = document.querySelector('input[name="shippingAddress"]:checked')
                     console.log('selectedAddress', selectedAddressElem);
@@ -727,8 +734,8 @@
                     selectedPaymentMethod = selectedPaymentMethodElem.value
 
                     if (selectedPaymentMethod === "COD") {
-
-                        axios.post('/placeorder', { Amount, selectedAddress, selectedPaymentMethod })
+                           const status='COD'
+                        axios.post('/placeorder', { Amount, selectedAddress, selectedPaymentMethod ,status,coupon})
                             .then(res => {
                                 if (!res.data.success) {
                                     document.getElementById('errorsg').innerHTML = res.data.message
@@ -756,20 +763,27 @@
                                         description: "Test Transaction",
                                         order_id: orderId,
                                         handler: function (response) {
-
+                                            const status ='success'
+                                            console.log("status",status);
                                             axios.post("/verifiaction", {
+                                              
                                                 response,
                                                 razorpay_payment_id: response.razorpay_payment_id,
                                                 razorpay_order_id: response.razorpay_order_id,
                                                 razorpay_signature: response.razorpay_signature
                                             }).then(res => {
+
                                                 if (res.data.success) {
-                                                    axios.post(`/placeorder?transactionId=${res.data.razorpay_payment_id}`, { Amount, selectedAddress, selectedPaymentMethod })
+                                                
+                                                    axios.post(`/placeorder?transactionId=${res.data.razorpay_payment_id}`, { Amount, selectedAddress, selectedPaymentMethod,status,coupon})
                                                         .then(res => {
                                                             if (res.data.success) {
                                                                 const orderId = res.data.orderId
                                                                 window.location.href = `/ordersuccess?orderId=${orderId}`
                                                             }
+                                                               
+
+                                                            
                                                         }).catch(err => {
                                                             console.log('error');
                                                         })
@@ -793,21 +807,29 @@
                                     };
                                     var razorpayObject = new Razorpay(options)
                                     razorpayObject.on('payment.failed', function (res) {
-                                        alert('payment failed')
+                                      const  status="pending"
+                                      axios.post('/placeorder',{ Amount, selectedAddress, selectedPaymentMethod,status,coupon})
+                                      .then(res=>{
+                                        if(!res.data.success){
+                                            const orderId=res.data.orderId
+                                            window.location.href='/orderpage'
+                                        }
+                                      })
+
                                     })
                                     razorpayObject.open()
                                 }
 
                             }).catch(err => {
-                                console.log('error');
+                                console.log('error in checkout page ',err);
                             })
 
 
 
 
                     } else {
-
-                        axios.post('/placeorderWallet', { Amount, selectedAddress, selectedPaymentMethod })
+                         const status="success"
+                        axios.post('/placeorderWallet', { Amount, selectedAddress, selectedPaymentMethod,status,coupon })
                             .then(res => {
                                 if (res.data.message) {
                                     document.getElementById('errorsg').innerHTML = res.data.message
@@ -843,9 +865,11 @@
 
                 function checkAmount(totalAmount) {
                     if (totalAmount >= 1000) {
+                        document.getElementById('codError').classList.remove('d-none')
                         document.getElementById("pay-methodoption3").disabled = true
                         document.getElementById("pay-methodoption3").checked = false;
                     } else {
+                        document.getElementById('codError').classList.add('d-none')
                         document.getElementById("pay-methodoption3").disabled = false
                     }
 

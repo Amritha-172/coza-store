@@ -35,10 +35,12 @@ const orderSchema = new mongoose.Schema({
             type:Number,
             required:true
         },
-        offerApplied:{
-            type:String,
-    
+        offer_id:{
+            type: mongoose.Schema.Types.ObjectId,
         }
+        
+      
+      
     }],
     orderAmount: {
         type: Number,
@@ -50,11 +52,6 @@ const orderSchema = new mongoose.Schema({
         ref:"address",
         required: true,
     },
-    orderStatus: {
-        type: String,
-        required: true,
-        default:"pending"
-    },
     deliveryDate:{
         type:Date
     },
@@ -65,7 +62,14 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
    
-    }
+    },
+    paymentStatus:{
+        type:String,
+        required:true
+    },
+    couponDiscount:{
+        type:Number
+    },
     
 },
 {

@@ -2,58 +2,79 @@ const orders = require('../models/orderModel');
 
 const dailySaleReport = async (req, res) => {
     try {
-    
-        const orderDetail = await orders.find({})
-        const TotalAmount = orderDetail.reduce((acc, curr) => {
-            return acc + curr.orderAmount
-        }, 0)
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
+        const orderDetail = await orders.find({});
+        const TotalAmount = orderDetail.reduce((acc, curr) => acc + curr.orderAmount, 0);
+        let dailyReport = await orders.aggregate([
+            { $unwind: "$oderedItem" },
+            { $match: { "oderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
 
-        const endOfDay = new Date();
-        endOfDay.setHours(23, 59, 59, 999);
-
-       
-        const dailyReport = await orders.aggregate([
             {
-                $match: {
-                    createdAt: { $gte: startOfDay, $lte: endOfDay }
+                $project: {
+                    day: { $dayOfMonth: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    year: { $year: "$createdAt" },
+                    orderAmount: 1,
+                    couponDiscount: 1,
+                    "oderedItem.offer_id": 1,
+                    "oderedItem.quantity": 1
                 }
             },
             {
                 $group: {
-                    _id: null, 
-                    totalAmount: { $sum: "$orderAmount" },
-                    orderCount: { $sum: 1 }
+                    _id: {
+                        orderId: "$_id",
+                        day: "$day",
+                        month: "$month",
+                        year: "$year"
+                    },
+                    totalSales: { $first: "$orderAmount" },
+                    productsCount: { $sum: "$oderedItem.quantity" },
+                    offeredProductsSold: {
+                        $sum: {
+
+                            $cond: [{ $ne: ["$oderedItem.offer_id", null] }, 1, 0]
+                        }
+                    },
+                    couponsUsed: { $sum: { $cond: [{ $gt: ["$couponDiscount", 0] }, 1, 0] } }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        day: "$_id.day",
+                        month: "$_id.month",
+                        year: "$_id.year"
+                    },
+                    totalOrderCount: { $sum: 1 },
+                    totalSales: { $sum: "$totalSales" },
+                    totalProducts: { $sum: "$productsCount" },
+                    offeredProductsSold: { $sum: "$offeredProductsSold" },
+                    couponsUsed: { $sum: "$couponsUsed" }
                 }
             },
             {
                 $project: {
-                    _id: 0, 
-                    totalAmount: 1,
-                    orderCount: 1,
-                    dateOfReport: { $dateToString: { format: "%Y-%m-%d", date: new Date() } } // Adding the report date
+                    dateFormatted: {
+                        $concat: [
+                            { $toString: "$_id.year" }, "-",
+                            { $cond: [{ $lt: ["$_id.month", 10] }, { $concat: ["0", { $toString: "$_id.month" }] }, { $toString: "$_id.month" }] }, "-",
+                            { $cond: [{ $lt: ["$_id.day", 10] }, { $concat: ["0", { $toString: "$_id.day" }] }, { $toString: "$_id.day" }] }
+                        ]
+                    },
+                    totalSales: 1,
+                    totalProducts: 1,
+                    offeredProductsSold: 1,
+                    couponsUsed: 1,
+                    totalOrderCount: 1
                 }
-            }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
         ]);
 
-        const reportData = dailyReport.map(item => ({
-            totalAmount: item.totalAmount,
-            orderCount: item.orderCount,
-            dateOfReport: item.dateOfReport
-        }));
+    
 
-      
-        if (!reportData.length) {
-            reportData.push({
-                totalAmount: 0,
-                orderCount: 0,
-                dateOfReport: new Date().toISOString().substring(0, 10)
-            });
-        }
-console.log("reportData",reportData);
         res.render('salesReport', {
-            reportData, 
+            reportData: dailyReport,
             page: 'daily',
             TotalAmount
         });
@@ -65,53 +86,64 @@ console.log("reportData",reportData);
 
 
 const weeklySalesReport = async (req, res) => {
-
     try {
-        const orderDetail = await orders.find({})
-        const TotalAmount = orderDetail.reduce((acc, curr) => {
-            return acc + curr.orderAmount
-        }, 0)
 
         const sevenWeeksAgo = new Date(new Date().setDate(new Date().getDate() - 49));
 
+
         const weeklyReport = await orders.aggregate([
+            { $match: { createdAt: { $gte: sevenWeeksAgo } } },
+            { $unwind: "$oderedItem" },
+            { $match: { "oderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
             {
-                $match: {
-                    createdAt: { $gte: sevenWeeksAgo }
-                }
-            },
-            {
-                $project: {
+                $addFields: {
                     week: { $isoWeek: "$createdAt" },
                     year: { $isoWeekYear: "$createdAt" },
-                    orderAmount: 1
+                    offeredProduct: { $cond: [{ $ne: ["$oderedItem.offer_id", null] }, 1, 0] },
+                    couponUsed: { $cond: [{ $gt: ["$couponDiscount", 0] }, 1, 0] }
                 }
             },
             {
                 $group: {
-                    _id: { week: "$week", year: "$year" },
-                    totalAmount: { $sum: "$orderAmount" },
-                    orderCount: { $sum: 1 }
+                    _id: {
+                        week: "$week",
+                        year: "$year"
+                    },
+                    totalOrderCount: { $sum: 1 },
+                    totalSales: { $sum: "$orderAmount" },
+                    totalProducts: { $sum: "$oderedItem.quantity" },
+                    offeredProductsSold: { $sum: "$offeredProduct" },
+                    couponsUsed: { $sum: "$couponUsed" }
                 }
-            },
-            {
-                $sort: { "_id.year": 1, "_id.week": 1 }
             },
             {
                 $project: {
                     _id: 0,
                     week: "$_id.week",
                     year: "$_id.year",
-                    totalAmount: 1,
-                    orderCount: 1,
-                    startOfWeek: { $dateToString: { format: "%Y-%m-%d", date: { $dateFromParts: { isoWeekYear: "$_id.year", isoWeek: "$_id.week", isoDayOfWeek: 1 } } } },
-                    endOfWeek: { $dateToString: { format: "%Y-%m-%d", date: { $dateFromParts: { isoWeekYear: "$_id.year", isoWeek: "$_id.week", isoDayOfWeek: 7 } } } }
+                    totalOrderCount: 1,
+                    totalSales: 1,
+                    totalProducts: 1,
+                    offeredProductsSold: 1,
+                    couponsUsed: 1,
+                    startOfWeek: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: { $dateFromParts: { isoWeekYear: "$_id.year", isoWeek: "$_id.week", isoDayOfWeek: 1 } }
+                        }
+                    },
+                    endOfWeek: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: { $dateFromParts: { isoWeekYear: "$_id.year", isoWeek: "$_id.week", isoDayOfWeek: 7 } }
+                        }
+                    }
                 }
-            }
+            },
+            { $sort: { "year": 1, "week": 1 } }
         ]);
-
-
-        res.render('salesReport', { weeklyReport, page: 'weekly', TotalAmount });
+    
+        res.render('salesReport', { reportData: weeklyReport, page: 'weekly', TotalAmount: weeklyReport.reduce((acc, curr) => acc + curr.totalSales, 0) });
     } catch (error) {
         console.log('error in weekly sales report', error);
         res.status(500).send('Error generating weekly sales report');
@@ -119,9 +151,51 @@ const weeklySalesReport = async (req, res) => {
 };
 
 
+
 const monthlySalesReport = async (req, res) => {
     try {
+   
+        const today = new Date();
+        const twelveMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 11, today.getDate());
 
+        const monthlyReport = await orders.aggregate([
+            { $match: { createdAt: { $gte: twelveMonthsAgo } } },
+            { $unwind: "$oderedItem" },
+            { $match: { "oderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
+            {
+                $addFields: {
+                    month: { $month: "$createdAt" },
+                    year: { $year: "$createdAt" },
+                    offeredProduct: { $cond: [{ $ne: ["$oderedItem.offer_id", null] }, 1, 0] },
+                    couponUsed: { $cond: [{ $gt: ["$couponDiscount", 0] }, 1, 0] }
+                }
+            },
+            {
+                $group: {
+                    _id: { month: "$month", year: "$year" },
+                    totalOrderCount: { $sum: 1 },
+                    totalSales: { $sum: "$orderAmount" },
+                    totalProducts: { $sum: "$oderedItem.quantity" },
+                    offeredProductsSold: { $sum: "$offeredProduct" },
+                    couponsUsed: { $sum: "$couponUsed" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    month: "$_id.month",
+                    year: "$_id.year",
+                    totalOrderCount: 1,
+                    totalSales: 1,
+                    totalProducts: 1,
+                    offeredProductsSold: 1,
+                    couponsUsed: 1,
+                    monthName: { $arrayElemAt: [["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], { $subtract: ["$month", 1] }] },
+                    monthYear: { $concat: [{ $arrayElemAt: [["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], { $subtract: ["$month", 1] }] }, "-", { $toString: "$year" }] }
+                }
+            },
+            { $sort: { "year": 1, "month": 1 } }
+        ]);
 
 
         const totalAmountResult = await orders.aggregate([
@@ -133,56 +207,18 @@ const monthlySalesReport = async (req, res) => {
             }
         ]);
         const TotalAmount = totalAmountResult.length > 0 ? totalAmountResult[0].totalAmount : 0;
-
-
-        const today = new Date();
-        const twelveMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 11, today.getDate());
-
-        const monthlyReport = await orders.aggregate([
-            {
-                $match: {
-                    createdAt: { $gte: twelveMonthsAgo }
-                }
-            },
-            {
-                $project: {
-                    month: { $month: "$createdAt" },
-                    year: { $year: "$createdAt" },
-                    orderAmount: 1
-                }
-            },
-            {
-                $group: {
-                    _id: { month: "$month", year: "$year" },
-                    orderedProductCount: { $sum: 1 },
-                    totalAmount: { $sum: "$orderAmount" }
-                }
-            },
-            {
-                $sort: { '_id.year': 1, '_id.month': 1 }
-            }
-        ]);
-
-
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        monthlyReport.forEach(report => {
-            const monthIndex = report._id.month - 1;
-            report._id.monthName = monthNames[monthIndex];
-            report._id.monthYear = `${report._id.monthName}-${report._id.year}`;
-        });
-
-
+        console.log("monthlyReport", monthlyReport);
         res.render('salesReport', {
-            report: monthlyReport,
+            reportData: monthlyReport,
             page: 'monthly',
             TotalAmount: TotalAmount
         });
-
     } catch (error) {
         console.log('error in monthly sales report', error);
         res.status(500).send('Error generating monthly sales report');
     }
 };
+
 
 
 const YearlySalesReport = async (req, res) => {

@@ -5,6 +5,8 @@ const products = require('../models/productModel')
 const bcrypt = require('bcrypt')
 const category = require('../models/categoryModel')
 const offers = require('../models/offerModel')
+const cart = require('../models/cartModel')
+
 
 const securePassword = async (password) => {
     try {
@@ -170,7 +172,7 @@ const verifyOtp = async (req, res) => {
 
 }
 
-const resendOtp = async (req, res) => {
+const   resendOtp = async (req, res) => {
     try {
         const userId = req.session.user_sign
         const email = req.session.user_email
@@ -332,21 +334,21 @@ const Homepage = async (req, res) => {
             let categoryDiscountedPrice = product.price;
             let appliedOffer = null;
 
-         
+
             offerData.forEach(offer => {
                 if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
                     productDiscountedPrice = product.price - (product.price * offer.discount / 100);
                 }
             });
 
-         
+
             offerData.forEach(offer => {
                 if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
                     categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
                 }
             });
 
-   
+
             if (productDiscountedPrice <= categoryDiscountedPrice) {
                 appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
                 discountedPrice = Math.round(productDiscountedPrice);
@@ -366,20 +368,36 @@ const Homepage = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+
+        let wishlistCount;
+        if (userdata) {
+
+            wishlistCount = userdata.wishlist.length
+
+        } else {
+            wishlistCount = 0
+
+        }
+        console.log("wishlistCount", wishlistCount);
 
         if (userdata) {
             res.render('user/user/home', {
                 product: productData,
                 userdata: userdata,
                 categoryData,
-                offerData
+                offerData,
+                cartCount,
+                wishlistCount
             });
         } else {
             res.render('user/user/home', {
                 product: productData,
                 userdata: null,
                 categoryData,
-                offerData
+                offerData,
+                cartCount: 0,
+                wishlistCount
             });
         }
     } catch (error) {
@@ -388,12 +406,10 @@ const Homepage = async (req, res) => {
 };
 
 
-
-
 const shop = async (req, res) => {
 
     try {
-        
+
         let userData = req.session.user_id;
         let userdata = await user.findOne({ _id: userData, is_blocked: false });
         let categoryData = await category.find({});
@@ -409,21 +425,21 @@ const shop = async (req, res) => {
             let categoryDiscountedPrice = product.price;
             let appliedOffer = null;
 
-         
+
             offerData.forEach(offer => {
                 if (offer.offerType === 'product' && offer.productId.includes(product._id.toString())) {
                     productDiscountedPrice = product.price - (product.price * offer.discount / 100);
                 }
             });
 
-         
+
             offerData.forEach(offer => {
                 if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
                     categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
                 }
             });
 
-   
+
             if (productDiscountedPrice <= categoryDiscountedPrice) {
                 appliedOffer = offerData.find(offer => offer.offerType === 'product' && offer.productId.includes(product._id.toString()));
                 discountedPrice = Math.round(productDiscountedPrice);
@@ -443,8 +459,10 @@ const shop = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
-        
-          res.render('user/shop', { product:productData, categories:categoryData, userdata })
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+        const wishlistCount = userdata.wishlist.length
+
+        res.render('user/shop', { product: productData, categories: categoryData, userdata ,cartCount,wishlistCount})
     } catch (error) {
         console.log('error in shop', error);
     }

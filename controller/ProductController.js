@@ -4,6 +4,7 @@ const fs = require('fs').promises
 const path = require('path')
 const user = require('../models/userModel')
 const offers = require('../models/offerModel')
+const cart=require('../models/cartModel')
 
 
 const loadProduct = async (req, res) => {
@@ -182,8 +183,10 @@ const deleteProduct = async (req, res) => {
 const findbyCategory = async (req, res) => {
     try {
         const { categoryId } = req.query;
-        
-     
+        const userdata=await user.findOne({_id:req.session.user_id})
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+
+ 
         const offerData = await offers.find({
             startDate: { $lte: new Date() },
             endDate: { $gte: new Date() }
@@ -230,9 +233,11 @@ const findbyCategory = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
-     console.log("productData",productData);
-     
-        res.render('user/products', { productData });
+ 
+    
+        console.log("cartCount",cartCount);
+        const wishlistCount = userdata.wishlist.length
+        res.render('user/products', { productData ,cartCount,wishlistCount,userdata});
     } catch (error) {
         console.log('Error finding products by category:', error);
         res.status(500).send('Error finding products by category');
@@ -289,8 +294,11 @@ const highLow = async (req, res) => {
         });
 
         products.sort((a, b) => b.discountedPrice - a.discountedPrice);
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
 
-        res.render('user/shop', { product: products, categories, userdata });
+        const wishlistCount = userdata.wishlist.length
+
+        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount });
     } catch (error) {
         console.log('error', error);
     }
@@ -346,8 +354,11 @@ const lowHigh = async (req, res) => {
         });
 
         products.sort((a, b) => a.discountedPrice -b.discountedPrice );
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
 
-        res.render('user/shop', { product: products, categories, userdata });
+        const wishlistCount = userdata.wishlist.length
+
+        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount });
     } catch (error) {
         console.log('error', error);
     }
@@ -424,7 +435,11 @@ const aToZ = async (req, res) => {
             };
         });
 
-        res.render('user/shop', { product: products, categories, userdata })
+
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+
+        const wishlistCount = userdata.wishlist.length
+        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount })
 
     } catch (error) {
         console.log('error in a to z', error);
@@ -504,7 +519,10 @@ const zToa = async (req, res) => {
             };
         });
 
-        res.render('user/shop', { product: products, categories, userdata });
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+
+        const wishlistCount = userdata.wishlist.length
+        res.render('user/shop', { product: products, categories, userdata,cartCount,wishlistCount});
     } catch (error) {
         console.log('error in z to a', error);
     }
@@ -569,8 +587,9 @@ const catSort = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
-
-        res.render('user/shop', { product: products, categories, userdata });
+        const cartCount = await cart.find({ userId: req.session.user_id }).length
+        const wishlistCount = userdata.wishlist.length
+        res.render('user/shop', { product: products, categories, userdata ,wishlistCount,cartCount});
 
     } catch (error) {
         console.log('error in catSort', error);

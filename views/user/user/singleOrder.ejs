@@ -296,12 +296,14 @@
                                             <%=productDetails.productId.productName%>
                                         </h6>
                                         <small class="text-muted">Size: M, Color: Red</small>
-                                        <div><span>Quantity:₹<%=productDetails.quantity%></span></div>
+                                        <div><span>Quantity:<%=productDetails.quantity%></span></div>
                                         <div><span>Price: ₹<%=productDetails.totalProductAmount%> </span></div>
                                     </div>
                                 </div>
                             </div>
-                            
+                            <% if(orderDetails.paymentStatus !=="pending"){%>
+
+                           
                             <div class="col-11 mt-3 d-flex justify-content-end align-items-start">
                                 <input type="hidden" name="" id="productId" value="<%=productDetails._id%>">
                                 <input type="hidden" name="" id="Status" value="<%=productDetails.productStatus%>">
@@ -313,9 +315,10 @@
                                     class="text-decoration-none  d-none btn border border-primary">Return</a>
                                 <h5 id="returned"></h5>
                             </div>
+                            <%}%>
 
                         </div>
-
+                        <% if(orderDetails.paymentStatus !=="pending"){%>
 
                         <div class="d-flex justify-content-center ">
                             <div class="order-status " style="width: 600px;">
@@ -360,6 +363,7 @@
 
 
                         </div>
+                        <%}%>
                         <%}%>
                     </div>
                 </div>
