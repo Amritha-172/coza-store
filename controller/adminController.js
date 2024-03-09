@@ -5,21 +5,43 @@ const Order = require('../models/orderModel')
 
 
 const userList = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 10;
+    const skip = (page - 1) * limit; 
+
     try {
-        const userlist = await User.find({}).sort({ _id: -1 })
+       
+        const userlist = await User.find({})
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip);
+
+        
+        const totalUsers = await User.countDocuments({});
+
+      
+        const totalPages = Math.ceil(totalUsers / limit);
+
         const locals = {
-            userlist: userlist
-        }
+            userlist: userlist,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'userlist'
+        };
 
-
-
-        res.render('userList', locals)
+        res.render('userList',locals );
 
     } catch (error) {
         console.log("error in userlist:", error);
-
+        res.status(500).send("Error fetching user list");
     }
-}
+};
+
 
 const blockUser = async (req, res) => {
     try {
@@ -45,20 +67,46 @@ const unblockUser = async (req, res) => {
 }
 
 const categories = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5; 
+    const skip = (page - 1) * limit; 
+
     try {
-        let categories = await category.find({}).sort({ _id: -1 })
-        res.render("categories", { category: categories })
+   
+        let categories = await category.find({})
+            .sort({_id: -1})
+            .limit(limit)
+            .skip(skip);
+
+        
+        const count = await category.countDocuments({});
+        const totalPages = Math.ceil(count / limit);
+
+      
+        res.render("categories", {
+            category: categories,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'category'
+        });
     } catch (error) {
-        console.log("error in categoris:", error);
+        console.log("error in categories:", error);
+        res.status(500).send("Error loading categories");
     }
-}
+};
+
 
 const loadAddCategory = async (req, res) => {
     try {
         const messages = req.flash('message')
         let categories = await category.find({}).sort({ _id: -1 })
 
-        res.render("addCategory", { category: categories, messages })
+        res.render("addCategory", { category: categories, messages,  activePage: 'category' })
     } catch (error) {
         console.log("error in categoris:", error);
     }
@@ -126,7 +174,7 @@ const loadEditCategory = async (req, res) => {
 
         let categories = await category.findOne({ _id: id })
 
-        res.render("editCategory", { category: categories, messages })
+        res.render("editCategory", { category: categories, messages,  activePage: 'category' })
     } catch (error) {
         console.log("error in categoris:", error);
     }
@@ -222,32 +270,60 @@ const deleteCategory = async (req, res) => {
 }
 
 const oderDetails = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5; 
+    const skip = (page - 1) * limit; 
+
     try {
-        const orders = await Order.find({}).populate('userId').populate("deliveryAddress").populate('oderedItem').sort({_id:-1})
+        
+        const orders = await Order.find({})
+            .populate('userId')
+            .populate("deliveryAddress")
+            .populate('orderedItem')
+            .sort({_id:-1})
+            .limit(limit)
+            .skip(skip);
+
+   
         const formattedOrders = orders.map(order => {
-            const date = new Date(order.createdAt)
+            const date = new Date(order.createdAt);
             const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
             return {
                 ...order.toObject(),
                 formattedCreatedAt: formattedDate,
-            }
-        })
+            };
+        });
 
+      
+        const count = await Order.countDocuments({});
+        const totalPages = Math.ceil(count / limit);
 
-        res.render('orderDetails', { orderDetails: formattedOrders })
+        res.render('orderDetails', {
+            orderDetails: formattedOrders,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'orders'
+        });
     } catch (error) {
-        console.log("error in oderDetails", error);
+        console.log("error in orderDetails", error);
+        res.status(500).send("Error fetching order details");
     }
-}
+};
+
 
 const singleProduct = async (req, res) => {
     try {
         const orderId = req.query.orderId.replace(/\s+/g,''); 
 
 
-        const orderDetails = await Order.findOne({ _id: orderId }).populate('userId').populate('oderedItem.productId').populate('deliveryAddress')
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('userId').populate('orderedItem.productId').populate('deliveryAddress')
 
-        res.render('singleorderDetails', { orderDetails })
+        res.render('singleorderDetails', { orderDetails,activePage: 'orders' })
     } catch (error) {
         console.log('error in single product', error);
     }
@@ -258,7 +334,7 @@ const updateSts = async (req, res) => {
         console.log(req.body);
         const { selectedOrderStatus, orderId, productId } = req.body
 
-        const orderStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': selectedOrderStatus } }, { arrayFilters: [{ "item.productId": productId }] })
+        const orderStatus = await Order.updateOne({ _id: orderId }, { $set: { 'orderedItem.$[item].productStatus': selectedOrderStatus } }, { arrayFilters: [{ "item.productId": productId }] })
         console.log('order status', orderStatus);
 
         res.status(200).json({ success: true })

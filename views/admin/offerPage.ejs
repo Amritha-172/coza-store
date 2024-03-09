@@ -1,68 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/admindashboard.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-
-<body>
-    <style>
-
-    </style>
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Coza Store</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-nav">
-            <div class="nav-item text-nowrap">
-                <a class="nav-link px-3" href="/admin/logout">Sign out</a>
-            </div>
-        </div>
-    </header>
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a href="/admin/dashboard" class="nav-link active"><i
-                                    class="fas fa-home me-2"></i> Dashboard</a></li>
-                        <li class="nav-item"><a href="/admin/userlist" class="nav-link"><i
-                                    class="fa-solid fa-users me-2"></i> Users</a></li>
-                        <li class="nav-item"><a href="/admin/productlist" class="nav-link"><i
-                                    class="fas fa-shopping-cart me-2"></i> Products</a></li>
-                        <li class="nav-item"><a href="/admin/oderDetails" class="nav-link"><i
-                                    class="fas fa-file-alt me-2"></i> Orders</a></li>
-                        <li class="nav-item"><a href="/admin/category" class="nav-link"><i class="fas fa-list me-2"></i>
-                                Categories</a></li>
-                        <li class="nav-item"><a href="/admin/Coupon" class="nav-link"><i
-                                    class="fa-solid fa-money-bill me-2"></i> Coupon</a></li>
-                        <li class="nav-item">
-                            <a href="/admin/offer" class="nav-link active d-flex align-items-center border">
-                                <i class="fa-solid fa-tag me-2"></i> offer
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'shopping cart'})%>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 bg-white ">
                 <div
@@ -141,6 +77,48 @@
                             </tbody>
                             <%}%>
                     </table>
+                    <nav aria-label="Product navigation" class="mt-4">
+                        <ul class="pagination justify-content-end">
+                            <% if(hasPreviousPage) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= previousPage %>" aria-label="Previous">Previous</a>
+                                </li>
+                            <% } else { %>
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">First</span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">Previous</span>
+                                </li>
+                            <% } %>
+                    
+                            <% for(let i=1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                    
+                            <% if(hasNextPage) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= nextPage %>" aria-label="Next">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= lastPage %>" aria-label="Last">Last</a>
+                                </li>
+                            <% } else { %>
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">Next</span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">Last</span>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                      
                 </div>
 
 

@@ -4,26 +4,50 @@ const fs = require('fs').promises
 const path = require('path')
 const user = require('../models/userModel')
 const offers = require('../models/offerModel')
-const cart=require('../models/cartModel')
+const cart = require('../models/cartModel')
 
 
 const loadProduct = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
     try {
-        const products = await product.find({}).populate('categoryId').sort({ _id: -1 })
+
+        const products = await product.find({})
+            .populate('categoryId')
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip);
 
 
-        res.render("products", { products })
+        const count = await product.countDocuments({});
+        const totalPages = Math.ceil(count / limit);
+
+
+        res.render("products", {
+            products: products,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'products'
+        });
     } catch (error) {
         console.log('error in load product:', error);
+        res.status(500).send("Error loading products");
     }
-}
+};
 
 const loadAddProduct = async (req, res) => {
     try {
         const messages = req.flash('message')
         const categories = await category.find({})
 
-        res.render("addProduct", { categories, messages })
+        res.render("addProduct", { categories, messages , activePage: 'products'})
     } catch (error) {
         console.log('error in load addproduct');
     }
@@ -31,20 +55,20 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        console.log("req.body",req.body);
-        console.log("req.files",req.files);
+        console.log("req.body", req.body);
+        console.log("req.files", req.files);
         const details = req.body
 
         const files = req.files
-     if(files.length<2){
-      return res.json({success:false,message:'Please select 2 images'})
-     }
+        if (files.length < 2) {
+            return res.json({ success: false, message: 'Please select 2 images' })
+        }
 
         const alreadyExist = await product.findOne({ productName: req.body.productName })
 
         if (alreadyExist) {
-           
-            return res.json({success:false,message:'Item already existed'})
+
+            return res.json({ success: false, message: 'Item already existed' })
         }
         else {
             const images = files.map(file => file.filename);
@@ -118,7 +142,7 @@ const loadeditProduct = async (req, res) => {
         const categories = await category.find({})
 
 
-        res.render('editProducts', { product: products, category: categories, })
+        res.render('editProducts', { product: products, category: categories, activePage: 'products' })
 
     } catch (error) {
         console.log("error in loadeditProdut:", error);
@@ -181,20 +205,29 @@ const deleteProduct = async (req, res) => {
 }
 
 const findbyCategory = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
     try {
         const { categoryId } = req.query;
-        const userdata=await user.findOne({_id:req.session.user_id})
+        const userdata = await user.findOne({ _id: req.session.user_id })
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
 
- 
         const offerData = await offers.find({
             startDate: { $lte: new Date() },
             endDate: { $gte: new Date() }
         });
 
-        let productData = await product.find({ categoryId: categoryId, is_blocked: false, is_categoryBlocked: false }).populate('categoryId');
+        let productData = await product.find({ categoryId: categoryId, is_blocked: false, is_categoryBlocked: false })
+        .sort({ _id: -1 })
+        .limit(limit)
+        .skip(skip)
+        .populate('categoryId');
+        const totalProducts = await product.countDocuments({ categoryId: categoryId, is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
 
-       
+
         productData = productData.map(product => {
             let productDiscountedPrice = product.price;
             let categoryDiscountedPrice = product.price;
@@ -206,7 +239,7 @@ const findbyCategory = async (req, res) => {
                 }
             });
 
-          
+
             offerData.forEach(offer => {
                 if (offer.offerType === 'category' && offer.categoryId.includes(product.categoryId._id.toString())) {
                     categoryDiscountedPrice = product.price - (product.price * offer.discount / 100);
@@ -221,7 +254,7 @@ const findbyCategory = async (req, res) => {
                 discountedPrice = Math.round(categoryDiscountedPrice);
             }
 
-           
+
             return {
                 ...product.toObject(),
                 originalPrice: product.price,
@@ -233,11 +266,20 @@ const findbyCategory = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
- 
     
-        console.log("cartCount",cartCount);
+
+ 
         const wishlistCount = userdata.wishlist.length
-        res.render('user/products', { productData ,cartCount,wishlistCount,userdata});
+        res.render('user/products', { productData, cartCount, wishlistCount, userdata, 
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        });
+        
     } catch (error) {
         console.log('Error finding products by category:', error);
         res.status(500).send('Error finding products by category');
@@ -247,12 +289,22 @@ const findbyCategory = async (req, res) => {
 
 
 const highLow = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
     try {
         const userId = req.session.user_id;
         const userdata = await user.findOne({ _id: userId });
-  
-        let products = await product.find().sort({ price: -1 }).populate('categoryId');
+
+        let products = await product.find().sort({ price: -1 })
+            .limit(limit)
+            .skip(skip)
+            .populate('categoryId');
         const categories = await category.find();
+        
+        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
 
         let offerData = await offers.find({
             startDate: { $lte: new Date() },
@@ -282,7 +334,7 @@ const highLow = async (req, res) => {
         products = products.map(product => {
             const { discountedPrice, appliedOffer } = applyOffer(product);
             return {
-                ...product._doc, 
+                ...product._doc,
                 originalPrice: product.price,
                 discountedPrice,
                 appliedOffer: appliedOffer ? {
@@ -295,10 +347,21 @@ const highLow = async (req, res) => {
 
         products.sort((a, b) => b.discountedPrice - a.discountedPrice);
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
-
         const wishlistCount = userdata.wishlist.length
 
-        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount });
+
+        res.render('user/shop', {
+            product: products, categories, userdata, wishlistCount,
+            cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+
+        });
     } catch (error) {
         console.log('error', error);
     }
@@ -307,12 +370,22 @@ const highLow = async (req, res) => {
 
 
 const lowHigh = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
     try {
         const userId = req.session.user_id;
         const userdata = await user.findOne({ _id: userId });
-  
-        let products = await product.find().sort({ price: 1 }).populate('categoryId');
+
+        let products = await product.find().sort({ price: 1 })
+            .limit(limit)
+            .skip(skip)
+            .populate('categoryId');
         const categories = await category.find();
+        
+        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
 
         let offerData = await offers.find({
             startDate: { $lte: new Date() },
@@ -342,7 +415,7 @@ const lowHigh = async (req, res) => {
         products = products.map(product => {
             const { discountedPrice, appliedOffer } = applyOffer(product);
             return {
-                ...product._doc, 
+                ...product._doc,
                 originalPrice: product.price,
                 discountedPrice,
                 appliedOffer: appliedOffer ? {
@@ -353,12 +426,23 @@ const lowHigh = async (req, res) => {
             };
         });
 
-        products.sort((a, b) => a.discountedPrice -b.discountedPrice );
+        products.sort((a, b) => a.discountedPrice - b.discountedPrice);
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
-
         const wishlistCount = userdata.wishlist.length
 
-        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount });
+
+        res.render('user/shop', {
+            product: products, categories, userdata, wishlistCount,
+            cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+
+        });
     } catch (error) {
         console.log('error', error);
     }
@@ -367,11 +451,20 @@ const lowHigh = async (req, res) => {
 
 
 const aToZ = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+    
     try {
-        const userId = req.session.user_id
-        const userdata = await user.findOne({ _id: userId })
+        const userId = req.session.user_id;
+        const userdata = await user.findOne({ _id: userId });
 
-   let products = await product.aggregate([
+        
+        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+ 
+        let products = await product.aggregate([
             {
                 $addFields: {
                     lowerCaseName: { $toLower: "$productName" }
@@ -383,77 +476,63 @@ const aToZ = async (req, res) => {
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $project: {
                     lowerCaseName: 0
                 }
             }
         ]);
-        const categories = await category.find()
 
+      
+        products = await product.populate(products, { path: 'categoryId' });
+    
 
-        let offerData = await offers.find({
-            startDate: { $lte: new Date() },
-            endDate: { $gte: new Date() }
-        });
-
-        products = await product.populate(products, { path: 'categoryId' }); 
-        products = products.map(product => {
-            let discountedPrice = product.price;
-            let appliedOffer = null;
-
-
-            offerData.forEach(offer => {
-                if (offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString())) {
-                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
-                    if (newDiscountedPrice < discountedPrice) {
-                        discountedPrice = Math.round(newDiscountedPrice);
-                        appliedOffer = offer;
-                    }
-                }
-            });
-
-
-            offerData.forEach(offer => {
-                if (offer.offerType === 'category' && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString())) {
-                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
-                    if (newDiscountedPrice < discountedPrice) {
-                        discountedPrice = Math.round(newDiscountedPrice);
-                        appliedOffer = offer;
-                    }
-                }
-            });
-
-            return {
-                ...product,
-                originalPrice: product.price,
-                discountedPrice,
-                appliedOffer: appliedOffer ? {
-                    offerName: appliedOffer.offerName,
-                    discount: appliedOffer.discount
-                } : null,
-                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
-            };
-        });
-
-
+        const categories = await category.find();
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+        const wishlistCount = userdata ? userdata.wishlist.length : 0;
 
-        const wishlistCount = userdata.wishlist.length
-        res.render('user/shop', { product: products, categories, userdata,wishlistCount,cartCount })
+        res.render('user/shop', { 
+            product: products, 
+            categories, 
+            userdata, 
+            wishlistCount, 
+            cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        });
 
     } catch (error) {
         console.log('error in a to z', error);
     }
+};
 
-}
 
 
 
 const zToa = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+    
     try {
         const userId = req.session.user_id;
         const userdata = await user.findOne({ _id: userId });
 
+        
+        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+ 
         let products = await product.aggregate([
             {
                 $addFields: {
@@ -466,63 +545,41 @@ const zToa = async (req, res) => {
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $project: {
                     lowerCaseName: 0
                 }
             }
         ]);
 
+      
+        products = await product.populate(products, { path: 'categoryId' });
     
+
         const categories = await category.find();
-        let offerData = await offers.find({
-            startDate: { $lte: new Date() },
-            endDate: { $gte: new Date() }
-        });
-
-       
-        products = await product.populate(products, { path: 'categoryId' }); 
-        products = products.map(product => {
-            let discountedPrice = product.price;
-            let appliedOffer = null;
-
-
-            offerData.forEach(offer => {
-                if (offer.offerType === 'product' && offer.productId.some(id => id.toString() === product._id.toString())) {
-                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
-                    if (newDiscountedPrice < discountedPrice) {
-                        discountedPrice = Math.round(newDiscountedPrice);
-                        appliedOffer = offer;
-                    }
-                }
-            });
-
-
-            offerData.forEach(offer => {
-                if (offer.offerType === 'category' && offer.categoryId.some(id => id.toString() === product.categoryId._id.toString())) {
-                    let newDiscountedPrice = product.price - (product.price * offer.discount / 100);
-                    if (newDiscountedPrice < discountedPrice) {
-                        discountedPrice = Math.round(newDiscountedPrice);
-                        appliedOffer = offer;
-                    }
-                }
-            });
-
-            return {
-                ...product,
-                originalPrice: product.price,
-                discountedPrice,
-                appliedOffer: appliedOffer ? {
-                    offerName: appliedOffer.offerName,
-                    discount: appliedOffer.discount
-                } : null,
-                offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
-            };
-        });
-
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
+        const wishlistCount = userdata ? userdata.wishlist.length : 0;
 
-        const wishlistCount = userdata.wishlist.length
-        res.render('user/shop', { product: products, categories, userdata,cartCount,wishlistCount});
+        res.render('user/shop', { 
+            product: products, 
+            categories, 
+            userdata, 
+            wishlistCount, 
+            cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        });
+
     } catch (error) {
         console.log('error in z to a', error);
     }
@@ -531,13 +588,19 @@ const zToa = async (req, res) => {
 
 
 const catSort = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
     try {
         const userId = req.session.user_id;
         const { id } = req.query;
         const userdata = await user.findOne({ _id: userId });
 
 
-        let products = await product.find({ categoryId: id });
+        let products = await product.find({ categoryId: id, is_blocked: false, is_categoryBlocked: false })
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip)
 
 
         const categories = await category.find();
@@ -587,9 +650,21 @@ const catSort = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
-        const cartCount = await cart.find({ userId: req.session.user_id }).length
+        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id })
         const wishlistCount = userdata.wishlist.length
-        res.render('user/shop', { product: products, categories, userdata ,wishlistCount,cartCount});
+        res.render('user/shop', {
+            product: products, categories, userdata, wishlistCount, cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        });
 
     } catch (error) {
         console.log('error in catSort', error);
@@ -612,8 +687,9 @@ const Search = async (req, res) => {
         } else {
             productData = products
         }
+        const cartCount = await cart.countDocuments({ userId: req.session.user_id });
 
-        res.json({ productData })
+        res.json({ productData,cartCount })
 
 
     } catch (error) {

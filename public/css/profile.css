@@ -259,3 +259,97 @@ body {
 .actives .status-icon {
     background-color: #c7300b;
 }
+
+body {
+    background-color: rgb(241, 243, 246);
+}
+
+
+
+.form-check-input:checked {
+    background-color: #717fe0;
+    border-color: #717fe0;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+    height: 36px;
+}
+
+
+.form-control {
+    border-radius: 0.25rem;
+}
+
+
+.btn-primary {
+    background-color: #717fe0;
+   
+    border: none;
+  
+    padding: 0.5rem 1rem;
+
+    transition: background-color 0.2s;
+
+}
+
+.btn-primary:hover {
+    background-color: #5050d2;
+  
+}
+
+
+
+
+
+.nav-dashboard {
+    background-color: #fff;
+  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    border-radius: 5px;
+  
+    padding: 20px;
+
+}
+
+.nav-dashboard .nav-item {
+    margin-bottom: 1rem;
+ 
+}
+
+.nav-dashboard .nav-link {
+    color: #717fe0;
+
+    font-weight: 500;
+
+    text-transform: uppercase;
+
+    transition: color 0.3s ease;
+}
+
+.nav-dashboard .nav-link:hover {
+    color: #5050d2;
+
+    text-decoration: none;
+    
+}
+
+.nav-dashboard .nav-link.active {
+    color: #ffffff;
+
+    background-color: #717fe0;
+    
+    border-radius: 4px;
+  
+}
+
+
+@media (max-width: 768px) {
+    .nav-dashboard {
+        margin-bottom: 20px;
+  
+    }
+}

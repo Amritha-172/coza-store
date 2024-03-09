@@ -1,7 +1,7 @@
 const user=require('../models/userModel')
 const Cart=require('../models/cartModel')
 const Product=require('../models/productModel')
-
+const {ObjectId}=require('mongodb')
 const Address=require('../models/addressModal')
 const Coupon = require('../models/couponModel');
 const offers=require('../models/offerModel')
@@ -64,9 +64,10 @@ const addToCart = async (req, res) => {
     }
 
     const savedCartItem = await cartItem.save();
+    const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
     console.log("add to cart success");
 
-    res.status(200).json(savedCartItem);
+    res.status(200).json({savedCartItem,cartCount});
   } catch (error) {
     console.log("Error in addToCart:", error);
     res.status(500).json("An error occurred");

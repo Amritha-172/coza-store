@@ -4,15 +4,38 @@ const category = require('../models/categoryModel')
 
 
 const offer = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5; 
+    const skip = (page - 1) * limit;
+
     try {
-        const offers = await Offer.find().sort({ _id: -1 })
+        
+        const offers = await Offer.find()
+            .sort({_id: -1})
+            .limit(limit)
+            .skip(skip);
 
-        res.render('offerPage', { offers })
+       
+        const totalOffers = await Offer.countDocuments({});
+        const totalPages = Math.ceil(totalOffers / limit);
 
+        res.render('offerPage', {
+            offers,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'offer'
+        });
     } catch (error) {
         console.log("error offer", error);
+        res.status(500).send("Error fetching offers");
     }
-}
+};
+
 
 const addOffer = async (req, res) => {
     try {
@@ -106,11 +129,11 @@ const loadEdit = async (req, res) => {
         if (offerData.productId.length > 0) {
             const procuctData = await product.find({})
 
-            res.render('editOffer', { offerData, Details: procuctData })
+            res.render('editOffer', { offerData, Details: procuctData ,activePage: 'offer'})
         }
         else if (offerData.categoryId.length > 0) {
             const categoryData = await category.find()
-            res.render('editOffer', { offerData, Details: categoryData })
+            res.render('editOffer', { offerData, Details: categoryData ,activePage: 'offer'})
         }
 
 

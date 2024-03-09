@@ -273,3 +273,26 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 0.9rem; /* Smaller font size for labels */
   color: #ffffff; /* Lighter grey color */
 }
+
+
+.table img {
+  width: 60px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.order-details-card {
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.order-details-header h4 {
+  margin-bottom: 20px;
+}

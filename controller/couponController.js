@@ -4,23 +4,50 @@ const { find } = require('../models/otpModel');
 
 
 const coupon = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5; 
+    const skip = (page - 1) * limit; 
+
     try {
-        const message=req.flash('message')
-        const coupons = await Coupon.find({}).sort({_id:-1})
+        const message = req.flash('message');
+        
+    
+        const totalCoupons = await Coupon.countDocuments({});
+        
+     
+        const coupons = await Coupon.find({})
+            .sort({_id:-1})
+            .limit(limit)
+            .skip(skip);
 
         const formattedCoupon = coupons.map(item => {
-            const formattedDate = moment(item.expireDate).format('DD-MM-YYYY')
+            const formattedDate = moment(item.expireDate).format('DD-MM-YYYY');
             return {
                 ...item.toObject(),
                 formattedDate,
-            }
-        })
+            };
+        });
 
-        res.render('couponPage', { coupons: formattedCoupon ,message})
+        const totalPages = Math.ceil(totalCoupons / limit);
+
+        res.render('couponPage', { 
+            coupons: formattedCoupon,
+            message,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            activePage: 'coupon'
+        });
     } catch (error) {
-        console.log("error in coupon page");
+        console.log("error in coupon page:", error);
+        res.status(500).send("Error loading coupons");
     }
-}
+};
+
 
 const addCoupon = async (req, res) => {
     try {

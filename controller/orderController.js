@@ -15,7 +15,7 @@ const useraddAddress = async (req, res) => {
     try {
 
         const userId = req.session.user_id;
-        console.log(req.body);
+           
         const { addressType, alternativePhone, landmark, mobile, state, city, streetAddress, locality, pincode, name } = req.body
          if(!addressType||addressType.trim()==""){
             req.flash('message','Please Select Address type')
@@ -193,7 +193,7 @@ const placeorder = async (req, res) => {
         const order = new Order({
             userId: userId,
             cartId: cartItems.map(item => item._id),
-            oderedItem: orderedItem,
+            orderedItem: orderedItem,
             orderAmount: Amount,
             deliveryAddress: selectedAddress,
             paymentMethod: selectedPaymentMethod,
@@ -296,27 +296,55 @@ const ordersuccess = async (req, res) => {
 }
 
 const orderpage = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 4; 
+    const skip = (page - 1) * limit; 
+
     try {
-        const userId = req.session.user_id
-        const orderDetails = await Order.find({ userId: userId }).populate('oderedItem.productId').sort({ _id: -1 })
+        const userId = req.session.user_id;
+        const userdata=await user.findOne({_id:userId})
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
+    
+        const orderDetails = await Order.find({ userId: userId })
+            .populate('orderedItem.productId')
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip);
 
-        res.render('user/user/orderpage', { orderDetails })
+    
+        const totalOrders = await Order.countDocuments({ userId: userId });
+        const totalPages = Math.ceil(totalOrders / limit); 
 
+        res.render('user/user/orderpage', {
+            orderDetails,
+            userdata,
+            wishlistCount,
+            cartCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        });
 
     } catch (error) {
         console.log('error in orderpage', error);
     }
-}
+};
+
 
 const singleorder = async (req, res) => {
     try {
         const orderId = req.query.orderId.trim();
         const productId = req.query.productId
 
-        const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate('oderedItem.productId')
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate('orderedItem.productId')
 
 
-        const products = orderDetails.oderedItem
+        const products = orderDetails.orderedItem
 
 
         const matchedItem = await products.find(item => item.productId._id.toString() === productId)
@@ -337,10 +365,10 @@ const cancelOrder = async (req, res) => {
 
         console.log(orderId, productId);
 
-        const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': "cancelled" } }, { arrayFilters: [{ "item._id": productId }] })
+        const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'orderedItem.$[item].productStatus': "cancelled" } }, { arrayFilters: [{ "item._id": productId }] })
 
-        const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
-        const matchedItem = await order.oderedItem.filter(item => item._id == productId)
+        const order = await Order.findOne({ _id: orderId }).populate("orderedItem.productId")
+        const matchedItem = await order.orderedItem.filter(item => item._id == productId)
 
     
    
@@ -426,7 +454,7 @@ const placeorderWallet = async (req, res) => {
         const order = new Order({
             userId: userId,
             cartId: cartItems.map(item => item._id),
-            oderedItem: orderedItem,
+            orderedItem: orderedItem,
             orderAmount: Amount,
             deliveryAddress: selectedAddress,
             paymentMethod: selectedPaymentMethod,
@@ -467,11 +495,11 @@ const retrunOrder = async (req, res) => {
 
         }
  
-           const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'oderedItem.$[item].productStatus': "returned",'oderedItem.$[item].returReason': selectedReason  } }, { arrayFilters: [{ "item._id": productId }] })
+           const productStatus = await Order.updateOne({ _id: orderId }, { $set: { 'orderedItem.$[item].productStatus': "returned",'orderedItem.$[item].returReason': selectedReason  } }, { arrayFilters: [{ "item._id": productId }] })
 
 
-        const order = await Order.findOne({ _id: orderId }).populate("oderedItem.productId")
-        const matchedItem = await order.oderedItem.filter(item => item._id == productId)
+        const order = await Order.findOne({ _id: orderId }).populate("orderedItem.productId")
+        const matchedItem = await order.orderedItem.filter(item => item._id == productId)
    
 
 
@@ -517,9 +545,9 @@ const invoicePage=async(req,res)=>{
 
         const{orderId,productId}=req.query
         console.log("productId",productId);
-         const orderDetails=await Order.findOne({_id:orderId.trim()}).populate('deliveryAddress').populate('oderedItem.productId')
+         const orderDetails=await Order.findOne({_id:orderId.trim()}).populate('deliveryAddress').populate('orderedItem.productId')
          console.log("orderDetails",orderDetails);
-         const products = orderDetails.oderedItem
+         const products = orderDetails.orderedItem
 
         const procductData = await products.find(item => item.productId._id.toString() === productId)
         console.log('procductData',procductData);

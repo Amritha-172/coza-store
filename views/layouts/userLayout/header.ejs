@@ -35,9 +35,12 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+	integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+	<link rel="stylesheet" href="css/profile.css">
 	<link rel="stylesheet" type="text/css" href="css/checkout.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -136,13 +139,13 @@
 
 
 
-					 <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="<%=	cartCount%>"
+					 <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" id="cartIcon" data-notify="<%=cartCount%>"
 							onclick="cart()"><i class="zmdi zmdi-shopping-cart"></i></button>
 			
 
 
 
-						<a href="/wishlist" class="dis-block icon-header-item cl2 hov-cl1 icon-header-noti trans-04 p-l-22 p-r-11 "
+						<a href="/wishlist" class="dis-block icon-header-item cl2 hov-cl1 icon-header-noti trans-04 p-l-22 p-r-11 " id="wishlist"
 							data-notify="<%=wishlistCount%>">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>

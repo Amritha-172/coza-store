@@ -1,6 +1,6 @@
- const User=require('../models/userModel')
- const Category=require('../models/categoryModel')
- const orders= require('../models/orderModel')
+const User = require('../models/userModel')
+const Category = require('../models/categoryModel')
+const orders = require('../models/orderModel')
 
 
 require('dotenv').config()
@@ -32,50 +32,64 @@ const adminVerify = async (req, res) => {
 
 const dashboard = async (req, res) => {
     try {
-        const userData = await User.find({});
-        const categoryData = await Category.find({});
-        const orderData = await orders.find({});
-        const TotalAmount = orderData.reduce((acc, curr) => acc + curr.orderAmount, 0);
+        const userCount = await User.countDocuments({});
+        const categoryCount = await Category.countDocuments({});
 
-        // Aggregate orders to get monthly totals and counts
         const startOfYear = new Date(new Date().getFullYear(), 0, 1);
         const monthlyOrderData = await orders.aggregate([
             { $match: { createdAt: { $gte: startOfYear } } },
-            { $group: {
-                _id: { 
-                    month: { $month: "$createdAt" }, 
-                    year: { $year: "$createdAt" }
-                },
-                monthlyTotal: { $sum: "$orderAmount" },
-                orderCount: { $sum: 1 }
-            }},
+            {
+                $group: {
+                    _id: {
+                        month: { $month: "$createdAt" },
+                        year: { $year: "$createdAt" }
+                    },
+                    monthlyTotal: { $sum: "$orderAmount" },
+                    monthlyCouponDiscount: { $sum: "$couponDiscount" },
+                    orderCount: { $sum: 1 },
+             
+                }
+            },
             { $sort: { "_id.year": 1, "_id.month": 1 } }
         ]);
 
-        // Initialize arrays for the chart
-        let monthlyOrderCounts = new Array(12).fill(0);
-        let monthlyTotalAmounts = new Array(12).fill(0);
+     
+        let OrderCounts = new Array(12).fill(0);
+        let TotalAmounts = new Array(12).fill(0);
+        let CouponDiscounts = new Array(12).fill(0);
+  
 
-        // Populate the arrays with data from the aggregation
+        
         monthlyOrderData.forEach(data => {
-            const monthIndex = data._id.month - 1; // -1 because array is zero-indexed
-            monthlyOrderCounts[monthIndex] = data.orderCount;
-            monthlyTotalAmounts[monthIndex] = data.monthlyTotal;
+            const monthIndex = data._id.month - 1;
+            OrderCounts[monthIndex] = data.orderCount;
+            TotalAmounts[monthIndex] = data.monthlyTotal;
+            CouponDiscounts[monthIndex] = data.monthlyCouponDiscount;
+    
         });
-        console.log("orderData",orderData,'monthlyOrderCounts',monthlyOrderCounts,'monthlyTotalAmounts',monthlyTotalAmounts);
 
         res.render("dashboard", {
-            userData,
-            categoryData,
-            TotalAmount,
-            orderData,
-            monthlyOrderCounts,
-            monthlyTotalAmounts
+            userCount,
+            categoryCount,
+            TotalAmount: monthlyOrderData.reduce((acc, curr) => acc + curr.monthlyTotal, 0),
+            TotalCouponDiscount: monthlyOrderData.reduce((acc, curr) => acc + curr.CouponDiscount, 0),
+            TotalOfferedProductsCount: monthlyOrderData.reduce((acc, curr) => acc + curr.offeredProductsCount, 0),
+            TotalOrderCount: monthlyOrderData.reduce((acc, curr) => acc + curr.orderCount, 0),
+            OrderCounts,
+            TotalAmounts,
+            CouponDiscounts,
+            categories: ['jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            text:"Monthly",
+            activePage: 'dashboard'
+           
         });
     } catch (error) {
-        console.log("error on dashboard", error);
+        console.error("Error on dashboard", error);
+        res.status(500).send("Error generating dashboard data");
     }
-}
+};
+
+
 
 const adminLogout = async (req, res) => {
     try {

@@ -69,5 +69,7 @@ admin_route.get('/salesDaily',adminMiddleware.isLogin,salesReport.dailySaleRepor
 admin_route.get('/salesWeekly',adminMiddleware.isLogin,salesReport.weeklySalesReport)
 admin_route.get('/salesMonthly',adminMiddleware.isLogin,salesReport.monthlySalesReport)
 admin_route.get('/salesYearly',adminMiddleware.isLogin,salesReport.YearlySalesReport)
+admin_route.post('/customDate',adminMiddleware.isLogin,salesReport.customDateSort)
+admin_route.get('/yearlyChart',adminMiddleware.isLogin,salesReport.yearlyChart)
 
 module.exports = admin_route;

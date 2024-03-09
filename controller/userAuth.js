@@ -59,7 +59,7 @@ const verifySignup = async (req, res) => {
         console.log(userData);
         const userId = userData._id
         req.session.user_sign = userId
-        // req.session.user_name = userData.name
+      
         req.session.user_email = userData.email
         await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
           Here is the verification code.Please enter otp and verify Email`)
@@ -172,7 +172,7 @@ const verifyOtp = async (req, res) => {
 
 }
 
-const   resendOtp = async (req, res) => {
+const resendOtp = async (req, res) => {
     try {
         const userId = req.session.user_sign
         const email = req.session.user_email
@@ -318,7 +318,11 @@ const userLogout = async (req, res) => {
 }
 
 const Homepage = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
     try {
+
         let userData = req.session.user_id;
         let userdata = await user.findOne({ _id: userData, is_blocked: false });
         let categoryData = await category.find({});
@@ -327,7 +331,11 @@ const Homepage = async (req, res) => {
             endDate: { $gte: new Date() }
         });
 
-        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({ _id: -1 }).populate('categoryId');
+        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false })
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip)
+            .populate('categoryId');
 
         productData = productData.map(product => {
             let productDiscountedPrice = product.price;
@@ -368,6 +376,9 @@ const Homepage = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
+        const totalProducts = await products.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
 
         let wishlistCount;
@@ -388,7 +399,14 @@ const Homepage = async (req, res) => {
                 categoryData,
                 offerData,
                 cartCount,
-                wishlistCount
+                wishlistCount,
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+                nextPage: page + 1,
+                previousPage: page - 1,
+                lastPage: totalPages
             });
         } else {
             res.render('user/user/home', {
@@ -397,7 +415,14 @@ const Homepage = async (req, res) => {
                 categoryData,
                 offerData,
                 cartCount: 0,
-                wishlistCount
+                wishlistCount,
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+                nextPage: page + 1,
+                previousPage: page - 1,
+                lastPage: totalPages
             });
         }
     } catch (error) {
@@ -407,6 +432,9 @@ const Homepage = async (req, res) => {
 
 
 const shop = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
 
     try {
 
@@ -417,8 +445,11 @@ const shop = async (req, res) => {
             startDate: { $lte: new Date() },
             endDate: { $gte: new Date() }
         });
-
-        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false }).sort({ _id: -1 }).populate('categoryId');
+        let productData = await products.find({ is_blocked: false, is_categoryBlocked: false })
+            .sort({ _id: -1 })
+            .limit(limit)
+            .skip(skip)
+            .populate('categoryId');
 
         productData = productData.map(product => {
             let productDiscountedPrice = product.price;
@@ -459,10 +490,22 @@ const shop = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
+        const totalProducts = await products.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
         const wishlistCount = userdata.wishlist.length
 
-        res.render('user/shop', { product: productData, categories: categoryData, userdata ,cartCount,wishlistCount})
+        res.render('user/shop', {
+            product: productData, categories: categoryData, userdata, cartCount, wishlistCount,
+            currentPage: page,
+            totalPages: totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages
+        })
     } catch (error) {
         console.log('error in shop', error);
     }

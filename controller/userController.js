@@ -36,8 +36,10 @@ const profile = async (req, res) => {
 
         let userData = await User.findOne({ _id: req.session.user_id, is_blocked: false })
         let address = null
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userData.wishlist.length
         if (userData) {
-            res.render('user/user/profile', { userData, Address: address })
+            res.render('user/user/profile', { userdata:userData, Address: address,cartCount,wishlistCount })
         } else {
             res.render('error')
         }
@@ -51,7 +53,9 @@ const loadeditProfile = async (req, res) => {
         const messages = req.flash('message')
         const userId = req.session.user_id
         const userData = await User.findOne({ _id: userId })
-        res.render('user/user/profileEdit', { userData, messages })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userData.wishlist.length
+        res.render('user/user/profileEdit', { userdata:userData, messages,cartCount,wishlistCount })
 
     } catch (error) {
         console.log('error in edit profile page');
@@ -157,13 +161,16 @@ const singleProduct = async (req, res,) => {
 const changePass = async (req, res) => {
     try {
         const userId = req.session.user_id
-        const userData = await User.findOne({ _id: userId, })
-        console.log("user", userData);
-        res.render('user/user/changePassword', { userData })
+        const userdata = await User.findOne({ _id: userId, })
+      
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
+  
+        res.render('user/user/changePassword', { userdata,cartCount,wishlistCount })
 
 
     } catch (error) {
-        console.log('error in change password');
+        console.log('error in change password',error);
     }
 }
 
@@ -228,11 +235,13 @@ const address = async (req, res) => {
     try {
         const messages = req.flash('message')
         const userId = req.session.user_id
-
+        const userdata = await User.findOne({ _id: userId })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
         const addressDetail = await Address.find({ userId: userId }).populate('userId')
         console.log("address detail", addressDetail);
 
-        res.render('user/user/address', { addressDetail, messages })
+        res.render('user/user/address', { addressDetail, messages ,userdata,cartCount,wishlistCount})
     } catch (error) {
         console.log("error in address");
     }
@@ -240,8 +249,11 @@ const address = async (req, res) => {
 
 const addAddress = async (req, res) => {
     try {
+        const userdata = await User.findOne({ _id:  req.session.user_id })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
         const messages = req.flash('message')
-        res.render('user/user/addAddress', { messages })
+        res.render('user/user/addAddress', { messages,userdata,cartCount,wishlistCount })
     } catch (error) {
         console.log('error in add address');
     }
@@ -252,7 +264,11 @@ const loadeditAddress = async (req, res) => {
         const messages = req.flash('message')
         const { adddressId } = req.query
         const address = await Address.findOne({ _id: adddressId })
-        res.render('user/user/editAddress', { address, messages })
+        const userId = req.session.user_id
+        const userdata = await User.findOne({ _id: userId })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
+        res.render('user/user/editAddress', { address, messages,userdata,cartCount,wishlistCount })
     } catch (error) {
         console.log("error in edit address");
     }
@@ -302,6 +318,9 @@ const deleteAddress = async (req, res) => {
 const wallet = async (req, res) => {
     try {
         const userId = req.session.user_id
+        const userdata = await User.findOne({ _id: userId })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
         const WalletDetails = await Wallet.findOne({ userId: userId })
 
         if (WalletDetails) {
@@ -322,9 +341,9 @@ const wallet = async (req, res) => {
             }
 
 
-            res.render('user/user/wallet', { WalletDetails: formattedWallet })
+            res.render('user/user/wallet', { WalletDetails: formattedWallet ,cartCount,wishlistCount,userdata})
         } else {
-            res.render('user/user/wallet', { WalletDetails: 0 })
+            res.render('user/user/wallet', { WalletDetails: 0,cartCount,wishlistCount,userdata })
         }
     } catch (error) {
         console.log('error in wallet page');
@@ -361,24 +380,64 @@ const addWallet = async (req, res) => {
 }
 
 const wishlist = async (req, res) => {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 4; 
+    const skip = (page - 1) * limit; 
 
     try {
-        const userId = req.session.user_id
-        const userData = await User.findOne({ _id: userId }).populate('wishlist')
+        const userId = req.session.user_id;
 
-        res.render('user/user/wishlist', { userData })
+        const userdata = await User.findOne({ _id: userId })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
+        const user = await User.findById(userId).select('wishlist');
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+      
+        const totalItems = user.wishlist.length;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        
+        const wishlistProductIds = user.wishlist.slice(skip, skip + limit);
+        const wishlistItems = await product.find({
+            '_id': { $in: wishlistProductIds }
+        });
+
+    
+        const userDataWithPagination = {
+            ...user.toObject(),
+            wishlist: wishlistItems,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+                nextPage: page < totalPages ? page + 1 : null,
+                previousPage: page > 1 ? page - 1 : null,
+                lastPage: totalPages
+            }
+        };
+
+        res.render('user/user/wishlist', { userData: userDataWithPagination,cartCount,wishlistCount,userdata });
+
     } catch (error) {
-        console.log('error in wishlist');
+        console.log('error in wishlist', error);
+        res.status(500).send('Server error');
     }
-}
+};
+
 
 const addWishlist = async (req, res) => {
     try {
         const { productId } = req.body
         const userId = req.session.user_id
         const wishlist = await User.updateOne({ _id: userId }, { $push: { wishlist: productId } })
-        console.log(wishlist);
-        res.status(200).json({ success: true })
+        const userdata=await User.findOne({_id:userId})
+        const wishlitCount=userdata.wishlist.length
+       
+        res.status(200).json({ success: true,wishlitCount })
 
     } catch (error) {
         console.log('error in add wishlist');
@@ -391,11 +450,14 @@ const removeWishlist = async (req, res) => {
         console.log(req.body);
         const userId = req.session.user_id
         const removewishlist = await User.updateOne({ _id: userId }, { $pull: { wishlist: productId } })
-        console.log("removewishlist", removewishlist);
+
+        const userdata=await User.findOne({_id:userId})
+        const wishlitCount=userdata.wishlist.length
+ 
         if (removewishlist) {
-            res.status(200).json({ success: true })
+            res.status(200).json({ success: true,wishlitCount })
         } else {
-            res.json({ success: false })
+            res.json({ success: false, })
         }
 
     } catch (error) {

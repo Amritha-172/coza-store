@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
       ref: 'cart',
       required:true
         },
-    oderedItem: [{
+    orderedItem: [{
         productId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'product', 
