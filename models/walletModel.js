@@ -18,7 +18,7 @@ const walletShema = new mongoose.Schema({
       transactionsMethod: {
          type: String,
          required: true,
-         enum: ["Debit", "Credit", "Transfer", "Refund", "Payment"]
+         enum: ["Debit", "Credit", "refferal", "Refund", "Payment"]
       },
       date:{
          type:Date,

@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/otppage.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <style>
 
@@ -43,9 +44,10 @@
     </div>
   </div>
 
-  <!-- JavaScript at the end for improved loading times -->
+
   <script>
-    function showSpinner() {
+
+function showSpinner() {
       document.getElementById('spinnerContainer').classList.remove('d-none');
     }
     function hideSpinner() {
@@ -61,7 +63,7 @@
 
       var timer = duration, minutes, seconds;
       currentTimerValue = timer
-      currentInterval = setInterval(function () { // Update the current interval
+      currentInterval = setInterval(function () { 
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
@@ -95,7 +97,7 @@
 
       };
 
-      // Resend OTP setup
+    
 
       document.getElementById('resendotp').addEventListener('click', function (e) {
       
@@ -118,6 +120,10 @@
 
       })
 
+   
+
+
+
     });
   </script>
   <script>
@@ -137,12 +143,11 @@
         
         axios.post('/signupOtp', { noOne:noOne.value, noTwo:noTwo.value, noThree:noThree.value, noFour:noFour.value,email:email.value })
           .then(res => {
-             if(res.data.success){
-               showSpinner() 
-            setTimeout(()=>{
-              window.location.href='/login'
+            if(res.data.success){
+               showSpinner()           
+               window.location.href='/login'
 
-            },1000)
+
              }
 
             if(res.data.message){
@@ -157,7 +162,7 @@
             else{
               errormsg.innerHTML=""
             }
-            console.log('success');
+            console.log('successfully done');
           }).catch(err => {
             console.log('error in signupotp in axios', err);
           })

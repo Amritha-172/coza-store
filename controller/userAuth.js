@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const category = require('../models/categoryModel')
 const offers = require('../models/offerModel')
 const cart = require('../models/cartModel')
+const wallet=require('../models/walletModel')
 
 
 const securePassword = async (password) => {
@@ -157,7 +158,45 @@ const verifyOtp = async (req, res) => {
                     console.log(err);
                 })
 
-                res.json({ success: true })
+                if( req.session.refferalId){
+                    console.log(" req.session.refferalId", req.session.refferalId);
+                    const walletData=await wallet.findOne({userId:req.session.refferalId})
+                    if(walletData){
+                        await wallet.updateOne({userId:req.session.refferalId},{$inc:{balance:100},$push:{transaction:{amount:100,   transactionsMethod:'refferal'}}})
+
+                    }else{
+                        const Walletnew= new wallet({
+                            userId:req.session.refferalId,
+                            balance:100,
+                            transaction:[
+                                {
+                                    amount:100,
+                                    transactionsMethod:'refferal',
+                                   
+                                }
+                            ]
+
+                        })
+                        Walletnew.save()
+                    }
+                    
+                    const newWallet= new wallet({
+                        userId:req.session.user_sign,
+                        balance:50,
+                        transaction:[
+                            {
+                                amount:100,
+                                transactionsMethod:'refferal',
+                               
+                            }
+                        ]
+
+                    })
+                    newWallet.save()
+
+                }
+
+                res.json({success:true})
             } else {
 
                 req.session.user_id = userID

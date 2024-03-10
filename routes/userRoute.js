@@ -8,6 +8,7 @@ const orderController=require('../controller/orderController')
 const paymentController=require('../controller/paymentController')
 const productControlller = require('../controller/ProductController');
 const couponController=require('../controller/couponController')
+const refferalController=require('../controller/referralController')
 const  userRoute=express()
     
 
@@ -24,11 +25,11 @@ userRoute.get('/register',userAuth.signup)
 userRoute.post('/checkEmail',userAuth.checkEmail)
 
 
-userRoute.get('/signup',auth.isLogout,userAuth.signup)
+// userRoute.get('/signup',auth.isLogout,userAuth.signup)
 userRoute.post('/signup',userAuth.verifySignup)
 
 userRoute.get('/signupOtp',auth.isLogout,userAuth.otp)
-userRoute.post('/signupOtp',auth.isLogout,userAuth.verifyOtp)
+userRoute.post('/signupOtp',userAuth.verifyOtp)
 userRoute.post('/resendOtp',auth.isLogout,userAuth.resendOtp)
 
 
@@ -121,7 +122,7 @@ userRoute.get("/catSort",auth.isLogin,auth.isBlocked,productControlller.catSort)
 userRoute.post("/Search",auth.isLogin,auth.isBlocked,productControlller.Search)
 
 
-
+userRoute.get('/referral',refferalController.refferl)
 
 
 

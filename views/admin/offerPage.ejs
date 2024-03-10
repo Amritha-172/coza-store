@@ -73,7 +73,7 @@
                                                                 </td>
                                     </tr>
                                     <%}%>
-                                        <!-- Add more rows as needed -->
+                                      
                             </tbody>
                             <%}%>
                     </table>
@@ -270,13 +270,14 @@
                 const offerType = this.value;
 
                 if (offerType) {
-                    // Fetch product data and display modal
+                    
                     axios.post('/admin/offerType', { offerType })
                         .then(res => {
                             if (res.data.productData) {
                                 const products = res.data.productData;
+                                console.log("products",products);
                                 const modalProductList = document.getElementById('modalProductList');
-                                modalProductList.innerHTML = ''; // Clear previous content
+                                modalProductList.innerHTML = '';
 
                                 products.forEach(product => {
                                     const imageUrl = `/multerimages/${product.image[0]}`;

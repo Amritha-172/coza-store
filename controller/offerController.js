@@ -100,6 +100,7 @@ const offerType = async (req, res) => {
             res.status(200).json({ categoryDetails })
         } else if (offerType == "product") {
             const productData = await product.find({})
+            console.log("productData",productData);
             res.status(200).json({ productData })
         }
 
