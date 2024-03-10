@@ -23,18 +23,29 @@ const loadProduct = async (req, res) => {
 
         const count = await product.countDocuments({});
         const totalPages = Math.ceil(count / limit);
-
+        const pagesToShow = 5;
+      
+        let startPage = page+pagesToShow-1
+        let endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+        if (endPage - startPage < pagesToShow - 1) {
+            startPage = Math.max(1, endPage - pagesToShow + 1);
+        }
+  console.log("startPage",startPage);
+  console.log("endPage",endPage);
 
         res.render("products", {
             products: products,
             currentPage: page,
+            startPage: startPage,
+            endPage: endPage,
             totalPages: totalPages,
             hasNextPage: page < totalPages,
             hasPreviousPage: page > 1,
             nextPage: page + 1,
             previousPage: page - 1,
             lastPage: totalPages,
-            activePage: 'products'
+            activePage: 'products',
+            limit
         });
     } catch (error) {
         console.log('error in load product:', error);
@@ -79,7 +90,7 @@ const addProduct = async (req, res) => {
                 price: details.price,
                 quantity: details.quantity,
                 image: images,
-                color: details.color,
+                brand: details.brand,
                 size: details.size,
                 categoryId: details.category,
 
@@ -153,7 +164,7 @@ const editProduct = async (req, res) => {
     try {
 
 
-        const { productName, category, price, description, quantity, id, size, color, oldimageUrl } = req.body
+        const { productName, category, price, description, quantity, id, size, brand, oldimageUrl } = req.body
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
 
@@ -173,7 +184,7 @@ const editProduct = async (req, res) => {
         array.push(...filename)
         console.log("array", array);
 
-        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, categoryId: category, price: price, description: description, quantity: quantity, size: size, color: color, image: array } })
+        const edit = await product.updateOne({ _id: id }, { $set: { productName: productName, categoryId: category, price: price, description: description, quantity: quantity, size: size, brand: brand, image: array } })
         console.log('edit', edit);
         if (edit) {
 

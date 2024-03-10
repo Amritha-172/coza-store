@@ -1,4 +1,4 @@
-<%- include('./../layouts/adminLayout/header',{pageTitle: 'shopping cart'})%>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'Orders'})%>
         <!-- Main Content -->
         <main class="main-content">
             <div class="content">
@@ -19,9 +19,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for(i=0; i< orderDetails.length;i++){%>
+                            <% let itemNumber = (currentPage - 1) * limit + 1; %>
+                            <% for(i=0; i< orderDetails.length;i++,itemNumber++){%>
                             <tr>
-                                <td><%=i+1%></td>
+                                <td><%=itemNumber%></td>
                                 <td><%=orderDetails[i]._id%></td>
                                 <td><%=orderDetails[i].formattedCreatedAt %></td>
                                 <td><%=orderDetails[i].deliveryAddress.name%></td>

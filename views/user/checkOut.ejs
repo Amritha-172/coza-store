@@ -812,7 +812,7 @@
                                       .then(res=>{
                                         if(!res.data.success){
                                             const orderId=res.data.orderId
-                                            window.location.href='/orderpage'
+                                            window.location.href='/orderpage?totalOrderAmount='+Amount
                                         }
                                       })
 

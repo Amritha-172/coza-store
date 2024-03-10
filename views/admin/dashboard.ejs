@@ -1,4 +1,4 @@
-<%- include('./../layouts/adminLayout/header',{pageTitle: 'shopping cart'})%>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'Admin Dashboard'})%>
 
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div
@@ -57,6 +57,7 @@
               </svg>
             </div>
             <div><span>
+      
                 <%=TotalOrderCount%>
               </span>
               <span>Orders</span>
@@ -81,11 +82,12 @@
 
         </header>
         <div class="row">
-        <div id="chart" class="col-8"></div>
-        <div class="col-4" > 
+        <div id="chart" class="col-11"></div>
+        <div class="col-7 mt-5" > 
           
-          <a href="" class="btn btn-success ">Best selling product</a>
-          <a href="" class="btn btn-success ">Best selling product</a>
+          <p  class="btn btn-secondary mb-5" id="bestProducts"  value="product">Best selling product</p>
+          <p  class="btn btn-secondary mb-5" id="bestBrand" value="brand">Best selling Brands</p>
+          <p class="btn btn-secondary mb-5" id="bestCategory" value="category">Best selling Category</p>
           <div id="chart2"></div>
         </div>
       </div>
@@ -103,7 +105,7 @@ var discount= <%- JSON.stringify(CouponDiscounts) %>;
 var catogory=<%- JSON.stringify(categories) %>;
 var text=<%- JSON.stringify(text) %>;
 
-     console.log("revenewData",revenewData);
+   
      var options = {
     series: [{
         name: 'Orders',
@@ -171,27 +173,89 @@ var text=<%- JSON.stringify(text) %>;
       ApexCharts.exec('yourChartId', 'updateSeries', newData);
     }
 
-    var options2 = {
-    series: [{
-        name: 'Series 2',
-        data: [30, 40, 45, 50, 49, 60, 70, 91, 125]
-    }],
-    chart: {
-        height: 350,
-        type: 'bar'
-    },
-    xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-    }
-};
-
-var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
-chart2.render();
+   
 
 
   </script>
   <script>
-    
+document.addEventListener('DOMContentLoaded', function() {
+  let chart2;
+
+  const updateChart = (url, itemDescription) => {
+    axios.get(url)
+      .then((res) => {
+        const data = res.data.bestSellingProducts;
+        const brandData=res.data.bestSellingBrands
+        const categoryData=res.data.bestSellingCategories
+      
+        let labels = [];
+        let totalSales =[]
+        if (itemDescription === 'Products') {
+          labels = data.map(product => product.productId);
+          totalSales = data.map(product => product.totalSales);
+        } else  if(itemDescription === 'Brands') {
+          labels = brandData.map(product => product.brand);
+          totalSales = brandData.map(product => product.totalSales);
+        }else{
+          labels = categoryData.map(product => product.categoryName);
+          totalSales = categoryData.map(product => product.totalSales);
+
+        }
+
+      
+        const item = res.data.item;
+
+        const options = {
+          series: [{
+            name: `Total Sales`,
+            data: totalSales
+          }],
+          chart: {
+            height: 350,
+            type: 'bar'
+          },
+          title: {
+            text: `Best selling ${itemDescription || item}`
+          },
+          xaxis: {
+            categories: labels
+          }
+        };
+
+        if (chart2) {
+          chart2.destroy();
+        }
+
+        chart2 = new ApexCharts(document.querySelector("#chart2"), options);
+        chart2.render();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const bestProduct = document.getElementById('bestProducts');
+  bestProduct.addEventListener('click', function(e) {
+    e.preventDefault();
+    updateChart('/admin/bestSellingProduct', 'Products');
+  });
+
+  const brandBtn = document.getElementById('bestBrand');
+  brandBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+ 
+    updateChart('/admin/bestSellingBrand', 'Brands');
+  });
+
+  const categoryBtn=document.getElementById('bestCategory')
+  bestCategory.addEventListener('click',function(e){
+    e.preventDefault()
+    updateChart('/admin/bestSellingCategory', 'Category');
+
+  })
+  
+});
+
   </script>
 </body>
 

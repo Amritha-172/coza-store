@@ -305,7 +305,8 @@ const orderpage = async (req, res) => {
         const userdata=await user.findOne({_id:userId})
         const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
         const wishlistCount = userdata.wishlist.length
-    
+        const totalOrderAmount=req.query.totalOrderAmount
+        req.session.totalOrderAmount=totalOrderAmount
         const orderDetails = await Order.find({ userId: userId })
             .populate('orderedItem.productId')
             .sort({ _id: -1 })
@@ -327,7 +328,8 @@ const orderpage = async (req, res) => {
             hasPreviousPage: page > 1,
             nextPage: page + 1,
             previousPage: page - 1,
-            lastPage: totalPages
+            lastPage: totalPages,
+            totalOrderAmount
         });
 
     } catch (error) {
@@ -340,7 +342,9 @@ const singleorder = async (req, res) => {
     try {
         const orderId = req.query.orderId.trim();
         const productId = req.query.productId
-
+        const userdata=await user.findOne({_id:req.session.user_id })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
         const orderDetails = await Order.findOne({ _id: orderId }).populate('deliveryAddress').populate('orderedItem.productId')
 
 
@@ -349,7 +353,7 @@ const singleorder = async (req, res) => {
 
         const matchedItem = await products.find(item => item.productId._id.toString() === productId)
 
-        res.render('user/user/singleOrder', { orderDetails, productDetails: matchedItem })
+        res.render('user/user/singleOrder', { orderDetails, productDetails: matchedItem ,userdata,cartCount,wishlistCount})
 
     } catch (error) {
         console.log("error in singleorder", error);
@@ -546,14 +550,18 @@ const invoicePage=async(req,res)=>{
         const{orderId,productId}=req.query
         console.log("productId",productId);
          const orderDetails=await Order.findOne({_id:orderId.trim()}).populate('deliveryAddress').populate('orderedItem.productId')
-         console.log("orderDetails",orderDetails);
+             
+         const userdata=await user.findOne({_id:req.session.user_id })
+        const cartCount = await Cart.countDocuments({ userId: req.session.user_id })
+        const wishlistCount = userdata.wishlist.length
          const products = orderDetails.orderedItem
 
         const procductData = await products.find(item => item.productId._id.toString() === productId)
         console.log('procductData',procductData);
-        res.render('user/user/orderInvoice',{procductData,orderDetails})
+        res.render('user/user/orderInvoice',{procductData,orderDetails,userdata,cartCount,wishlistCount})
         
     } catch (error) {
+        console.log('error ininvoice page' ,error);
         
     }
 }

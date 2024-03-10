@@ -72,4 +72,8 @@ admin_route.get('/salesYearly',adminMiddleware.isLogin,salesReport.YearlySalesRe
 admin_route.post('/customDate',adminMiddleware.isLogin,salesReport.customDateSort)
 admin_route.get('/yearlyChart',adminMiddleware.isLogin,salesReport.yearlyChart)
 
+admin_route.get('/bestSellingProduct',adminMiddleware.isLogin,salesReport.bestSellingProduct)
+admin_route.get('/bestSellingBrand',adminMiddleware.isLogin,salesReport.bestSellingBrands)
+admin_route.get('/bestSellingCategory',adminMiddleware.isLogin,salesReport.bestSellingCategories)
+
 module.exports = admin_route;

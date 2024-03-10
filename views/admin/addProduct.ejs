@@ -1,4 +1,4 @@
-<%- include('./../layouts/adminLayout/header',{pageTitle: 'shopping cart'})%>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'Add product'})%>
             <!-- Main Content -->
             <main class="main-content container-fluid">
                 <div class="row justify-content-center">
@@ -55,8 +55,8 @@
 
                                 <!-- Color -->
                                 <div class="mb-3 col-md-6">
-                                    <label for="color" class="form-label">Color</label>
-                                    <input type="text" class="form-control" id="color" name="color" required>
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <input type="text" class="form-control" id="brand" name="brand" required>
                                 </div>
 
                               
@@ -284,7 +284,7 @@
                 const description = document.getElementById('description').value
                 const quantity = document.getElementById('quantity').value
                 const size = document.getElementById('size').value
-                const color = document.getElementById('color').value
+                const brand = document.getElementById('brand').value
              
                 const image1 = document.getElementById('image1').files[0]
                 const image2 = document.getElementById('image2').files[0]
@@ -298,7 +298,7 @@
                 formData.append('description', description)
                 formData.append('quantity', quantity)
                 formData.append('size', size)
-                formData.append('color', color)
+                formData.append('brand', brand)
          
                 
 

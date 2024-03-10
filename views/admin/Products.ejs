@@ -1,4 +1,4 @@
-<%- include('./../layouts/adminLayout/header',{pageTitle: 'shopping cart'})%>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'Product Page'})%>
 
 
             <main class="main-content">
@@ -27,10 +27,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for(let i=0 ;i < products.length ; i++ ) { %>
+                            <% let itemNumber = (currentPage - 1) * limit + 1; %>
+                            <% for(let i=0 ;i < products.length ; i++,itemNumber++ ) { %>
+                              
                                 <tr>
                                     <td style="width: 50px;">
-                                        <%= i+1 %>
+                                        <%= itemNumber %>
                                     </td>
                                     <td>
                                         <% console.log(products[i].image[0])%>
@@ -98,24 +100,24 @@
                         <ul class="pagination justify-content-end">
                             <% if(hasPreviousPage) { %>
                                 <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
-                                <li class="page-item"><a class="page-link" href="?page=<%= previousPage %>">Previous</a>
+                                <li class="page-item"><a class="page-link" href="?page=<%= previousPage %>">Previous</a></li>
+                            <% } %>
+                    
+                            <% for(let i=startPage; i <= endPage; i++) { %> 
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>">
+                                        <%= i %>
+                                    </a>
                                 </li>
-                                <% } %>
-                                    <% for(let i=1; i <=totalPages; i++) { %>
-                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %>">
-                                                <%= i %>
-                                            </a>
-                                        </li>
-                                        <% } %>
-                                            <% if(hasNextPage) { %>
-                                                <li class="page-item"><a class="page-link"
-                                                        href="?page=<%= nextPage %>">Next</a></li>
-                                                <li class="page-item"><a class="page-link"
-                                                        href="?page=<%= lastPage %>">Last</a></li>
-                                                <% } %>
+                            <% } %>
+                    
+                            <% if(hasNextPage) { %>
+                                <li class="page-item"><a class="page-link" href="?page=<%= nextPage %>">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="?page=<%= lastPage %>">Last</a></li>
+                            <% } %>
                         </ul>
                     </nav>
+                    
 
                 </div>
             </main>

@@ -297,6 +297,8 @@ const oderDetails = async (req, res) => {
       
         const count = await Order.countDocuments({});
         const totalPages = Math.ceil(count / limit);
+        
+        
 
         res.render('orderDetails', {
             orderDetails: formattedOrders,
@@ -307,7 +309,8 @@ const oderDetails = async (req, res) => {
             nextPage: page + 1,
             previousPage: page - 1,
             lastPage: totalPages,
-            activePage: 'orders'
+            activePage: 'orders',
+            limit
         });
     } catch (error) {
         console.log("error in orderDetails", error);

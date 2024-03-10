@@ -18,10 +18,10 @@ const productSchema= new mongoose.Schema({
        required:true  
 
     }],
-    color:[{
+    brand:{
         type:String,
         required:true
-    }],
+    },
     size:[{
         type:String,
         required:true

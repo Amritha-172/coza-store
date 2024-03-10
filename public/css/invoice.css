@@ -148,6 +148,18 @@ body{
     background-color: #5050d2; 
 }
 
+.invoice-button {
+    background-color: #717fe0;; /* Blue */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.invoice-button:hover {
+    background-color: #5050d2;
+}
 
 
 
