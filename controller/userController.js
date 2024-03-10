@@ -304,8 +304,8 @@ const editAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
     try {
-        const { adddressId } = req.query
-        const remove = await Address.deleteOne({ _id: adddressId })
+        const { addressId } = req.query
+        const remove = await Address.deleteOne({ _id: addressId })
         if (remove) {
             res.redirect('/userAddress')
         }

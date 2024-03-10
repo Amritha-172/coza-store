@@ -5,6 +5,7 @@ const path = require('path')
 const user = require('../models/userModel')
 const offers = require('../models/offerModel')
 const cart = require('../models/cartModel')
+const { log } = require('console')
 
 
 const loadProduct = async (req, res) => {
@@ -30,8 +31,7 @@ const loadProduct = async (req, res) => {
         if (endPage - startPage < pagesToShow - 1) {
             startPage = Math.max(1, endPage - pagesToShow + 1);
         }
-  console.log("startPage",startPage);
-  console.log("endPage",endPage);
+
 
         res.render("products", {
             products: products,
@@ -114,26 +114,29 @@ const addProduct = async (req, res) => {
 
 const listProduct = async (req, res) => {
     try {
-        const { productName } = req.query
+        const { productId } = req.query;
+        console.log("Blocking product with name:", productId);
+     const productDetails=await product.findOne({_id:productId})
+     console.log("productDetails",productDetails);
+        const update = await product.updateOne({_id: productId}, {$set: {is_blocked: true}});
+        console.log("Update result:", update);
 
-        const update = await product.updateOne({ productName: productName }, { $set: { is_blocked: true } })
-
-        if (update) {
-
-            res.redirect('productlist')
+        if (update.modifiedCount == 1) {
+            res.redirect('productlist');
         } else {
-            res.json({ message: "something went wrong try again" })
+          
+            res.status(404).json({ message: "Product not found or already blocked" });
         }
-
     } catch (error) {
-        console.log("error in list product", error);
+        console.error("Error in blocking product:", error);
+        res.status(500).json({ message: "An error occurred, please try again" });
     }
 }
 
 const unlistProduct = async (req, res) => {
     try {
-        const { productName } = req.query
-        const update = await product.updateOne({ productName: productName }, { $set: { is_blocked: false } })
+        const { productId } = req.query;
+        const update = await product.updateOne({ _id: productId }, { $set: { is_blocked: false } })
 
         if (update) {
             res.redirect('productlist')
@@ -149,8 +152,8 @@ const loadeditProduct = async (req, res) => {
     try {
 
         const { id } = req.query
-        const products = await product.findOne({ _id: id }).sort({ _id: -1 })
-        const categories = await category.find({})
+        const products = await product.findOne({ _id: id }).populate('categoryId').sort({ _id: -1 })
+        const categories = await category.find({_id:{$ne:products.categoryId._id}})
 
 
         res.render('editProducts', { product: products, category: categories, activePage: 'products' })

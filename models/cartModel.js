@@ -32,7 +32,7 @@ const cartItemShema = new mongoose.Schema({
 
     })
 
-//schema for the cart
+
 
 
 module.exports = mongoose.model('cart', cartItemShema)

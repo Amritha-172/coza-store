@@ -1,4 +1,4 @@
-<%- include('./../layouts/adminLayout/header',{pageTitle: 'Category '})%>
+<%- include('./../layouts/adminLayout/header',{pageTitle: 'Category page '})%>
             <!-- Main Content -->
             <main class="main-content">
                 <div class="topbar">
@@ -49,11 +49,11 @@
                                         </a>
                                         <% if(category[i].is_blocked){%>
                                             <a href="/admin/unblockCategory?id=<%= category[i]._id %>"><button
-                                                    type="submit" class="btn " id="unblock"
+                                                    type="submit" class="btn unblock" id="unblock"
                                                     style="background-color: rgb(153, 165, 233);">unBlock</button></a>
                                             <%} else{%>
                                                 <a href="/admin/blockCategory?id=<%= category[i]._id %>"><button
-                                                        type="submit" class="btn "
+                                                        type="submit" class="btn block"
                                                         style="background-color: rgb(153, 165, 233);"
                                                         id="block">Block</button></a>
 
@@ -113,7 +113,30 @@
 
     <script>
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+      
+        if (event.target.closest('.block') || event.target.closest('.unblock')) {
+            event.preventDefault();
 
+            const href = event.target.closest('a').href; 
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: event.target.closest('.block') ? "Do you want to block this category?" : "Do you want to unblock this category?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: event.target.closest('.block') ? "Yes, block it!" : "Yes, unblock it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href; 
+                }
+            });
+        }
+    });
+});
 
 
     </script>

@@ -278,7 +278,7 @@ const oderDetails = async (req, res) => {
         
         const orders = await Order.find({})
             .populate('userId')
-            .populate("deliveryAddress")
+            
             .populate('orderedItem')
             .sort({_id:-1})
             .limit(limit)
@@ -324,7 +324,7 @@ const singleProduct = async (req, res) => {
         const orderId = req.query.orderId.replace(/\s+/g,''); 
 
 
-        const orderDetails = await Order.findOne({ _id: orderId }).populate('userId').populate('orderedItem.productId').populate('deliveryAddress')
+        const orderDetails = await Order.findOne({ _id: orderId }).populate('userId').populate('orderedItem.productId')
 
         res.render('singleorderDetails', { orderDetails,activePage: 'orders' })
     } catch (error) {

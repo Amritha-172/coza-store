@@ -28,7 +28,7 @@
                                 <div class="col-md-6">
                                     <label for="category" class="form-label">Category:</label>
                                     <select name="category" id="category" class="form-select">
-                                        <option><--select category --></option>
+                                        <option value="<%=product.categoryId._id%>" selected> <%=product.categoryId.catName%></option>
                                         <% category.forEach((category)=>{ %>
                                             <option value="<%= category._id %>">
                                                 <%= category.catName %>

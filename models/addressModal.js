@@ -42,7 +42,7 @@ const addressShema= new mongoose.Schema({
      
     },
     alterPhone:{
-       Types:Number
+       types:Number
     },
     locality:{
         type:String,
