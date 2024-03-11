@@ -41,7 +41,7 @@ admin_route.post('/blockcategory/',adminMiddleware.isLogin,adminController.block
 admin_route.get('/unlistproduct',adminMiddleware.isLogin,products.unlistProduct)
 admin_route.get('/listproduct',adminMiddleware.isLogin,products.listProduct)
 admin_route.get('/editproduct',adminMiddleware.isLogin,products.loadeditProduct)   
-admin_route.post('/deleteImage',products.deleteProduct)
+admin_route.post('/deleteImage',products.deleteProductImage)
 
 admin_route.post('/editproduct',adminMiddleware.isLogin,multer.uploadProduct,products.editProduct)
 admin_route.get('/oderDetails',adminMiddleware.isLogin,adminController.oderDetails)

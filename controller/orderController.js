@@ -203,6 +203,7 @@ const placeorder = async (req, res) => {
             const products = await product.updateOne({ _id: productId }, { $inc: { quantity: -quantity } });
 
         }
+        req.session.coupon=null
 
         const order = new Order({
             userId: userId,
@@ -487,6 +488,7 @@ const placeorderWallet = async (req, res) => {
             const products = await product.updateOne({ _id: productId }, { $inc: { quantity: -quantity } });
 
         }
+        req.session.coupon=null
         const order = new Order({
             userId: userId,
             cartId: cartItems.map(item => item._id),

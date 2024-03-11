@@ -527,7 +527,7 @@ const bestSellingProduct = async (req, res) => {
                 _id: {
                   productId: "$productDetails.productName"
                 },
-                totalSales: { $sum: { $multiply: ["$orderedItem.quantity", "$orderedItem.totalProductAmount"] } }
+                totalSales: { $sum: { $cond: [ { $ifNull: [ "$orderedItem.totalProductAmount", 0 ] }, "$orderedItem.totalProductAmount", 0 ] } }
               }
             },
             {
@@ -586,7 +586,7 @@ const bestSellingBrands=async(req,res)=>{
                 _id: {
                   brand: "$productDetails.brand"
                 },
-                totalSales: { $sum: { $multiply: ["$orderedItem.quantity", "$orderedItem.totalProductAmount"] } }
+                totalSales: { $sum: { $cond: [ { $ifNull: [ "$orderedItem.totalProductAmount", 0 ] }, "$orderedItem.totalProductAmount", 0 ] } }
               }
             },
             {
@@ -653,7 +653,7 @@ const bestSellingCategories=async(req,res)=>{
                   category: "$categorydetails._id",
                   categoryName: "$categorydetails.catName"
                 },
-                totalSales: { $sum: { $multiply: ["$orderedItem.quantity", "$orderedItem.totalProductAmount"] } }
+                totalSales: { $sum: { $cond: [ { $ifNull: [ "$orderedItem.totalProductAmount", 0 ] }, "$orderedItem.totalProductAmount", 0 ] } }
               }
             },
             {

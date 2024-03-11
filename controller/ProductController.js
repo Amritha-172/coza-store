@@ -240,7 +240,7 @@ const editProduct = async (req, res) => {
     }
 }
 
-const deleteProduct = async (req, res) => {
+const deleteProductImage = async (req, res) => {
 
     try {
         const { preview, filename, id } = req.body
@@ -657,7 +657,7 @@ const catSort = async (req, res) => {
             .limit(limit)
             .skip(skip)
 
-
+            console.log('products',products.length);
         const categories = await category.find();
 
 
@@ -705,9 +705,9 @@ const catSort = async (req, res) => {
                 offerText: appliedOffer ? `${appliedOffer.discount}% Off` : ''
             };
         });
-        const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
+        const totalProducts = await product.countDocuments({categoryId: id, is_blocked: false, is_categoryBlocked: false });
         const totalPages = Math.ceil(totalProducts / limit);
-
+console.log("totalPages",totalPages);
         const cartCount = await cart.countDocuments({ userId: req.session.user_id })
         const wishlistCount = userdata.wishlist.length
         res.render('user/shop', {
@@ -764,7 +764,7 @@ module.exports = {
     listProduct,
     loadeditProduct,
     editProduct,
-    deleteProduct,
+    deleteProductImage,
     findbyCategory,
     highLow,
     lowHigh,
