@@ -180,33 +180,25 @@ const loadEditCategory = async (req, res) => {
     }
 }
 
-const checkCategory = async (req, res) => {
-    try {
-        const catName = req.body.name
-        const id = req.body.id
-        const regexPattern = new RegExp(`^${catName}$`, 'i')
-        const alreadyExist = await category.find({ _id: { $ne: id }, catName: regexPattern, })
 
-
-        if (alreadyExist.length > 0) {
-            req.flash('message', "already exist")
-            return res.status(200).json({ success: true })
-        } else {
-            res.json({ success: false })
-        }
-    } catch (error) {
-        console.log('error in check category');
-    }
-}
 
 const editCategory = async (req, res) => {
     try {
-        const { catName, description, id } = req.body
-
+        
+        const catName = req.body.name
+        const id = req.body.id
+        const description=req.body.description
+        const regexPattern = new RegExp(`^${catName}$`, 'i')
+        const alreadyExist = await category.findOne({ _id: { $ne: id }, catName: regexPattern, })
+        if(alreadyExist){
+            console.log("alreadyExist",alreadyExist);
+           return  res.json({success:false})
+        }
+    
         const editcat = await category.updateOne({ _id: id }, { $set: { catName: catName, description: description } })
 
         if (editcat) {
-            res.redirect('category')
+           res.json ({success:true})
         }
 
 
@@ -367,7 +359,7 @@ module.exports = {
     oderDetails,
     singleProduct,
     updateSts,
-    checkCategory,
+  
 
  
 

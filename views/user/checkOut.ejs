@@ -243,7 +243,7 @@
                                         <!-- Credit/Debit Card Option -->
                                         <div class="payment-option col-lg-4 col-md-6">
                                             <input type="radio" name="pay-method" id="pay-methodoption1"
-                                                class="card-radio-input d-none" value="credit"
+                                                class="card-radio-input d-none" value="Razorpay"
                                                 aria-label="Credit / Debit Card">
                                             <label for="pay-methodoption1" class="payment-option-label">
                                                 <i class="bx bx-credit-card payment-icon"></i>
@@ -748,7 +748,7 @@
                             }).catch(err => {
                                 console.log('error');
                             })
-                    } else if (selectedPaymentMethod === "credit") {
+                    } else if (selectedPaymentMethod === "Razorpay") {
 
                         axios.post('/createOrder', { Amount, selectedAddress, })
                             .then(res => {

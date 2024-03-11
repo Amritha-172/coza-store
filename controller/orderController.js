@@ -476,7 +476,7 @@ const placeorderWallet = async (req, res) => {
         if (walletDetails.balance < Amount) {
             return res.json({ message: "please check your wallet" })
         }
-        const walletFund = await wallet.updateOne({ userId: userId }, { $inc: { balance: -Amount }, $push: { transaction: { amount: Amount, transactionsMethod: "Credit" } } })
+        const walletFund = await wallet.updateOne({ userId: userId }, { $inc: { balance: -Amount }, $push: { transaction: { amount: Amount, transactionsMethod: "Razorpay" } } })
         console.log('walletFund', walletFund);
 
 

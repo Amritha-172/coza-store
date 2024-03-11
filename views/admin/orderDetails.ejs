@@ -12,7 +12,8 @@
                                 <th style="width: 50px;">ID</th>
                                 <th>Order Number</th>
                                 <th>Date</th>
-                                <th>Customer</th>
+                                <th>Customer details</th>
+                                <th>Payment Method</th>
                                 <th>Total Price</th>
                             
                                 <th style="width: 200px;">Action</th>
@@ -25,7 +26,8 @@
                                 <td><%=itemNumber%></td>
                                 <td><%=orderDetails[i]._id%></td>
                                 <td><%=orderDetails[i].formattedCreatedAt %></td>
-                                <td><%=orderDetails[i].deliveryAddress.name%></td>
+                                <td><%=orderDetails[i].deliveryAddress.name%> , <span><%=orderDetails[i].deliveryAddress.mobile%></span>, <span><%=orderDetails[i].deliveryAddress.streetAddress%></span><span><%=orderDetails[i].deliveryAddress.streetAddress%></span> <span><%=orderDetails[i].deliveryAddress.state%></span> <span><%=orderDetails[i].deliveryAddress.pincode%></span></td>
+                                <td><%=orderDetails[i].paymentMethod%></td>
                                 <td>₹<%=orderDetails[i].orderAmount%></td>
                                 
                                 <td>

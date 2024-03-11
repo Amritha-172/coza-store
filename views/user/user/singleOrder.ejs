@@ -9,18 +9,21 @@
                         <div class="info-section">
                             <h3>User Information</h3>
                             <% if(orderDetails) {%>
-                                <p><strong>Name: </strong>
+                               
+                            
+                                <strong>Name: </strong>
                                     <%=orderDetails.deliveryAddress.name%>
-                                </p>
-                                <p><strong>phone: </strong>
+                               <br>
+                              <strong>phone: </strong>
                                     <%=orderDetails.deliveryAddress.mobile%>
-                                </p>
-                                <p><strong>Address:</strong>
+                        
+                                <p> <strong>Address:</strong>
                                     <%=orderDetails.deliveryAddress.streetAddress%>
                                         <%=orderDetails.deliveryAddress.city%>
                                             <%=orderDetails.deliveryAddress.state%>
                                                 <%=orderDetails.deliveryAddress.pincode%>
                                 </p>
+                                <div class=""> Date : <%=new Date(orderDetails.createdAt).toLocaleDateString("en-US")%></div>
                         </div>
                     </div>
 

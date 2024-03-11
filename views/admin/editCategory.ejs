@@ -22,7 +22,7 @@
                     </div>
                     <input type="hidden" id="id" name="id" value="<%=category._id%>">
 
-                    <button type="submit" class="btn btn-primary">Update Category</button>
+                    <button type="submit"  id="update" class="btn btn-primary">Update Category</button>
                 </form>
             </div>
         </main>
@@ -31,18 +31,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded',function(){
-            document.getElementById('catName').addEventListener('blur',function(e){
+            document.getElementById('update').addEventListener('click',function(e){
                 e.preventDefault()
                 const name=document.getElementById('catName').value
                 const id=document.getElementById('id').value
+                const description=document.getElementById('description').value
               console.log(name,id);
-               axios.post('/admin/checkCategory',{name,id})
+               axios.post('/admin/editcategory',{name,id,description})
                .then(res=>{
-                if(res.data.success){
+                if(!res.data.success){
                   document.getElementById('errormsg').innerHTML="Already exist Category"
 
                 }else{
                     document.getElementById('errormsg').innerHTML=""
+                    window.location.href='/admin/category'
                 }
                 console.log('success');
                }).catch(err=>{

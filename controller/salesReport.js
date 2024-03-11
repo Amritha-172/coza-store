@@ -6,7 +6,7 @@ const dailySaleReport = async (req, res) => {
 
         let dailyReport = await orders.aggregate([
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] } } },
 
             {
                 $project: {
@@ -97,7 +97,7 @@ const weeklySalesReport = async (req, res) => {
         const weeklyReport = await orders.aggregate([
             { $match: { createdAt: { $gte: sevenWeeksAgo } } },
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] } } },
             {
                 $project: {
                     week: { $isoWeek: "$createdAt" },
@@ -169,7 +169,7 @@ const monthlySalesReport = async (req, res) => {
         const monthlyReport = await orders.aggregate([
             { $match: { createdAt: { $gte: twelveMonthsAgo } } },
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] } } },
             {
                 $project: {
                     month: { $month: "$createdAt" },
@@ -335,7 +335,7 @@ const customDateSort = async (req, res) => {
                 }
             },
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] } } },
 
             {
                 $project: {
@@ -429,7 +429,7 @@ const yearlyChart = async (req, res) => {
         const yearlyOrderData = await orders.aggregate([
             { $match: { createdAt: { $gte: tenYearsAgo } } },
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "returned", "pending"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "returned", "pending","shipped"] } } },
             {
                 $group: {
                     _id: {
@@ -567,7 +567,7 @@ const bestSellingBrands=async(req,res)=>{
             },
             {
               $match: {
-                "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] }
+                "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] }
               }
             },
             {
@@ -622,7 +622,7 @@ const bestSellingCategories=async(req,res)=>{
             },
             {
               $match: {
-                "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned"] }
+                "orderedItem.productStatus": { $nin: ["cancelled", "pending", "returned","shipped"] }
               }
             },
             {

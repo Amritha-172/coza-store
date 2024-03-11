@@ -69,10 +69,29 @@ const addProduct = async (req, res) => {
         console.log("req.body", req.body);
         console.log("req.files", req.files);
         const details = req.body
-
         const files = req.files
-        if (files.length < 2) {
+
+        if (files.length <=1) {
             return res.json({ success: false, message: 'Please select 2 images' })
+        }
+        if(!details.productName||details.productName.trim()==""){
+            return res.json({ success: false, message: 'Please  Enter Product name' })
+        }
+        if(!details.category||details.category.trim()==""){
+            return res.json({ success: false, message: 'Please  Select category' })
+        }
+
+        if(!details.price||details.price <1){
+            return res.json({ success: false, message: 'Please  Enter valid price' })
+        }
+        if(!details.quantity||details.quantity <1){
+            return res.json({ success: false, message: 'Please  Enter valid Quantity' })
+        }
+        if(!details.brand||details.brand.trim()==""){
+            return res.json({ success: false, message: 'Please  Enter Brand' })
+        }
+        if(!details.description||details.description.trim()==""){
+            return res.json({ success: false, message: 'Please  Enter Description' })
         }
 
         const alreadyExist = await product.findOne({ productName: req.body.productName })
@@ -171,6 +190,28 @@ const editProduct = async (req, res) => {
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
 
+        if(!productName||productName.trim()==""){
+            return res.json({success:false,message:"Product name is required"})
+        }
+        if(!price||price.trim()==""||price<1){
+            return res.json({success:false,message:"Please Enter valid amount"})
+
+        }
+        if(!quantity||quantity<1){
+            return res.json({success:false,message:"Please Enter quantity "})
+        }
+        if(!description||description.trim()==""){
+            return res.json({success:false,message:"Please Enter Description "})
+        }
+        if(!brand||brand.trim()==""){
+            return res.json({success:false,message:"Please Enter Brand "})
+        }
+        if(!category||category.trim()==""){
+            return res.json({success:false,message:"Please Select category "})
+        }
+         
+
+
         const filename = req.files.map(item => {
             return item.filename
         })
@@ -220,7 +261,7 @@ const deleteProduct = async (req, res) => {
 
 const findbyCategory = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 8;
     const skip = (page - 1) * limit;
 
     try {
@@ -466,7 +507,7 @@ const lowHigh = async (req, res) => {
 
 const aToZ = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 8;
     const skip = (page - 1) * limit;
     
     try {
@@ -535,7 +576,7 @@ const aToZ = async (req, res) => {
 
 const zToa = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 8;
     const skip = (page - 1) * limit;
     
     try {

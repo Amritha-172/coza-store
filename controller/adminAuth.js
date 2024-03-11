@@ -40,7 +40,7 @@ const dashboard = async (req, res) => {
         const monthlyOrderData = await orders.aggregate([
             { $match: { createdAt: { $gte: startOfYear } } },
             { $unwind: "$orderedItem" },
-            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "returned", "pending"] } } },
+            { $match: { "orderedItem.productStatus": { $nin: ["cancelled", "returned", "pending","shipped"] } } },
             {
                 $group: {
                     _id: {
@@ -95,8 +95,6 @@ const dashboard = async (req, res) => {
         res.status(500).send("Error generating dashboard data");
     }
 };
-
-
 
 
 const adminLogout = async (req, res) => {

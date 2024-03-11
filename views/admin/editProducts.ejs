@@ -4,21 +4,17 @@
             <main class="main-content col-8 ms-5">
                 <div class="content">
                     <h1>EDIT PRODUCT</h1>
-                    <% if(messages.length>0){%>
+             
                         <p id='erroreditproduct' style="color: red;">
-                            <%=messages%>
+                     
                         </p>
-                        <%}%>
+                 
                             <!-- Inside your form for editing product details -->
                             <form class="row g-3">
 
                                 <div class="col-md-6">
 
-                                    <%if(messages.length>0){%>
-                                        <div style="color: red;">
-                                            <%=messages[0]%>
-                                        </div>
-                                        <%}%>
+                                    
                                             <label for="productName" class="form-label">Product Name</label>
                                             <input type="text" class="form-control " id="productName"
                                                 pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$" name="productName"
@@ -326,6 +322,7 @@
                         if (res.data.success) {
                             window.location.href = '/admin/productlist'
                         }else{
+                            console.log("res.data.message",res.data.message);
                             document.getElementById('erroreditproduct').innerHTML=res.data.message
                         }
 
@@ -336,19 +333,19 @@
             })
 
 
-            document.getElementById('price').addEventListener('blur', function (e) {
-                e.preventDefault()
-                const price = document.getElementById('price').value
-                if (price < 1) {
-                    const error = document.getElementById('error')
-                    error.innerHTML = "Please Eneter Valid number"
-                    error.style.color = 'red'
+            // document.getElementById('price').addEventListener('blur', function (e) {
+            //     e.preventDefault()
+            //     const price = document.getElementById('price').value
+            //     if (price < 1) {
+            //         const error = document.getElementById('error')
+            //         error.innerHTML = "Please Eneter Valid number"
+            //         error.style.color = 'red'
 
-                } else {
-                    error.innerHTML = " "
-                }
+            //     } else {
+            //         error.innerHTML = " "
+            //     }
 
-            })
+            // })
 
 
 

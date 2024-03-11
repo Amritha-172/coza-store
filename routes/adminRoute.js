@@ -25,7 +25,7 @@ admin_route.get('/findcatId',adminMiddleware.isLogin,adminController.findCatId)
 admin_route.get('/addcategory',adminMiddleware.isLogin,adminController.loadAddCategory)
 admin_route.post('/addcategory',adminMiddleware.isLogin,adminController.addCategory)
 admin_route.get('/editcategory',adminMiddleware.isLogin,adminController.loadEditCategory)
-admin_route.post('/checkCategory',adminMiddleware.isLogin,adminController.checkCategory)
+
 admin_route.post('/editcategory',adminMiddleware.isLogin,adminController.editCategory)
 admin_route.get('/blockCategory',adminMiddleware.isLogin,adminController.blockCategory)
 admin_route.get('/unblockCategory',adminMiddleware.isLogin,adminController.unblockCategory)
