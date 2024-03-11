@@ -185,7 +185,7 @@ const verifyOtp = async (req, res) => {
                         balance:50,
                         transaction:[
                             {
-                                amount:100,
+                                amount:50,
                                 transactionsMethod:'refferal',
                                
                             }
