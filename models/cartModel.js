@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-//single cart item schema
+
 const cartItemShema = new mongoose.Schema({
 
     productId: {

@@ -112,13 +112,15 @@
                                                                             <span class='text-success '>
                                                                                 <%=order.paymentStatus%>
                                                                             </span>
+                                                                            <br>
+                                                                            Date  :
+                                                                            <span><%=new Date(order.createdAt).toLocaleDateString("en-US")%></span>
                                                                             <%if(order.paymentStatus=="pending"){%>
                                                                                 <button
                                                                                     class="btn border bg-success mt-4 text-white btn-retry">Retry</button>
                                                                                 <%}%>
-                                                                                <br>
-                                                                                Date  :
-                                                                                <span><%=new Date(order.createdAt).toLocaleDateString("en-US")%></span>
+                                                                               
+                                                                               
                                                                                
                                                                         </div>
 

@@ -210,6 +210,12 @@ const editProduct = async (req, res) => {
             return res.json({success:false,message:"Please Select category "})
         }
          
+        const alreadyExist = await product.findOne({ productName: req.body.productName })
+
+        if (alreadyExist) {
+
+            return res.json({ success: false, message: 'Item already existed' })
+        }
 
 
         const filename = req.files.map(item => {
@@ -544,9 +550,11 @@ const aToZ = async (req, res) => {
         ]);
 
       
-        products = await product.populate(products, { path: 'categoryId' });
-    
+        products.forEach((item=>{
 
+            console.log(item.productName);
+        }))
+    
         const categories = await category.find();
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
         const wishlistCount = userdata ? userdata.wishlist.length : 0;

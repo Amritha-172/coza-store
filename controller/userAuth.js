@@ -87,7 +87,9 @@ const verifyLogin = async (req, res) => {
     try {
 
         const { email, password } = req.body
-        const userData = await user.findOne({ email: email });
+        console.log("email",email);
+        console.log("password",password);
+        const userData = await user.findOne({email:email});
         console.log(userData);
         if (!userData) {
             req.flash('message', 'User not fount')
@@ -143,7 +145,7 @@ const verifyOtp = async (req, res) => {
 
         if (!userID) {
             console.log("no userid");
-            return res.json({ message: 'No userId' })
+            return res.json({success:false, message: 'No userId' })
         }
 
         const findOtp = await OTP.find({ userid: userID }).sort({ createdAt: -1 }).limit(1)
@@ -199,8 +201,8 @@ const verifyOtp = async (req, res) => {
                 res.json({success:true})
             } else {
 
-                req.session.user_id = userID
-                res.json({ message: 'Incorrect OTP' })
+                // req.session.user_id = userID
+               return res.json({success:false, message: 'Incorrect OTP' })
 
             }
         }
@@ -215,10 +217,12 @@ const resendOtp = async (req, res) => {
     try {
         const userId = req.session.user_sign
         const email = req.session.user_email
+        console.log("userId",userId);
+        console.log("email",email);
         console.log("userId", userId);
         await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
         Here is the verification code.Please enter otp and verify Email`)
-        res.status(200).json({ success: true })
+          res.status(200).json({ success: true })
 
     } catch (error) {
         console.log('Error in resend otp ', error);
