@@ -158,6 +158,8 @@ const checkname = async (req, res) => {
 const placeorder = async (req, res) => {
     try {
 
+      const {transactionId}=req.query
+        
         const { Amount, selectedAddress, selectedPaymentMethod, status, coupon } = req.body
 
         if (!selectedAddress) {
@@ -244,7 +246,7 @@ const placeorder = async (req, res) => {
                 amount: Amount,
                 status: 'completed',
                 paymentMethod: selectedPaymentMethod,
-
+                transactionId:transactionId
 
             })
             await Payment.save()
@@ -270,9 +272,22 @@ const placeorder = async (req, res) => {
 
 const retryOrder = async (req, res) => {
     try {
-        const { orderId } = req.body
+        const userId=req.session.user_id
+        const { orderId,transactionId ,Amount} = req.body
         console.log(req.body);
         const update = await Order.updateOne({ _id: orderId }, { $set: { paymentStatus: 'success' } })
+        const Payment = new payment({
+            userId: userId,
+            orderId: orderId,
+            amount: Amount,
+            status: 'completed',
+            paymentMethod: 'Razorpay',
+            transactionId:transactionId
+
+        })
+        await Payment.save()
+
+
         if (update) {
             res.status(200).json({ success: true })
         }

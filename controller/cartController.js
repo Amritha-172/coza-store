@@ -255,8 +255,9 @@ const editPrice=async(req,res)=>{
 
 const removeProduct=async(req,res)=>{
   try {
+    const userId=req.session.user_id
     const {productId}=req.body
-       const remove=await Cart.deleteOne({productId:productId}) 
+       const remove=await Cart.deleteOne({userId:userId, productId:productId}) 
       
        if(remove){
         res.status(200).json({success:true})

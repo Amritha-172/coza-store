@@ -14,6 +14,7 @@
                             <th>Date</th>
                             <th>Customer details</th>
                             <th>Payment Method</th>
+                            <th>Coupon discount</th>
                             <th>Total Price</th>
 
                             <th style="width: 200px;">Action</th>
@@ -47,6 +48,9 @@
                                     </td>
                                     <td>
                                         <%=orderDetails[i].paymentMethod%>
+                                    </td>
+                                    <td>
+                                        ₹<%=orderDetails[i].couponDiscount%>
                                     </td>
                                     <td>₹<%=orderDetails[i].orderAmount%>
                                     </td>

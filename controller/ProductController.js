@@ -210,7 +210,7 @@ const editProduct = async (req, res) => {
             return res.json({success:false,message:"Please Select category "})
         }
          
-        const alreadyExist = await product.findOne({ productName: req.body.productName })
+        const alreadyExist = await product.findOne({_id:{$ne:id}, productName: req.body.productName })
 
         if (alreadyExist) {
 
@@ -358,12 +358,10 @@ const highLow = async (req, res) => {
         const userId = req.session.user_id;
         const userdata = await user.findOne({ _id: userId });
 
-        let products = await product.find().sort({ price: -1 })
-            .limit(limit)
-            .skip(skip)
-            .populate('categoryId');
+        let products = await product.find().populate('categoryId');
+
         const categories = await category.find();
-        
+
         const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
         const totalPages = Math.ceil(totalProducts / limit);
 
@@ -406,7 +404,9 @@ const highLow = async (req, res) => {
             };
         });
 
-        products.sort((a, b) => b.discountedPrice - a.discountedPrice);
+        products = products.sort((a, b) => b.discountedPrice - a.discountedPrice);
+        products = products.slice(skip, skip + limit);
+
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
         const wishlistCount = userdata.wishlist.length
 
@@ -429,7 +429,6 @@ const highLow = async (req, res) => {
 };
 
 
-
 const lowHigh = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 8;
@@ -439,12 +438,10 @@ const lowHigh = async (req, res) => {
         const userId = req.session.user_id;
         const userdata = await user.findOne({ _id: userId });
 
-        let products = await product.find().sort({ price: 1 })
-            .limit(limit)
-            .skip(skip)
-            .populate('categoryId');
+        let products = await product.find().populate('categoryId');
+
         const categories = await category.find();
-        
+
         const totalProducts = await product.countDocuments({ is_blocked: false, is_categoryBlocked: false });
         const totalPages = Math.ceil(totalProducts / limit);
 
@@ -487,7 +484,9 @@ const lowHigh = async (req, res) => {
             };
         });
 
-        products.sort((a, b) => a.discountedPrice - b.discountedPrice);
+        products = products.sort((a, b) => a.discountedPrice - b.discountedPrice);
+        products = products.slice(skip, skip + limit);
+
         const cartCount = await cart.countDocuments({ userId: req.session.user_id });
         const wishlistCount = userdata.wishlist.length
 

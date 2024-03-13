@@ -81,7 +81,8 @@ const dailySaleReport = async (req, res) => {
             page: 'daily',
             TotalAmount: dailyReport.reduce((acc, curr) => acc + curr.totalSales, 0),
             TotalSaleCount: dailyReport.reduce((acc, curr) => acc + curr.totalOrderCount, 0),
-            TotalCouponAmount: dailyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0)
+            TotalCouponAmount: dailyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0),
+            fromDate:'', toDate:''
         });
     } catch (error) {
         console.log('error in daily sales report', error);
@@ -151,7 +152,8 @@ const weeklySalesReport = async (req, res) => {
             reportData: weeklyReport, page: 'weekly',
             TotalAmount: weeklyReport.reduce((acc, curr) => acc + curr.totalSales, 0),
             TotalSaleCount: weeklyReport.reduce((acc, curr) => acc + curr.totalOrderCount, 0),
-            TotalCouponAmount: weeklyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0)
+            TotalCouponAmount: weeklyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0),
+            fromDate:'', toDate:''
 
         });
     } catch (error) {
@@ -233,7 +235,8 @@ const monthlySalesReport = async (req, res) => {
             page: 'monthly',
             TotalAmount: monthlyReport.reduce((acc, curr) => acc + curr.totalSales, 0),
             TotalSaleCount: monthlyReport.reduce((acc, curr) => acc + curr.totalOrderCount, 0),
-            TotalCouponAmount: monthlyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0)
+            TotalCouponAmount: monthlyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0),
+            fromDate:'', toDate:''
         });
     } catch (error) {
         console.log('error in monthly sales report', error);
@@ -304,7 +307,8 @@ const YearlySalesReport = async (req, res) => {
             page: 'yearly',
             TotalAmount: yearlyReport.reduce((acc, curr) => acc + curr.totalSales, 0),
             TotalSaleCount: yearlyReport.reduce((acc, curr) => acc + curr.totalOrderCount, 0),
-            TotalCouponAmount: yearlyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0)
+            TotalCouponAmount: yearlyReport.reduce((acc, curr) => acc + curr.couponsUsed, 0),
+            fromDate:'', toDate:''
         });
     } catch (error) {
         console.log('error in yearly sales report', error);
@@ -323,7 +327,7 @@ const customDateSort = async (req, res) => {
 
         const endDate = new Date(toDate);
         endDate.setHours(23, 59, 59, 999);
-
+          
 
         const customReport = await orders.aggregate([
             {
@@ -406,12 +410,13 @@ const customDateSort = async (req, res) => {
         ]);
 
         console.log("customReport", customReport);
-        res.json({
+        res.render("salesReport",{
             reportData: customReport,
             page: 'daily',
             TotalAmount: customReport.reduce((acc, curr) => acc + curr.totalSales, 0),
             TotalSaleCount: customReport.reduce((acc, curr) => acc + curr.totalOrderCount, 0),
-            TotalCouponAmount: customReport.reduce((acc, curr) => acc + curr.couponsUsed, 0)
+            TotalCouponAmount: customReport.reduce((acc, curr) => acc + curr.couponsUsed, 0),
+            fromDate, toDate
         });
 
     } catch (error) {
@@ -681,6 +686,37 @@ const bestSellingCategories=async(req,res)=>{
 }
 
 
+const checkDataExist=async(req,res)=>{
+    try {
+        const { fromDate, toDate } = req.query
+        console.log("fromDate", fromDate, toDate);
+        const startDate = new Date(fromDate);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(toDate);
+        endDate.setHours(23, 59, 59, 999);
+
+
+        if(startDate>endDate){
+            return  res.json({succes:false ,message:" Start date is greater than the end date"})
+        }
+        const data= await orders.find({ createdAt: {
+            $gte: startDate,
+            $lte: endDate
+        }}) 
+        console.log('data',data);
+        if(data.length ==0){
+          return  res.json({succes:false ,message:'Data not found in this date'})
+        }else{
+            return res.json({success:true ,message:""})
+        }
+    
+        
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     dailySaleReport,
     weeklySalesReport,
@@ -690,6 +726,7 @@ module.exports = {
     yearlyChart,
     bestSellingProduct,
     bestSellingBrands,
-    bestSellingCategories
+    bestSellingCategories,
+    checkDataExist
 
 }

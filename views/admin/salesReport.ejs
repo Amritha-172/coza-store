@@ -139,20 +139,22 @@
                                     </ul>
                                 </div>
                             </div>
-                            <p style="color: Red;" id='errordate'></p>
+                            <p style="color: Red; font-size: 14px; font-weight: bold; text-align: center; background-color: #ffeeee; padding: 5px;"
+                                id="errordate"></p>
 
+                            <form action="/admin/customDate" method="post">
                             <div class="col-lg-6 d-flex ">
                                 <div class="input-group reportDate me-2" style="width: 300px;">
                                     <span class="input-group-text ">From Date</span>
-                                    <input type="date" id="fromDate" name="fromDate" class="form-control">
+                                    <input type="date" id="fromDate" value="<%=fromDate%>" name="fromDate" class="form-control">
                                 </div>
                                 <div class="input-group reportDate me-2" style="width: 280px;">
                                     <span class="input-group-text">To Date</span>
-                                    <input type="date" id="toDate" name="toDate" class="form-control">
+                                    <input type="date" id="toDate" name="toDate" value="<%= toDate%>" class="form-control">
                                 </div>
-                                <button type="submit" class="btn btn-primary " id="saleDateFilterBtn">Filter</button>
+                              <button type="submit" class="btn btn-primary " id="saleDateFilterBtn">Filter</button>
                             </div>
-
+                        </form>
 
                         </div>
 
@@ -188,12 +190,13 @@
 
 
                                             </div>
-                                            
+
                                             <div class="col-lg-3 d-flex justify-content-between  ">
 
                                                 <button type="button" class="btn btn-primary  revenueShowBtn">
                                                     <h1 class="text-white ">Total sales count: <span class="text-white "
-                                                            id="totalSalesCount"><%=TotalSaleCount%>
+                                                            id="totalSalesCount">
+                                                            <%=TotalSaleCount%>
                                                         </span></h1>
                                                 </button>
 
@@ -231,7 +234,7 @@
                                                             <%=reportData[i].offeredProductsSold%>
                                                         </td>
                                                         <td>
-                                                            ₹  <%=reportData[i].couponsUsed%>
+                                                            ₹ <%=reportData[i].couponsUsed%>
                                                         </td>
                                                         <td>
                                                             <%=reportData[i].totalProducts%>
@@ -374,7 +377,7 @@
                                                                                     <%=reportData[i].offeredProductsSold%>
                                                                                 </td>
                                                                                 <td>
-                                                                                    ₹  <%=reportData[i].couponsUsed%>
+                                                                                    ₹ <%=reportData[i].couponsUsed%>
                                                                                 </td>
                                                                                 <td>
                                                                                     <%=reportData[i].totalProducts%>
@@ -386,6 +389,57 @@
                                                                     </tbody>
 
                                                                     <%}%>
+
+
+
+
+                                                                        <%if(page=="customDate"){%>
+                                                                            <thead class="table-dark  ">
+                                                                                <tr>
+                                                                                    <th>SI No</th>
+                                                                                    <th>Date</th>
+                                                                                    <th>Orders</th>
+                                                                                    <th>offers</th>
+                                                                                    <th>coupon</th>
+                                                                                    <th>Product Count</th>
+                                                                                    <th>Total Revenue</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="tableData">
+
+                                                                                <%for(i=0;i< reportData.length;i++){%>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <%=i+1%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%=reportData[i].dateFormatted%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%=reportData[i].totalOrderCount%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%=reportData[i].offeredProductsSold%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ₹
+                                                                                            <%=reportData[i].couponsUsed%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <%=reportData[i].totalProducts%>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ₹
+                                                                                            <%=reportData[i].totalSales%>
+
+                                                                                        </td>
+                                                                                    </tr>
+
+
+                                                                                    <%}%>
+                                                                            </tbody>
+                                                                            <%}%>
+
                                     </table>
                                 </div>
 
@@ -407,59 +461,108 @@
 
     </script>
     <script>
-        document.getElementById('saleDateFilterBtn').addEventListener('click', function () {
-            const fromDate = document.getElementById('fromDate').value
-            const toDate = document.getElementById('toDate').value
-            console.log(fromDate, toDate);
-            if (fromDate > toDate) {
-                document.getElementById('errordate').innerHTML = "From date is Greater than Todate"
-            } else {
-                document.getElementById('errordate').innerHTML = ""
 
-                axios.post('/admin/customDate', { fromDate, toDate })
-                    .then((res) => {
-                        console.log(res.data);
-                        document.getElementById('totalAmount').innerHTML = `₹  ${res.data.TotalAmount}`
-                        document.getElementById('totalSalesCount').innerHTML=` ${res.data.TotalSaleCount}`
-                        document.getElementById('totaldiscount').innerHTML=`₹  ${res.data.TotalCouponAmount}`
-                        updateTable(res.data.reportData);
+        document.addEventListener('DOMContentLoaded', function () {
 
-                    }).catch((err) => {
+            const fromDateInput = document.getElementById('fromDate')
+            const toDateInput = document.getElementById('toDate')
+            let fromDate;
+            let toDate;
+            fromDateInput.addEventListener('change', function () {
+                fromDate = this.value
+                console.log('fromDate', fromDate);
+                checkdata(fromDate, toDate)
+            })
+            toDateInput.addEventListener('change', function () {
+                toDate = this.value
+                console.log('toDate', toDate);
+                checkdata(fromDate, toDate)
+
+            })
+
+            function checkdata(fromDate, toDate) {
+                axios.get(`/admin/checkDataExist?fromDate=${fromDate}&&toDate=${toDate}`)
+                    .then(res => {
+                        if (!res.data.success) {
+                            document.getElementById('errordate').innerHTML = res.data.message
+                            document.getElementById('saleDateFilterBtn').disabled = true
+                        }
+                        else {
+                            document.getElementById('errordate').innerHTML = " "
+                            console.log('successs data exist');
+                            document.getElementById('saleDateFilterBtn').disabled = false
+                        }
+
+                    }).catch(err => {
                         console.log('error');
-
-                    });
+                    })
 
             }
-        })
-        function updateTable(data) {
-            const tableBody = document.getElementById('tableData');
-            tableBody.innerHTML = '';
 
 
-            data.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${row.dateFormatted || ''}</td>
-            <td>${row.totalOrderCount || 0}</td>
-            <td>${row.offeredProductsSold || 0}</td>
-            <td>₹${row.couponsUsed || 0}</td>
-            <td>${row.totalProducts || 0}</td>
-            <td>₹${row.totalSales || 0}</td>
-        `;
-                tableBody.appendChild(tr);
+
+
+            // document.getElementById('saleDateFilterBtn').addEventListener('click', function () {
+            
+            //     const fromDate = document.getElementById('fromDate').value
+            //     const toDate = document.getElementById('toDate').value
+            //     console.log(fromDate, toDate);
+            //     if (fromDate > toDate) {
+            //         document.getElementById('errordate').innerHTML = "From date is Greater than Todate"
+            //     } else {
+            //         document.getElementById('errordate').innerHTML = ""
+
+            //         axios.post('/admin/customDate', { fromDate, toDate })
+            //             .then((res) => {
+            //                 const data = res.data.reportData
+            //                 document.getElementById('totalAmount').innerHTML = `₹  ${res.data.TotalAmount}`
+            //                 document.getElementById('totalSalesCount').innerHTML = ` ${res.data.TotalSaleCount}`
+            //                 document.getElementById('totaldiscount').innerHTML = `₹  ${res.data.TotalCouponAmount}`
+            //                 console.log("res.data.reportData", res.data.reportData);
+            //                 updateTable(data);
+
+
+            //             }).catch((err) => {
+            //                 console.log('error', err);
+
+            //             });
+            //     }
+            // })
+            // function updateTable(data) {
+            //     const tableBody = document.getElementById('tableData');
+            //     tableBody.innerHTML = '';
+
+            //     data.forEach((row, index) => {
+
+            //         const tr = document.createElement('tr');
+            //         tr.innerHTML = `
+            //              <td>${index + 1}</td>
+            //              <td>${row.dateFormatted || ''}</td>
+            //              <td>${row.totalOrderCount || 0}</td>
+            //              <td>${row.offeredProductsSold || 0}</td>
+            //              <td>₹${row.couponsUsed || 0}</td>
+            //              <td>${row.totalProducts || 0}</td>
+            //              <td>₹${row.totalSales || 0}</td>
+            //                `;
+
+            //         tableBody.appendChild(tr);
+            //     });
+
+
+
+            //     console.log("entering the update table function");
+            // }
+
+            new DataTable('#example', {
+
+                layout: {
+                    topStart: {
+                        buttons: ['copy', 'excel', 'pdf', 'colvis']
+                    }
+                }
             });
 
-        }
-
-
-        new DataTable('#example', {
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'excel', 'pdf', 'colvis']
-                }
-            }
-        });
+        })
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

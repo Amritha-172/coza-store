@@ -75,5 +75,7 @@ admin_route.get('/yearlyChart',adminMiddleware.isLogin,salesReport.yearlyChart)
 admin_route.get('/bestSellingProduct',adminMiddleware.isLogin,salesReport.bestSellingProduct)
 admin_route.get('/bestSellingBrand',adminMiddleware.isLogin,salesReport.bestSellingBrands)
 admin_route.get('/bestSellingCategory',adminMiddleware.isLogin,salesReport.bestSellingCategories)
+admin_route.get('/checkDataExist',adminMiddleware.isLogin,salesReport.checkDataExist)
+
 
 module.exports = admin_route;

@@ -262,11 +262,12 @@
                                         }).then(res => {
 
                                             if (res.data.success) {
+                                             
                                                 const orderId = document.getElementById('orderId').value
-                                                axios.post('/retryPayment', { orderId })
+                                                axios.post('/retryPayment', { orderId ,transactionId:res.data.razorpay_payment_id,Amount})
                                                     .then(res => {
                                                         if (res.data.success) {
-
+                                                            console.log("response here");
                                                             window.location.href = `/ordersuccess?orderId=${orderId}`
                                                         }
 
@@ -280,7 +281,7 @@
                                                 alert('Payment verification failed');
                                             }
                                         }).catch(err => {
-                                            console.error('Verification request failed', error);
+                                            console.error('Verification request failed', err);
                                             alert('Payment verification failed');
                                         })
 

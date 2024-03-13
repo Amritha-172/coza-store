@@ -1,6 +1,6 @@
 <%- include('./../layouts/userLayout/header',{pageTitle: 'Product'})%>
 
-	<!-- Cart -->
+
 	
 
 	
@@ -431,80 +431,107 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</div>
 	<script>
 		function cart() {
-			window.location.href = '/shoppingcart	'
-		}
+				window.location.href = '/shoppingcart	'
+			}
 
-		document.addEventListener('DOMContentLoaded', function () {
+			document.addEventListener('DOMContentLoaded', function () {
 
 
-			const wishlist = document.querySelectorAll('.wishlist-button')
-			console.log('wishlist', wishlist);
-			wishlist.forEach((button) => {
+				const wishlist = document.querySelectorAll('.wishlist-button')
+				wishlist.forEach((button) => {
 
-				const productId = button.getAttribute('data-product-id');
+					const productId = button.getAttribute('data-product-id');
+					const iconHeart1 = button.querySelector('.icon-heart1');
+					const iconHeart2 = button.querySelector('.icon-heart2');
 
-				const iconHeart1 = button.querySelector('.icon-heart1');
-				const iconHeart2 = button.querySelector('.icon-heart2');
-				console.log('iconHeart1', iconHeart1);
+					axios.post('/checkwishlist', { productId })
+						.then(res => {
+							if (res.data.success) {
+								iconHeart1.style.opacity = "0";
+								iconHeart2.style.opacity = "1";
+							} else {
+								iconHeart1.style.opacity = "1";
+								iconHeart2.style.opacity = "0";
+							}
+						}).catch(err => {
+							console.log('error', err);
+						})
 
-				axios.post('/checkwishlist', { productId })
-					.then(res => {
-						if (res.data.success) {
-							console.log("successfully");
+
+
+					button.addEventListener('click', function (e) {
+						e.preventDefault();
+
+						const productId = this.getAttribute('data-product-id');
+						const iconHeart1 = this.querySelector('.icon-heart1');
+						const iconHeart2 = this.querySelector('.icon-heart2');
+
+
+						if (getComputedStyle(iconHeart1).opacity === "1") {
 							iconHeart1.style.opacity = "0";
 							iconHeart2.style.opacity = "1";
+
+							axios.post('/wishlist', { productId })
+								.then(res => {
+									if (res.data.success) {
+										var wishlistCount = res.data.wishlitCount;
+										var wishlistElement = document.getElementById("wishlist");
+										wishlistElement.setAttribute('data-notify', wishlistCount);
+										showToast('Add to wishlist')
+										
+										console.log('success');
+
+									}
+								}).catch(err => {
+									console.log('error in wishlist', err);
+								})
+
 						} else {
-							console.log('failed');
 							iconHeart1.style.opacity = "1";
 							iconHeart2.style.opacity = "0";
+							axios.post('/removeWhishlist', { productId })
+								.then(res => {
+									var wishlistCount = res.data.wishlitCount;
+										var wishlistElement = document.getElementById("wishlist");
+										wishlistElement.setAttribute('data-notify', wishlistCount)
+									showToast('Removed from wishlist')
+									console.log('success removed');
+								}).catch(err => {
+									console.log('error in wishlist', err);
+								})
+
 						}
-					}).catch(err => {
-						console.log('error', err);
-					})
-
-
-
-				button.addEventListener('click', function (e) {
-					e.preventDefault();
-
-					const productId = this.getAttribute('data-product-id');
-					const iconHeart1 = this.querySelector('.icon-heart1');
-					const iconHeart2 = this.querySelector('.icon-heart2');
-
-
-					if (getComputedStyle(iconHeart1).opacity === "1") {
-						iconHeart1.style.opacity = "0";
-						iconHeart2.style.opacity = "1";
-
-						axios.post('/wishlist', { productId })
-							.then(res => {
-
-								console.log('success');
-							}).catch(err => {
-								console.log('error in wishlist', err);
-							})
-
-					} else {
-						iconHeart1.style.opacity = "1";
-						iconHeart2.style.opacity = "0";
-						axios.post('/removeWhishlist', { productId })
-							.then(res => {
-								console.log('success');
-							}).catch(err => {
-								console.log('error in wishlist', err);
-							})
-
-					}
 
 
 
 
 
-				});
+					});
+
+				})
+
+				function showToast(message) {
+					const Toast = Swal.mixin({
+						toast: true,
+						position: 'bottom',
+						showConfirmButton: false,
+						timer: 1000,
+						timerProgressBar: true,
+						background: 'black',
+						color: '#fff',
+						didOpen: (toast) => {
+							toast.addEventListener('mouseenter', Swal.stopTimer)
+							toast.addEventListener('mouseleave', Swal.resumeTimer)
+						}
+					});
+
+					Toast.fire({
+						icon: 'success',
+						title: message
+					});
+				}
 
 			})
-
-		})
 	</script>
 
 <!--===============================================================================================-->	
@@ -552,46 +579,11 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <!--===============================================================================================-->
 	<script src="vendor/isotope/isotope.pkgd.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/sweetalert/sweetalert.min.js"></script>
-	<script>
-		$('.js-addwish-b2, .js-addwish-detail').on('click', function(e){
-			e.preventDefault();
-		});
 
-		$('.js-addwish-b2').each(function(){
-			var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-			$(this).on('click', function(){
-				swal(nameProduct, "is added to wishlist !", "success");
-
-				$(this).addClass('js-addedwish-b2');
-				$(this).off('click');
-			});
-		});
-
-		$('.js-addwish-detail').each(function(){
-			var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
-
-			$(this).on('click', function(){
-				swal(nameProduct, "is added to wishlist !", "success");
-
-				$(this).addClass('js-addedwish-detail');
-				$(this).off('click');
-			});
-		});
-
-		/*---------------------------------------------*/
-
-		$('.js-addcart-detail').each(function(){
-			var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-			$(this).on('click', function(){
-				swal(nameProduct, "is added to cart !", "success");
-			});
-		});
 	
-	</script>
 <!--===============================================================================================-->
 	<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-	<script>
+	<!-- <script>
 		$('.js-pscroll').each(function(){
 			$(this).css('position','relative');
 			$(this).css('overflow','hidden');
@@ -605,7 +597,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 				ps.update();
 			})
 		});
-	</script>
+	</script> -->
 <!--===============================================================================================-->
 	<script src="js/main.js"></script>
 
