@@ -41,7 +41,11 @@ const userShema = mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref:'product'
     
-    }]
+    }],
+    chatStatus:{
+        type:Boolean,
+        default:0
+    }
    
 
    

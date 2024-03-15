@@ -9,6 +9,8 @@ const paymentController=require('../controller/paymentController')
 const productControlller = require('../controller/ProductController');
 const couponController=require('../controller/couponController')
 const refferalController=require('../controller/referralController')
+
+const chatController=require('../controller/chatController')
 const  userRoute=express()
     
 
@@ -124,8 +126,8 @@ userRoute.post("/Search",auth.isLogin,auth.isBlocked,productControlller.Search)
 
 userRoute.get('/referral',refferalController.refferl)
 
+userRoute.get('/chat',auth.isLogin,auth.isBlocked,chatController.LoadchatPage)
 
-
-
+userRoute.post('/saveChat',chatController.saveChat)
 
 module.exports=userRoute

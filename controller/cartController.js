@@ -230,7 +230,7 @@ const editPrice=async(req,res)=>{
     const userId=req.session.user_id
     const {productId,totalPrice,quantity}=req.body
 
-    await Cart.updateOne({productId:productId},{$set:{price:totalPrice,quantity:quantity}})
+    await Cart.updateOne({userId: userId,productId:productId},{$set:{price:totalPrice,quantity:quantity}})
 
     let cartItems = await Cart.find({ userId: userId }).populate('productId');
       let newTotal=0

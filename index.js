@@ -10,6 +10,15 @@ const flash = require('express-flash')
 
 require('./config/config').connect()
 
+const {chatbox}=require('./controller/chatController')
+const server = app.listen(process.env.PORT, () => {
+  console.log(`Server is running at http://localhost:${process.env.PORT}`);
+});
+
+chatbox(server)
+
+
+
 app.set('view engine','ejs')
 app.set('views','views')
 
@@ -31,11 +40,12 @@ app.use("/admin", adminRoute)
 app.use("/", userRoute)
 
 
+
 app.use((req, res, next) => {
   res.status(404).render('error');
 });
 
 
-app.listen(process.env.PORT, () => {
-  console.log(`server is Running at http://localhost:${process.env.PORT}`);
-})
+// app.listen(process.env.PORT, () => {
+//   console.log(`server is Running at http://localhost:${process.env.PORT}`);
+// })

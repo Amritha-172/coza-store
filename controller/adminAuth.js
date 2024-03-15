@@ -1,6 +1,7 @@
 const User = require('../models/userModel')
 const Category = require('../models/categoryModel')
 const orders = require('../models/orderModel')
+const Admin=require('../models/adminModel')
 
 
 require('dotenv').config()
@@ -16,14 +17,16 @@ const adminLogin = async (req, res) => {
 const adminVerify = async (req, res) => {
     try {
         const { name, password } = req.body
+      
+      const adminData=await Admin.findOne({name:name}) 
+      if(adminData){
+        req.session.admin_id=adminData._id
+        res.redirect("/admin/dashboard")
+      }else{
 
-        if (name == process.env.ADMIN_NAME && password == process.env.ADMIN_PASS) {
-            req.session.admin_id = "admin1"
-            res.redirect("/admin/dashboard")
-        } else {
-            res.render("adminlogin", { message: "incorrect username and password" })
-            console.log("error");
-        }
+        res.redirect('/admin/')
+      }
+
 
     } catch (error) {
         console.log("error in the admin login verify", error);

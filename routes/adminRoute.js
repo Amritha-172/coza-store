@@ -8,6 +8,7 @@ const multer=require('../middleware/multerMiddleware')
 const couponController=require('../controller/couponController')
 const offerController= require('../controller/offerController')
 const salesReport=require('../controller/salesReport')
+const chatController=require('../controller/chatController')
 
 admin_route.set("view engine",'ejs')
 admin_route.set("views","./views/admin")
@@ -76,6 +77,6 @@ admin_route.get('/bestSellingProduct',adminMiddleware.isLogin,salesReport.bestSe
 admin_route.get('/bestSellingBrand',adminMiddleware.isLogin,salesReport.bestSellingBrands)
 admin_route.get('/bestSellingCategory',adminMiddleware.isLogin,salesReport.bestSellingCategories)
 admin_route.get('/checkDataExist',adminMiddleware.isLogin,salesReport.checkDataExist)
-
+admin_route.get('/adminChat',adminMiddleware.isLogin,chatController.adminChatPage)
 
 module.exports = admin_route;
