@@ -201,6 +201,8 @@
             const file = input.files[0];
             const newDate = new Date().getTime();
             originalFileNames[inputId] = `${file.name}_${newDate}`;
+            console.log("originalFileNames[inputId]",originalFileNames[inputId]);
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('imageToCrop').src = e.target.result;
@@ -260,7 +262,7 @@
             const filename = segments[segments.length - 1];
             console.log(filename);
 
-            oldimageUrl.push(filename)
+            oldimageUrl.push("file name",filename)
 
 
 
