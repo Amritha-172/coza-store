@@ -33,7 +33,7 @@ const loadProduct = async (req, res) => {
         }
 
 
-        res.render("products", {
+        res.render("/products", {
             products: products,
             currentPage: page,
             startPage: startPage,
