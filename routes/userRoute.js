@@ -27,7 +27,7 @@ userRoute.get('/register',userAuth.signup)
 userRoute.post('/checkEmail',userAuth.checkEmail)
 
 
-// userRoute.get('/signup',auth.isLogout,userAuth.signup)
+userRoute.get('/signup',auth.isLogout,userAuth.signup)
 userRoute.post('/signup',userAuth.verifySignup)
 
 userRoute.get('/signupOtp',auth.isLogout,userAuth.otp)

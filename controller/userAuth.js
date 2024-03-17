@@ -65,7 +65,7 @@ const verifySignup = async (req, res) => {
         await util.mailsender(email, userId, `It seems you logging at CoZA store and trying to verify your Email.
           Here is the verification code.Please enter otp and verify Email`)
 
-        res.render("user/SignupOtp", { message: "enter Otp", user: req.session.user_email })
+        res.render("user/signupOtp", { message: "enter Otp", user: req.session.user_email })
 
     } catch (error) {
         res.render('error')
