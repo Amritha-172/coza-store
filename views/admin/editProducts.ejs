@@ -235,8 +235,11 @@
         function deleteImage(inputId, previewId) {
             const id = document.getElementById('id').value
             var preview = document.getElementById(previewId).getAttribute('src')
+
             const segments = preview.split('/');
+            console.log("segments",segments);
             const filename = segments[segments.length - 1]
+            console.log('filename',filename);
             axios.post('/admin/deleteImage', { preview, filename, id })
 
                 .then(res => {
@@ -258,9 +261,10 @@
             var input = document.getElementById(inputId);
             var preview = document.getElementById(previewId);
             const oldurl = preview.src
+          
             const segments = oldurl.split('/');
             const filename = segments[segments.length - 1];
-            console.log(filename);
+         
 
             oldimageUrl.push("file name",filename)
 

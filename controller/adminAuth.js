@@ -19,6 +19,9 @@ const adminVerify = async (req, res) => {
         const { name, password } = req.body
       
       const adminData=await Admin.findOne({name:name}) 
+      if(adminData.password !==password){
+        return res.redirect('/admin/')
+      }
       if(adminData){
         req.session.admin_id=adminData._id
         res.redirect("/admin/dashboard")

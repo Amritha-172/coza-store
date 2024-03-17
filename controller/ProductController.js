@@ -187,6 +187,7 @@ const editProduct = async (req, res) => {
 
 
         const { productName, category, price, description, quantity, id, size, brand, oldimageUrl } = req.body
+        console.log("oldimageUrl",oldimageUrl);
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
 
