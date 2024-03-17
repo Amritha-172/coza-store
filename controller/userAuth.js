@@ -367,6 +367,7 @@ const Homepage = async (req, res) => {
     try {
 
         let userData = req.session.user_id;
+        if(userData){}
         let userdata = await user.findOne({ _id: userData, is_blocked: false });
         let categoryData = await category.find({});
         let offerData = await offers.find({
