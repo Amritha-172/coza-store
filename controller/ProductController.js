@@ -117,16 +117,16 @@ const addProduct = async (req, res) => {
 
             })
             const save = await products.save()
-
+              console.log("save",save);
             if (save) {
-                res.status(200).json({ success: true })
+               return res.status(200).json({ success: true })
 
             }
         }
 
 
     } catch (error) {
-        res.status(302).json({ success: false })
+      return res.status(302).json({ success: false })
         console.log("error in addproduct:", error);
     }
 }
