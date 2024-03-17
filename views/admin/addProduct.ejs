@@ -242,7 +242,7 @@
             currentPreviewId = previewId;
             const input = document.getElementById(inputId);
             const file = input.files[0];
-            originalFileNames[inputId] = file.name;
+            originalFileNames[inputId] = `${file.name}_${newDate}`;
 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -301,7 +301,7 @@
                 formData.append('brand', brand)
          
                 
-
+        
                 Object.keys(croppedImages).forEach(key => {
                     const originalFileName = originalFileNames[key];
                     formData.append('cropImages', croppedImages[key],originalFileName);
