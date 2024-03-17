@@ -238,11 +238,14 @@
         });
 
         function prepareImageForCropping(inputId, previewId) {
+       
             currentInputId = inputId;
             currentPreviewId = previewId;
             const input = document.getElementById(inputId);
             const file = input.files[0];
+            const newDate = new Date().getTime();
             originalFileNames[inputId] = `${file.name}_${newDate}`;
+            console.log("originalFileNames[inputId]",originalFileNames[inputId]);
 
             const reader = new FileReader();
             reader.onload = function (e) {

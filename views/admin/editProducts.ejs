@@ -199,7 +199,8 @@
             currentPreviewId = previewId;
             const input = document.getElementById(inputId);
             const file = input.files[0];
-            originalFileNames[inputId] = file.name;
+            const newDate = new Date().getTime();
+            originalFileNames[inputId] = `${file.name}_${newDate}`;
             const reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('imageToCrop').src = e.target.result;
