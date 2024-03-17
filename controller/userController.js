@@ -72,7 +72,7 @@ const updateProfile = async (req, res) => {
         req.session.fullname = fullname
         req.session.age = age
         req.session.gender = gender
-        const existNewEmail=await User.findOne({_id:{$ne:id} , email:email})
+        const existNewEmail=await User.findOne({_id:{$ne:userId} , email:email})
         const findEmail = await User.findOne({ _id: userId })
         if(existNewEmail){
             return res.json({ success: false, message: 'Email already existed' })
