@@ -20,7 +20,7 @@
                     </thead>
                     <tbody>
                         <% let itemNumber=(currentPage - 1) * limit + 1; %>
-                        <% for(let i=0 ;i < locals.userlist.length ; i++ ) { %>
+                        <% for(let i=0 ;i < locals.userlist.length ; i++,itemNumber++ ) { %>
                             <tr>
                                 <td>
                                     <%=itemNumber%>
