@@ -19,11 +19,11 @@
                         </tr>
                     </thead>
                     <tbody>
-
+                        <% let itemNumber=(currentPage - 1) * limit + 1; %>
                         <% for(let i=0 ;i < locals.userlist.length ; i++ ) { %>
                             <tr>
                                 <td>
-                                    <%= i+1 %>
+                                    <%=itemNumber%>
                                 </td>
                                 <td>
                                     <%= locals.userlist[i].name %>
