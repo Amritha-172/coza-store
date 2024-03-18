@@ -183,7 +183,7 @@ const checkout=async(req,res)=>{
   try {
    
     const cartTotal= await Cart.find({userId:req.session.user_id})
-       const totalAmount= cartTotal.reduce((acc,curr)=>{
+       let totalAmount= cartTotal.reduce((acc,curr)=>{
           return acc+curr.price
        },0)
 
