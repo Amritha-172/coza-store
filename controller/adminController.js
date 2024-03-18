@@ -31,7 +31,8 @@ const userList = async (req, res) => {
             nextPage: page + 1,
             previousPage: page - 1,
             lastPage: totalPages,
-            activePage: 'userlist'
+            activePage: 'userlist',
+            limit:limit
         };
 
         res.render('userList',locals );
