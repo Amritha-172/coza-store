@@ -92,7 +92,7 @@ const verifyLogin = async (req, res) => {
         const userData = await user.findOne({email:email});
         console.log(userData);
         if (!userData) {
-            req.flash('message', 'User not fount')
+            req.flash('message', 'User not found')
             return res.redirect('/login')
 
         }
