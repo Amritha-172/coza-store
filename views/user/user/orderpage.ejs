@@ -117,7 +117,7 @@
                                                                             <span><%=new Date(order.createdAt).toLocaleDateString("en-US")%></span>
                                                                             <%if(order.paymentStatus=="pending"){%>
                                                                                 <button
-                                                                                    class="btn border bg-success mt-4 text-white btn-retry">Retry</button>
+                                                                                    class="btn border bg-success mt-4 text-white btn-retry"  data-orderId="<%=order%>" >Retry</button>
                                                                                 <%}%>
                                                                                
                                                                                
@@ -232,20 +232,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const retryBtn = document.querySelectorAll(' .btn-retry')
-
+             
             retryBtn.forEach(btn => {
+                const orderId= document.getElementById('orderId').value
                 btn.addEventListener('click', function (e) {
                     e.preventDefault()
                     console.log("button clicked");
-                    const Amount = document.getElementById('totalOrderAmount').value
-                    axios.post('/createOrder', { Amount })
+                 
+                    axios.post('/createOrder',{orderId})
                         .then(res => {
                             if (res.data.success) {
                                 const { orderId } = res.data
                                 console.log(res.data);
                                 var options = {
                                     key: res.data.key_id,
-                                    amount: Amount * 100,
+                                    amount: res.data.amount * 100,
                                     currency: "INR",
                                     name: "Coza store ",
                                     description: "Test Transaction",
@@ -264,7 +265,7 @@
                                             if (res.data.success) {
                                              
                                                 const orderId = document.getElementById('orderId').value
-                                                axios.post('/retryPayment', { orderId ,transactionId:res.data.razorpay_payment_id,Amount})
+                                                axios.post('/retryPayment', { orderId ,transactionId:res.data.razorpay_payment_id})
                                                     .then(res => {
                                                         if (res.data.success) {
                                                             console.log("response here");
@@ -306,7 +307,7 @@
                             }
 
                         }).catch(err => {
-                            console.log('error in checkout page ', err);
+                            console.log('error in retry order page ', err);
                         })
 
 

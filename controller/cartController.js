@@ -181,32 +181,23 @@ const shoppingcart = async (req, res) => {
 
 const checkout=async(req,res)=>{
   try {
-    let totalprice;
-    if (req.method === "GET") {
+   
+    const cartTotal= await Cart.find({userId:req.session.user_id})
+       const totalAmount= cartTotal.reduce((acc,curr)=>{
+          return acc+curr.price
+       },0)
 
-      if (req.query.totalprice) {
-        totalprice = req.query.totalprice;
-      } else {
-        
-        return res.status(400).send("Total price is required in the query parameters.");
-      }
-    } else if (req.method === "POST") {
-      if (req.body.totalprice) {
-        totalprice = req.body.totalprice;
-      } else {
-        
-        return res.status(400).send("Total price is required in the request body.");
-      }
-    }
-    if(totalprice<500){
-      totalprice =Number(totalprice)+40
+  
+
+    if(totalAmount<500){
+      totalAmount =totalAmount+40
     }
     const userId=req.session.user_id
     const couponData=req.session.coupon
     const addressData=await Address.find({userId:userId})
     const userData= await user.findOne({_id:userId})
    const currentdate=new Date()
-    const couponDetails =await Coupon.find({minimumAmount:{$lte:totalprice}})
+    const couponDetails =await Coupon.find({minimumAmount:{$lte:totalAmount}})
     const validCoupon = couponDetails.filter(coupon =>new Date(coupon.expireDate)>=currentdate)
     const cartCount = await Cart.countDocuments({ userId: req.session.user_id });
     const wishlistCount = userData.wishlist.length
@@ -214,9 +205,9 @@ const checkout=async(req,res)=>{
   if(!couponData){
 
  
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData:"",userdata:userData,cartCount,wishlistCount})
+    res.render('user/checkOut',{addressData,totalprice:totalAmount,validCoupon,couponData:"",userdata:userData,cartCount,wishlistCount})
   }else{
-    res.render('user/checkOut',{addressData,totalprice,validCoupon,couponData,userdata:userData,cartCount,wishlistCount})
+    res.render('user/checkOut',{addressData,totalprice:totalAmount,validCoupon,couponData,userdata:userData,cartCount,wishlistCount})
 
   }
        

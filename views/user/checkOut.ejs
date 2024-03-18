@@ -684,7 +684,7 @@
                     }else{
                        
 
-                        window.location.href='/checkout?totalprice=' + encodeURIComponent(subtotal)
+                        window.location.href='/checkout'
 
                     }
                    }).catch(err=>{
@@ -750,14 +750,14 @@
                             })
                     } else if (selectedPaymentMethod === "Razorpay") {
 
-                        axios.post('/createOrder', { Amount, selectedAddress, })
+                        axios.post('/createOrder', {  selectedAddress, })
                             .then(res => {
                                 if (res.data.success) {
                                     const { orderId } = res.data
                                     console.log(res.data);
                                     var options = {
                                         key: res.data.key_id,
-                                        amount: Amount * 100,
+                                        amount: res.data.amount * 100,
                                         currency: "INR",
                                         name: "Coza store ",
                                         description: "Test Transaction",

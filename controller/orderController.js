@@ -160,11 +160,23 @@ const placeorder = async (req, res) => {
 
       const {transactionId}=req.query
         
-        const { Amount, selectedAddress, selectedPaymentMethod, status, coupon } = req.body
+        const { selectedAddress, selectedPaymentMethod, status, coupon } = req.body
 
         if (!selectedAddress) {
 
             res.json({ success: false, message: "Please select an Address" })
+        }
+        
+
+        const cartTotal= await Cart.find({userId:req.session.user_id})
+        let totalAmount= cartTotal.reduce((acc,curr)=>{
+           return acc+curr.price
+        },0)
+
+        if(req.session.coupon){
+           const coupondetails= await Coupons.findOne({_id:req.session.coupon})
+           totalAmount=totalAmount-coupondetails.dicountAmount
+
         }
 
         const userId = req.session.user_id
@@ -211,7 +223,7 @@ const placeorder = async (req, res) => {
             userId: userId,
             cartId: cartItems.map(item => item._id),
             orderedItem: orderedItem,
-            orderAmount: Amount,
+            orderAmount: totalAmount,
             deliveryAddress: deliveryAddress,
             paymentMethod: selectedPaymentMethod,
             paymentStatus: status,
@@ -233,7 +245,7 @@ const placeorder = async (req, res) => {
             const Payment = new payment({
                 userId: userId,
                 orderId: order._id,
-                amount: Amount,
+                amount: totalAmount,
                 status: 'pending',
                 paymentMethod: selectedPaymentMethod
 
@@ -243,7 +255,7 @@ const placeorder = async (req, res) => {
             const Payment = new payment({
                 userId: userId,
                 orderId: order._id,
-                amount: Amount,
+                amount: totalAmount,
                 status: 'completed',
                 paymentMethod: selectedPaymentMethod,
                 transactionId:transactionId
@@ -273,13 +285,14 @@ const placeorder = async (req, res) => {
 const retryOrder = async (req, res) => {
     try {
         const userId=req.session.user_id
-        const { orderId,transactionId ,Amount} = req.body
+        const { orderId,transactionId } = req.body
         console.log(req.body);
+        const orderdetail=await Order.findOne({_id:orderId})
         const update = await Order.updateOne({ _id: orderId }, { $set: { paymentStatus: 'success' } })
         const Payment = new payment({
             userId: userId,
             orderId: orderId,
-            amount: Amount,
+            amount: orderdetail.orderAmount,
             status: 'completed',
             paymentMethod: 'Razorpay',
             transactionId:transactionId
@@ -455,6 +468,17 @@ const cancelOrder = async (req, res) => {
 const placeorderWallet = async (req, res) => {
     try {
         const { Amount, selectedAddress, selectedPaymentMethod, status, coupon } = req.body
+
+        const cartTotal= await Cart.find({userId:req.session.user_id})
+        let totalAmount= cartTotal.reduce((acc,curr)=>{
+           return acc+curr.price
+        },0)
+
+        if(req.session.coupon){
+           const coupondetails= await Coupons.findOne({_id:req.session.coupon})
+           totalAmount=totalAmount-coupondetails.dicountAmount
+
+        }
         const userId = req.session.user_id
         const cartItems = await Cart.find({ userId: userId }).populate('productId')
         const couponData = await Coupons.findOne({ couponCode: coupon })
@@ -489,10 +513,10 @@ const placeorderWallet = async (req, res) => {
             return res.json({ message: "please check your wallet" })
         }
 
-        if (walletDetails.balance < Amount) {
+        if (walletDetails.balance < totalAmount) {
             return res.json({ message: "please check your wallet" })
         }
-        const walletFund = await wallet.updateOne({ userId: userId }, { $inc: { balance: -Amount }, $push: { transaction: { amount: Amount, transactionsMethod: "Razorpay" } } })
+        const walletFund = await wallet.updateOne({ userId: userId }, { $inc: { balance: -totalAmount }, $push: { transaction: { amount: totalAmount, transactionsMethod: "Razorpay" } } })
         console.log('walletFund', walletFund);
 
 
@@ -508,7 +532,7 @@ const placeorderWallet = async (req, res) => {
             userId: userId,
             cartId: cartItems.map(item => item._id),
             orderedItem: orderedItem,
-            orderAmount: Amount,
+            orderAmount: totalAmount,
             deliveryAddress: deliveryAddress,
             paymentMethod: selectedPaymentMethod,
             paymentStatus: status,
@@ -520,7 +544,7 @@ const placeorderWallet = async (req, res) => {
         const Payment = new payment({
             userId: userId,
             orderId: order._id,
-            amount: Amount,
+            amount: totalAmount,
             status: 'pending',
             paymentMethod: selectedPaymentMethod
 

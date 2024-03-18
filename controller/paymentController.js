@@ -1,19 +1,37 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Order = require('../models/orderModel');
+const Cart=require('../models/cartModel')
+const Coupons=require('../models/couponModel')
 
 require('../config/config').connect()
 
 
 const createorder = async (req, res) => {
     try {
+          let {orderId}=req.body
+        const cartTotal= await Cart.find({userId:req.session.user_id})
+        let totalAmount= cartTotal.reduce((acc,curr)=>{
+           return acc+curr.price
+        },0)
+
+        if(req.session.coupon){
+           const coupondetails= await Coupons.findOne({_id:req.session.coupon})
+           totalAmount=totalAmount-coupondetails.dicountAmount
+
+        }
+
+        if(orderId){
+            const orderDetail= await Order.findOne({_id:orderId})
+            totalAmount=orderDetail.orderAmount
+        }
         const instance = new Razorpay({
             key_id: process.env.KEY_ID,
             key_secret: process.env.KEY_SECRET
         })
 
         const options = {
-            amount: req.body.Amount * 100,
+            amount: totalAmount * 100,
             currency: "INR",
         }
         instance.orders.create(options, (error, order) => {
@@ -26,7 +44,7 @@ const createorder = async (req, res) => {
                     success: true,
                     msg: "Order created",
                     orderId: order.id,
-                    amount: req.body.Amount * 100,
+                    amount: totalAmount * 100,
                     key_id: process.env.KEY_ID,
                     product_name: req.body.name,
                     description: "Test Transaction",
