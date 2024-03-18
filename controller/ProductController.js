@@ -190,9 +190,7 @@ const editProduct = async (req, res) => {
         console.log("oldimageUrl",oldimageUrl);
         console.log("req.body", req.body);
         console.log(" req.files", req.files);
-        if(req.files.length<=1){
-            return res.json({success:false,message:"Please select 2 images"})
-        }
+       
 
         if(!productName||productName.trim()==""){
             return res.json({success:false,message:"Product name is required"})
