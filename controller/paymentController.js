@@ -20,6 +20,9 @@ const createorder = async (req, res) => {
            totalAmount=totalAmount-coupondetails.dicountAmount
 
         }
+        if(totalAmount<500){
+            totalAmount+=40
+        }
 
         if(orderId){
             const orderDetail= await Order.findOne({_id:orderId})
