@@ -21,7 +21,7 @@ const securePassword = async (password) => {
 const signup = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render("user/user/register", { messages })
+        res.render("user/user/register", { messages,userdata:'',cartCount:0,wishlistCount:0 })
     } catch (error) {
         console.log("error in signup page:", error);
         res.render('error')
@@ -76,7 +76,7 @@ const verifySignup = async (req, res) => {
 const userLogin = async (req, res) => {
     try {
         const messages = req.flash('message')
-        res.render('user/user/login', { messages })
+        res.render('user/user/login', { messages,userdata:'',cartCount:0,wishlistCount:0 })
     } catch (error) {
         console.log("error in userlogin:", error);
         res.status(500).send('Internal Server Error');
