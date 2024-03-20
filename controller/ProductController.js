@@ -56,7 +56,7 @@ const loadProduct = async (req, res) => {
 const loadAddProduct = async (req, res) => {
     try {
         const messages = req.flash('message')
-        const categories = await category.find({})
+        const categories = await category.find({is_blocked:false})
 
         res.render("addProduct", { categories, messages , activePage: 'products'})
     } catch (error) {
@@ -172,7 +172,7 @@ const loadeditProduct = async (req, res) => {
 
         const { id } = req.query
         const products = await product.findOne({ _id: id }).populate('categoryId').sort({ _id: -1 })
-        const categories = await category.find({_id:{$ne:products.categoryId._id}})
+        const categories = await category.find({_id:{$ne:products.categoryId._id},is_blocked:false})
 
 
         res.render('editProducts', { product: products, category: categories, activePage: 'products' })

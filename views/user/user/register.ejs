@@ -50,16 +50,14 @@
                         custemer Support
                     </a>
 
-                    <% if(userdata) { %>
-                        <a href="profile" class="flex-c-m trans-04 p-lr-25">
-                            <%= userdata.name %>
-                        </a>
-                        <% } else { %>
+                    
+                     
+                       
                             <a href="/login" class="flex-c-m trans-04 p-lr-25">
                                 Login
                             </a>
 
-                            <% } %>
+                         
 
                                 <a href="#" class="flex-c-m trans-04 p-lr-25">
                                     EN
@@ -113,14 +111,14 @@
 
 
 
-                 <a href="/shoppingcart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" id="cartIcon" data-notify="<%=cartCount%>"
+                 <a href="/shoppingcart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" id="cartIcon" data-notify="0"
                         ><i class="zmdi zmdi-shopping-cart"></i></a>
         
 
 
 
                     <a href="/wishlist" class="dis-block icon-header-item cl2 hov-cl1 icon-header-noti trans-04 p-l-22 p-r-11 " id="wishlist"
-                        data-notify="<%=wishlistCount%>">
+                        data-notify="0">
                         <i class="zmdi zmdi-favorite-outline"></i>
                     </a>
                 </div>
