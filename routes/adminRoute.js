@@ -19,7 +19,9 @@ admin_route.get('/logout',adminAuth.adminLogout)
 admin_route.get("/dashboard",adminMiddleware.isLogin,adminAuth.dashboard)
 admin_route.get('/userlist',adminMiddleware.isLogin,adminController.userList)
 admin_route.get('/blockuser',adminMiddleware.isLogin,adminController.blockUser)
-admin_route.get('/unblockuser',adminMiddleware.isLogin,adminController.unblockUser)
+// admin_route.get('/unblockuser',adminMiddleware.isLogin,adminController.unblockUser)
+
+
 
 admin_route.get('/category',adminMiddleware.isLogin,adminController.categories)
 admin_route.get('/findcatId',adminMiddleware.isLogin,adminController.findCatId)
