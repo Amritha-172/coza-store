@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  mongo_db:
+    container_name: database_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    environment:
+       mongoUrl: "mongodb+srv://amrithas172:VBXo136SCf5cg2qq@coza-store.e6hgkka.mongodb.net/?retryWrites=true&w=majority&appName=coza-store/test"
+       NODE_MAILER_PASS: "qmhl hgwh ksmp twxd"
+       NODE_MAILER_EMAIL: "cozastore29@gmail.com"
+       SESSION_KEY: "Mysecretsession"
+       ADMIN_PASS: "123"
+       ADMIN_EMAIL: "amrithas172@gmail.com"
+       ADMIN_NAME: "AMRITHA"
+       PORT: 3000
+       KEY_ID: "rzp_test_UFkimUsgSwScqh"
+       KEY_SECRET: "bbiphS2OIFszjjvcpbdwmQoH"
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
